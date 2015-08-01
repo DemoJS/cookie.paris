@@ -7,7 +7,7 @@ var redis = require("redis").createClient()
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended: false}))
 
-app.get("/api/subscribers", function(request, response)
+/*app.get("/api/subscribers", function(request, response)
 {
     redis.lrange("cookie:subscribers", 0, -1, function(err, data)
     {
@@ -15,7 +15,7 @@ app.get("/api/subscribers", function(request, response)
         
         response.json(data)
     })
-})
+})*/
 
 app.post("/api/subscribers", function(request, response)
 {
