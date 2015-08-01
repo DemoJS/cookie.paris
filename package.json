@@ -1,5 +1,10 @@
 {
-	"name": "www.tabsorspaces.com",
-	"version": "0.0.1-1",
-	"author": "wsmind"
+  "name": "cookie.paris",
+  "version": "0.0.1-1",
+  "author": "wsmind",
+  "dependencies": {
+    "body-parser": "^1.13.3",
+    "express": "^4.13.2",
+    "redis": "^0.12.1"
+  }
 }
