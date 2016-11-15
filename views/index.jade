@@ -1,0 +1,11 @@
+extend layout
+
+block content
+  img(src="logo.png" style="margin: 0 auto; display: block;")
+  h1.text-center.login-title Keep in touch with the Cookie Demoparty!
+  p Put your email down, we'll email you back when we have news to share!
+  .account-wall
+    form(method="POST" action="/api/subscribers")
+      input.form-control(type="text" placeholder="Email" required autofocus name="email")
+      button.btn.btn-lg.btn-primary.btn-block(type="submit") Keep me informed!
+      label.checkbox.pull-left

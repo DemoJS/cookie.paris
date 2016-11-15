@@ -7,6 +7,9 @@ var redis = require("redis").createClient()
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended: false}))
 
+app.set("view engine", "jade")
+app.set("views", __dirname + "/views")
+
 /*app.get("/api/subscribers", function(request, response)
 {
     redis.lrange("cookie:subscribers", 0, -1, function(err, data)
@@ -31,6 +34,11 @@ app.post("/api/subscribers", function(request, response)
         
         response.send("Thanks for registering!")
     })
+})
+
+app.get("/", function(request, response)
+{
+    response.render("index")
 })
 
 app.use(express.static(__dirname + "/public"))
