@@ -1,14 +1,45 @@
 body
 {
-    padding-top: 70px;
+    padding-top: 51px;
     background-color: #111;
     color: #ccc;
+}
+
+@media (min-width: 768px)
+{
+    .container
+    {
+        width: 720px;
+    }
+}
+
+.header
+{
+    width: 100%;
+    border-top: 1px solid #f80;
+    background-color: #151515;
+    text-align: center;
+    padding: 30px;
+}
+
+.content
+{
+    margin: 20px 0px;
+}
+
+.content h2
+{
+    margin-top: 50px;
+    background-image: url("/title-icon.png");
+    background-repeat: no-repeat;
+    height: 40px;
+    line-height: 40px;
+    padding-left: 45px;
 }
 
 .footer
 {
     width: 100%;
-    margin: 0px;
     padding: 30px;
     text-align: center;
     background-color: #f80;
