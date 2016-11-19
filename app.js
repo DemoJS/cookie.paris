@@ -39,6 +39,7 @@ app.post("/api/subscribers", function(request, response)
 app.get("/", function(request, response) { response.render("index") })
 app.get("/location", function(request, response) { response.render("location") })
 app.get("/competitions", function(request, response) { response.render("competitions") })
+app.get("/timetable", function(request, response) { response.render("timetable") })
 
 app.use(express.static(__dirname + "/public"))
 
