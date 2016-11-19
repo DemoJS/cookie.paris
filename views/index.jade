@@ -3,12 +3,14 @@ extend layout
 block header
   img(src="logo.png" style="margin: 0 auto; display: block;")
   h1 Cookie 2016
-  p December 2nd to 3rd, 
+  p December 3rd, 
     a(href="/location") Paris
   
 block content
   h2 The Cookie Demoparty
-  p Cookie is a day-long demoparty, open to everyone:
+  p Cookie is a day-long 
+    a(href="https://en.wikipedia.org/wiki/Demoparty") demoparty
+    | , open to everyone:
   ul
     li The event is free
     li There is something for everyone (concerts, conferences, beers...)
@@ -22,3 +24,9 @@ block content
     | competitions.
   p To avoid confusion, a rename was needed, and Cookie was born! (you'll note
     | the subtle reference though ;)
+
+  h2 More info
+  p Check out the 
+    a(href="/location") map 
+    | and 
+    a(href="/competitions") competitions.

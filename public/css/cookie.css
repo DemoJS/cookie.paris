@@ -5,6 +5,17 @@ body
     color: #ccc;
 }
 
+a
+{
+	color: #f80;
+}
+
+a:hover
+{
+	color: #f80;
+	text-decoration: underline;
+}
+
 @media (min-width: 768px)
 {
     .container
@@ -44,4 +55,10 @@ body
     text-align: center;
     background-color: #f80;
     color: #111;
+}
+
+.footer img
+{
+	margin: 40px;
+	height: 80px;
 }
