@@ -1,0 +1,22 @@
+extend layout
+
+block header
+  h1 Visitors
+
+block content
+  h2 Register
+  p ... and let your friends know you'll come!
+
+  form.form-horizontal(method="post", action="/api/register")
+    .form-group
+      label.col-sm-2.control-label(for="handle") Handle
+      .col-sm-10: input.form-control#handle(type="text", name="handle")
+    .form-group
+      label.col-sm-2.control-label(for="group") Group
+      .col-sm-10: input.form-control#group(type="text", name="group", placeholder="Leave empty if you don't have a group")
+    .form-group
+      .col-sm-offset-2.col-sm-10: button.btn.btn-default(type="submit") Register
+
+  h2 Who's coming?
+  each visitor in visitors
+    p= visitor

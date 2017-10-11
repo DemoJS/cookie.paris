@@ -6,6 +6,7 @@
     "body-parser": "^1.13.3",
     "express": "^4.13.2",
     "jade": "^1.11.0",
-    "redis": "^0.12.1"
+    "redis": "^0.12.1",
+    "sanitize-html": "^1.14.1"
   }
 }
