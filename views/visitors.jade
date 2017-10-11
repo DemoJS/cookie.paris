@@ -18,5 +18,6 @@ block content
       .col-sm-offset-2.col-sm-10: button.btn.btn-default(type="submit") Register
 
   h2 Who's coming?
+  p: em= "There's a total of " + visitors.length + " registered visitors."
   each visitor in visitors
     p= visitor
