@@ -19,7 +19,8 @@ a:hover
 }
 
 a.sublink {
-    margin: 0 10px;
+    display: inline-block;
+    margin: 10px 20px;
 }
 
 a.anchor {
