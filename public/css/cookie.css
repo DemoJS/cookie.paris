@@ -4,7 +4,7 @@ body
     padding-bottom: 51px;
     background-color: #111;
     color: #ccc;
-	font-size: 1.6em;
+    font-size: 1.6em;
 }
 
 a
@@ -41,10 +41,82 @@ a.anchor {
 .header
 {
     width: 100%;
+    height: 300px;
     border-top: 1px solid #f80;
-    background-color: #151515;
+    background: #000 url('../images/fire.gif') no-repeat center;
+    background-size: cover;
+    box-shadow: inset 0px 0px 30px 0px #000;
     text-align: center;
     padding: 30px;
+}
+
+.titleGif
+{
+  margin-top: 35px;
+  height: 200px;
+  background: url('../images/title.gif') no-repeat center;
+  background-size: contain;
+}
+
+.titleLocation
+{
+  height: 250px;
+  background: url('../images/location.gif') no-repeat center;
+  background-size: contain;
+}
+
+.titleCompetitions
+{
+  height: 250px;
+  background: url('../images/competitions.gif') no-repeat center;
+  background-size: contain;
+}
+
+.titleVisitors
+{
+  height: 250px;
+  background: url('../images/visitors.gif') no-repeat center;
+  background-size: contain;
+}
+
+.titleTimetable
+{
+  height: 250px;
+  background: url('../images/timetable.gif') no-repeat center;
+  background-size: contain;
+}
+
+.titleLogo
+{
+  display: block;
+  max-width: 400px;
+  margin: 10px auto 0 auto;
+}
+
+.titleText
+{
+  display: inline-block;
+  height: 100px;
+  vertical-align: middle;
+  margin-left: 20px;
+}
+
+.logo
+{
+  display: inline-block;
+  height: 100px;
+}
+
+.links
+{
+  text-align: center;
+}
+
+.header h1 {
+  color: #000;
+  height: 300px;
+  line-height: 150px;
+  vertical-align: middle;
 }
 
 .content
