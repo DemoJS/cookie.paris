@@ -4,8 +4,6 @@ var bodyParser = require('body-parser')
 
 var redis = require("redis").createClient()
 
-var sanitizeHtml = require('sanitize-html');
-
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended: false}))
 
@@ -37,8 +35,6 @@ app.post("/api/register", function(request, response)
     var visitor = handle;
     if (group)
         visitor += " / " + group;
-
-    visitor = sanitizeHtml(visitor)
 
     redis.rpush("cookie2017:visitors", visitor, function(err)
     {
