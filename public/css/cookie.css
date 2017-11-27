@@ -148,3 +148,87 @@ a.anchor {
 	margin: 40px;
 	height: 80px;
 }
+
+.trFrame {
+  height: 200px;
+  box-shadow: inset 0px 40px 30px 0px #000;
+}
+
+.tdPhoto {
+  -moz-border-radius: 50px;
+  -webkit-border-radius: 50px;
+}
+
+.noLine {
+  border-top: hidden;
+}
+
+.trSpace {
+  height: 40px;
+}
+
+.trMoleman {
+  background: url("../images/timetable/moleman.png") center;
+  background-size: contain;
+}
+
+.tdPoke {
+  background: url("../images/timetable/poke.jpg") center;
+  background-size: cover;
+}
+
+.trPoke {
+  background: url("../images/timetable/pokeCover.png") center;
+  background-size: contain;
+}
+
+.trSlayer {
+  background: url("../images/timetable/slayerCover.png") center;
+  background-size: cover;
+}
+
+.tdSlayer {
+  background: url("../images/timetable/slayer.jpg") center;
+  background-size: cover;
+}
+
+.trCoyhot {
+  height: 300px;
+  background: url("../images/timetable/Presentation_EEVEE.png") center;
+  background-size: contain;
+}
+
+.tdCoyhot {
+  background: url("../images/timetable/Photo_CoyHot.png") center;
+  background-size: cover;
+}
+
+.trFlopine {
+  background: url("../images/timetable/cookie_shader_atelier.png") center;
+  background-size: cover;
+}
+
+.tdFlopine {
+  background: url("../images/timetable/flopine.jpg") center;
+  background-size: cover;
+}
+
+.trPlayShangai {
+  background: url("../images/timetable/playshangai.png") center;
+  background-size: cover;
+}
+
+.trVideoGameMusic {
+  background: url("../images/timetable/videogamemusic.png") center;
+  background-size: cover;
+}
+
+.trUgly {
+  background: url("../images/timetable/ugly.jpg") top;
+  background-size: cover;
+}
+
+.trHotel {
+  background: url("../images/timetable/hotel.jpg") bottom;
+  background-size: cover;
+}
