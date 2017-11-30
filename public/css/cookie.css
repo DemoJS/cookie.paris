@@ -232,3 +232,18 @@ a.anchor {
   background: url("../images/timetable/hotel.jpg") bottom;
   background-size: cover;
 }
+
+.trXtrium {
+  background: url("../images/timetable/xtrium.jpg") bottom;
+  background-size: cover;
+}
+
+.trCouguarsOnABeach {
+  background: url("../images/timetable/couguarsonabeach.jpg") bottom;
+  background-size: cover;
+}
+
+.trCactusEtMammuth {
+  background: url("../images/timetable/cactusetmammuth.jpg") bottom;
+  background-size: cover;
+}
