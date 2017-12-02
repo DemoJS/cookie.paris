@@ -238,6 +238,16 @@ a.anchor {
   background-size: cover;
 }
 
+.tdHello {
+  background: url("../images/timetable/hello.jpg") bottom;
+  background-size: cover;
+}
+
+.trHello {
+  background: url("../images/timetable/helloCover.png") bottom;
+  background-size: contain;
+}
+
 .trCouguarsOnABeach {
   background: url("../images/timetable/couguarsonabeach.jpg") bottom;
   background-size: cover;
