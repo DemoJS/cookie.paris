@@ -7527,7 +7527,7 @@ $__System.register("36", [], function (_export, _context) {
   return {
     setters: [],
     execute: function () {
-      _export("__useDefault", __useDefault = "\r\nuniform sampler2D frame, frameUI, curve, bloom, blur;\r\nuniform vec2 resolution, mouse;\r\nuniform float time;\r\nvarying vec2 vUv;\r\n\r\nfloat sdbox (vec2 p, vec2 r) { vec2 d = abs(p)-r; return max(d.x, d.y); }\r\n\r\nvoid main () {\r\n\tvec2 uv = vUv;\r\n\tfloat dof = clamp(length(uv-.5), 0., 1.);\r\n\tvec4 color = vec4(0,0,0,1);\r\n\tfloat unit = 1./resolution.y;\r\n\t// vec2 offset = vec2(1,0) * unit;\r\n\tvec2 m = (mouse/resolution)*2.-1.;\r\n\tm.y *= -1.;\r\n\tvec2 p = uv;\r\n\tp.x *= resolution.x/resolution.y;\r\n\t// float radius = 10. * length(m);// + 10. * sin(atan(p.y,p.x) * 1000.);\r\n\t// vec2 offset = normalize(-m) * unit * radius;\r\n\t// color.r += texture2D(blur, uv-offset).r;\r\n\t// offset = normalize(-m) * unit * radius * 2.;\r\n\t// color.g += texture2D(blur, uv-offset).g;\r\n\t// offset = normalize(-m) * unit * radius * 3.;\r\n\t// color.b += texture2D(blur, uv-offset).b;\r\n\r\n\t// color = mix(texture2D(frame, uv), texture2D(blur, uv), dof);\r\n\t// color = texture2D(frame, uv) + color * dof;\r\n\t// radius = 30. + 100. * sin(atan(p.y,p.x) * 1000.);\r\n\t// offset = normalize(p) * unit * radius;\r\n\t// vec4 c = texture2D(frame, uv) + texture2D(frame, uv-offset)*.25;\r\n\t// color = c;\r\n\t// color = mix(texture2D(frame, uv), texture2D(bloom, uv), dof) + color * dof;\r\n\t// color = mix(texture2D(frame, uv), texture2D(bloom, uv), dof) + color * dof;\r\n\tcolor += texture2D(bloom, uv);// * .75;\r\n\t// color = texture2D(frame, uv);\r\n\r\n\tvec3 background = mix(vec3(1,0,0),vec3(0),uv.y);\r\n\t// uv.x = (uv.x-.5)*resolution.x/resolution.y+.5;\r\n\t// vec4 overlay = texture2D(text, uv);\r\n\tvec4 overlay = vec4(0);\r\n\tp = uv * 2. - 1.;\r\n\t// color *= 1.-(abs(p.x)*abs(p.x)*abs(p.x)*abs(p.x));\r\n\t// color *= 1.-(abs(p.y)*abs(p.y)*abs(p.y)*abs(p.y));\r\n\tcolor *= 1.+.1*sin(p.y*1000.);\r\n\tcolor *= 1.+.1*random(p);\r\n\t// float lod = 8.;\r\n\t// float salt = random(floor(uv.xx*lod)/lod);\r\n\t// float x = mod(uv.x * 10. + salt, 1.);\r\n\t// float shade = step(x, .5);\r\n\t// color = mix(color, 1.-color, shade);\r\n\t// const float count = 10.;\r\n\t// p *= rotation(PI/4.);\r\n\t// float wave = sin(time+sin(time*10.));\r\n\t// for (float i = count; i > 0.; --i) {\r\n\t// \tfloat r = i/count;\r\n\t\t// p *= rotation(wave*.2);\r\n\t\t// p.x += r*.2;\r\n\t\t// box = min(box, abs(sdbox(p, .3+.1*r*wave)));\r\n\t// }\r\n\t// pModPolar(p, 4.);\r\n\t// p.x = repeat(p.x - time * .1, .1);\r\n\t// float tracer = sin(p.x);\r\n\t// color.rgb = mix(background, color.rgb, color.a);\r\n\t// float tracer = sdbox(p, vec2(.9, .7));\r\n\t// tracer = smoothstep(.0, 1., .002/abs(tracer));\r\n\t// color = clamp(color, 0., 1.);\r\n\t// color = mix(color, 1.-color, tracer);\r\n\tcolor += overlay;// + tracer;\r\n\tgl_FragColor = color;\r\n}");
+      _export("__useDefault", __useDefault = "\r\nuniform sampler2D frame, frameUI, curve, bloom, blur;\r\nuniform vec2 resolution, mouse;\r\nuniform float time;\r\nvarying vec2 vUv;\r\n\r\nvoid main () {\r\n\tvec2 p = vUv;\r\n\tp.x *= resolution.x/resolution.y;\r\n\tp = vUv * 2. - 1.;\r\n\tvec4 color = texture2D(bloom, vUv);\r\n\tcolor *= 1.+.1*sin(p.y*1000.);\r\n\tcolor *= 1.+.1*random(p);\r\n\tgl_FragColor = color;\r\n}");
 
       _export("__useDefault", __useDefault);
 
@@ -8065,17 +8065,17 @@ $__System.register('41', ['2', 'c', '3f'], function (_export) {
 
 	function addText() {
 
-		addShape2D(assets.shaders.shape2D.clone(), [.0, .0, 1, .25], // rect.xyzw
+		addShape2D(assets.shaders.shape2D.clone(), [.0, .0, 1, 1], // rect.xyzw
 		[0, 0], // anchor
-		[0, 60], // offset
+		[0, 40], // offset
 		makeText.createTexture([{
 			text: 'cookie',
 			font: 'bebasneue_bold',
 			fillStyle: '#bdbdbd',
 			width: 1024,
-			height: 256,
+			height: 1024,
 			fontSize: 150,
-			offsetY: -60,
+			offsetY: -90,
 			textAlign: 'center',
 			textBaseline: 'middle'
 		}, {
@@ -8083,65 +8083,31 @@ $__System.register('41', ['2', 'c', '3f'], function (_export) {
 			font: 'bebasneue_bold',
 			fillStyle: '#bdbdbd',
 			fontSize: 85,
-			offsetY: 35,
-			textAlign: 'center',
-			textBaseline: 'middle'
-		}]));
-
-		addShape2D(assets.shaders.shape2D.clone(), [0, 0, 1, .125], // rect.xyzw
-		[0, 0], // anchor
-		[0, -60], // offset
-		makeText.createTexture([{
+			offsetY: 0
+		}, {
 			text: 'NOV 30 - DEC 1, 2018',
 			font: 'bebasneue_bold',
 			fillStyle: '#bdbdbd',
-			width: 1024,
-			height: 128,
 			fontSize: 65,
-			textAlign: 'center',
-			textBaseline: 'middle'
-		}]));
-
-		addShape2D(assets.shaders.shape2D.clone(), [0, 0, 1, .125], // rect.xyzw
-		[0, 0], // anchor
-		[0, -130], // offset
-		makeText.createTexture([{
+			offsetY: 80
+		}, {
 			text: 'AT FOLIE NUMERIQUE',
 			font: 'bebasneue_bold',
 			fillStyle: '#bdbdbd',
-			width: 1024,
-			height: 128,
 			fontSize: 50,
-			textAlign: 'center',
-			textBaseline: 'middle'
-		}]));
-
-		addShape2D(assets.shaders.shape2D.clone(), [0, 0, 1, .125], // rect.xyzw
-		[0, 0], // anchor
-		[0, -180], // offset
-		makeText.createTexture([{
+			offsetY: 150
+		}, {
 			text: 'PARIS, FRANCE',
 			font: 'bebasneue_bold',
 			fillStyle: '#bdbdbd',
-			width: 1024,
-			height: 128,
 			fontSize: 70,
-			textAlign: 'center',
-			textBaseline: 'middle'
-		}]));
-
-		addShape2D(assets.shaders.shape2D.clone(), [0, 0, 1, .125], // rect.xyzw
-		[0, 0], // anchor
-		[0, -260], // offset
-		makeText.createTexture([{
+			offsetY: 200
+		}, {
 			text: 'more info coming soon',
 			font: 'bebasneue_bold',
 			fillStyle: '#a3a3a3',
-			width: 1024,
-			height: 128,
 			fontSize: 40,
-			textAlign: 'center',
-			textBaseline: 'middle'
+			offsetY: 280
 		}]));
 	}
 
@@ -35045,7 +35011,7 @@ $__System.register('45', ['3', '7', '8', '9', '40', '41', '46', 'c', 'b', '3f', 
 					initUniforms();
 
 					engine.camera.position.x = 5;
-					engine.camera.position.y = 2;
+					engine.camera.position.y = 3;
 					engine.camera.position.z = 0;
 
 					engine.controls.enableDamping = true;
