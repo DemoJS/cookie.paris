@@ -3,1416 +3,7 @@
 (["1"], [], false, function($__System) {
 var require = this.require, exports = this.exports, module = this.module;
 !function(e){function n(e,n){e=e.replace(l,"");var r=e.match(u),t=(r[1].split(",")[n]||"require").replace(s,""),i=p[t]||(p[t]=new RegExp(a+t+f,"g"));i.lastIndex=0;for(var o,c=[];o=i.exec(e);)c.push(o[2]||o[3]);return c}function r(e,n,t,o){if("object"==typeof e&&!(e instanceof Array))return r.apply(null,Array.prototype.splice.call(arguments,1,arguments.length-1));if("string"==typeof e&&"function"==typeof n&&(e=[e]),!(e instanceof Array)){if("string"==typeof e){var l=i.get(e);return l.__useDefault?l["default"]:l}throw new TypeError("Invalid require")}for(var a=[],f=0;f<e.length;f++)a.push(i["import"](e[f],o));Promise.all(a).then(function(e){n&&n.apply(null,e)},t)}function t(t,l,a){"string"!=typeof t&&(a=l,l=t,t=null),l instanceof Array||(a=l,l=["require","exports","module"].splice(0,a.length)),"function"!=typeof a&&(a=function(e){return function(){return e}}(a)),void 0===l[l.length-1]&&l.pop();var f,u,s;-1!=(f=o.call(l,"require"))&&(l.splice(f,1),t||(l=l.concat(n(a.toString(),f)))),-1!=(u=o.call(l,"exports"))&&l.splice(u,1),-1!=(s=o.call(l,"module"))&&l.splice(s,1);var p={name:t,deps:l,execute:function(n,t,o){for(var p=[],c=0;c<l.length;c++)p.push(n(l[c]));o.uri=o.id,o.config=function(){},-1!=s&&p.splice(s,0,o),-1!=u&&p.splice(u,0,t),-1!=f&&p.splice(f,0,function(e,t,l){return"string"==typeof e&&"function"!=typeof t?n(e):r.call(i,e,t,l,o.id)});var d=a.apply(-1==u?e:t,p);return"undefined"==typeof d&&o&&(d=o.exports),"undefined"!=typeof d?d:void 0}};if(t)c.anonDefine||c.isBundle?c.anonDefine&&c.anonDefine.name&&(c.anonDefine=null):c.anonDefine=p,c.isBundle=!0,i.registerDynamic(p.name,p.deps,!1,p.execute);else{if(c.anonDefine&&!c.anonDefine.name)throw new Error("Multiple anonymous defines in module "+t);c.anonDefine=p}}var i=$__System,o=Array.prototype.indexOf||function(e){for(var n=0,r=this.length;r>n;n++)if(this[n]===e)return n;return-1},l=/(\/\*([\s\S]*?)\*\/|([^:]|^)\/\/(.*)$)/gm,a="(?:^|[^$_a-zA-Z\\xA0-\\uFFFF.])",f="\\s*\\(\\s*(\"([^\"]+)\"|'([^']+)')\\s*\\)",u=/\(([^\)]*)\)/,s=/^\s+|\s+$/g,p={};t.amd={};var c={isBundle:!1,anonDefine:null};i.amdDefine=t,i.amdRequire=r}("undefined"!=typeof self?self:global);
-$__System.register('2', ['3'], function (_export) {
-	'use strict';
-
-	var Texture;
-
-	_export('createTexture', createTexture);
-
-	function createCanvas(segments) {
-		var ctx = document.createElement('canvas').getContext('2d');
-		ctx.canvas.width = segments[0].width || 1024;
-		ctx.canvas.height = segments[0].height || 1024;
-		var font = segments[0].font;
-		segments.forEach(function (segment) {
-			var options = segment || {};
-			var fontSize = options.fontSize || 32;
-			options.font = options.font || font;
-			ctx.font = fontSize + 'px ' + options.font;
-			ctx.fillStyle = options.fillStyle || 'white';
-			ctx.textAlign = options.textAlign || 'center';
-			ctx.textBaseline = options.textBaseline || 'middle';
-			ctx.shadowColor = options.shadowColor || 'rgba(0,0,0,.5)';
-			ctx.shadowBlur = options.shadowBlur || 4;
-
-			var words = options.text.split('\n');
-			var line = '';
-
-			var anchor = options.anchor || [.5, .5];
-			var x = ctx.canvas.width * anchor[0];
-			var y = ctx.canvas.height * anchor[1];
-
-			x += options.offsetX || 0;
-			y += options.offsetY || 0;
-
-			// y = ctx.canvas.height - fontSize;
-			y -= Math.max(0, words.length - 1) * fontSize / 2;
-
-			for (var n = 0; n < words.length; n++) {
-				line = words[n];
-				ctx.fillText(line, x, y);
-				y += fontSize;
-			}
-		});
-
-		return ctx.canvas;
-	}
-
-	function createTexture(segments) {
-		var texture = new Texture(createCanvas(segments));
-		texture.needsUpdate = true;
-		return texture;
-	}
-
-	return {
-		setters: [function (_) {
-			Texture = _.Texture;
-		}],
-		execute: function () {}
-	};
-});
-
-$__System.register('4', ['3', '5', '6', '7', '8'], function (_export) {
-	var THREE, _createClass, _classCallCheck, closestPowerOfTwo, renderer, _default;
-
-	return {
-		setters: [function (_3) {
-			THREE = _3;
-		}, function (_) {
-			_createClass = _['default'];
-		}, function (_2) {
-			_classCallCheck = _2['default'];
-		}, function (_4) {
-			closestPowerOfTwo = _4.closestPowerOfTwo;
-		}, function (_5) {
-			renderer = _5['default'];
-		}],
-		execute: function () {
-			'use strict';
-
-			_default = (function () {
-				function _default(options) {
-					_classCallCheck(this, _default);
-
-					options = options || {};
-					this.renderTextures = [];
-					this.currentIndex = 0;
-					this.count = options.count || 2;
-					for (var i = 0; i < this.count; ++i) {
-						this.renderTextures.push(new THREE.WebGLRenderTarget(options.width || window.innerWidth, options.height || window.innerHeight, {
-							format: options.format || THREE.RGBAFormat,
-							type: options.type || THREE.FloatType,
-							minFilter: options.min || THREE.LinearFilter,
-							magFilter: options.mag || THREE.LinearFilter,
-							stencilBuffer: options.stencil || true,
-							depthBuffer: options.depth || true
-						}));
-					}
-
-					this.scene = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), options.material);
-					this.camera = new THREE.PerspectiveCamera(75, 1, 0.01, 100);
-					this.camera.position.z = 5;
-				}
-
-				_createClass(_default, [{
-					key: 'update',
-					value: function update() {
-						this.swap();
-						renderer.render(this.scene, this.camera, this.getRenderTarget(), true);
-					}
-				}, {
-					key: 'record',
-					value: function record(scene, camera) {
-						renderer.render(scene, camera, this.getRenderTarget(), true);
-					}
-				}, {
-					key: 'getRenderTarget',
-					value: function getRenderTarget() {
-						return this.renderTextures[this.currentIndex];
-					}
-				}, {
-					key: 'getTexture',
-					value: function getTexture() {
-						return this.renderTextures[this.currentIndex].texture;
-					}
-				}, {
-					key: 'swap',
-					value: function swap() {
-						this.currentIndex = (this.currentIndex + 1) % this.count;
-					}
-				}, {
-					key: 'setSize',
-					value: function setSize(width, height) {
-						for (var i = 0; i < this.count; ++i) {
-							this.renderTextures[i].setSize(width, height);
-						}
-					}
-				}, {
-					key: 'dispose',
-					value: function dispose() {
-						for (var i = 0; i < this.count; ++i) {
-							this.renderTextures[i].dispose();
-						}
-					}
-				}], [{
-					key: 'createDataTexture',
-					value: function createDataTexture(dataArray, itemSize) {
-						// var dimension = closestPowerOfTwo(Math.sqrt(dataArray.length / itemSize));
-						var array = [];
-						// var count = dimension * dimension;
-						var count = dataArray.length / 3;
-						for (var t = 0; t < count; ++t) {
-							if (t * itemSize + itemSize - 1 < dataArray.length) {
-								for (var i = 0; i < 3; ++i) {
-									if (i < itemSize) {
-										array.push(dataArray[t * itemSize + i]);
-									} else {
-										array.push(0);
-									}
-								}
-							} else {
-								array.push(0, 0, 0);
-							}
-						}
-						var texture = new THREE.DataTexture(new Float32Array(array), count, 1, THREE.RGBFormat, THREE.FloatType);
-						texture.needsUpdate = true;
-						return texture;
-					}
-				}]);
-
-				return _default;
-			})();
-
-			_export('default', _default);
-		}
-	};
-});
-
-$__System.register('9', ['7', 'a', 'b', 'c', 'd', 'e'], function (_export) {
-	var clamp, lerp, lerpArray, lerpVector, lerpVectorArray, saturate, _Object$keys, parameters, assets, engine, Mouse, keys, deltas, params, uniformsToUpdate, uniforms;
-
-	function initUniforms() {
-		keys = _Object$keys(assets.animations.actions);
-		keys.forEach(function (name) {
-			uniforms[name] = { value: [0, 0, 0] };
-			deltas[name] = [0, 0, 0];
-		});
-		params = _Object$keys(parameters.debug);
-		params.forEach(function (name) {
-			var param = parameters.debug[name];
-			var type = typeof param;
-			if (type == 'number') {
-				uniforms[name] = { value: param };
-			} else if (type == 'boolean') {
-				uniforms[name] = { value: param ? 1 : 0 };
-			}
-		});
-		assets.shaders.render.uniforms = uniforms;
-		uniforms.frame.value = engine.frametarget.texture;
-		uniforms.blur.value = engine.bloom.blurTarget.texture;
-		uniforms.bloom.value = engine.bloom.bloomTarget.texture;
-	}
-
-	function updateUniforms(elapsed) {
-		uniforms.time.value = elapsed;
-		uniforms.cameraPos.value = engine.camera.position;
-		uniforms.cameraTarget.value = engine.controls.target;
-		uniforms.mouse.value[0] = Mouse.x;
-		uniforms.mouse.value[1] = Mouse.y;
-		keys.forEach(function (name) {
-			var pos = assets.animations.getPosition(name, elapsed);
-			deltas[name] = lerpArray(deltas[name], pos, .1);
-			uniforms[name].value = pos;
-		});
-		params.forEach(function (name) {
-			var param = parameters.debug[name];
-			var type = typeof param;
-			if (type == 'number') {
-				uniforms[name].value = param;
-			} else if (type == 'boolean') {
-				uniforms[name].value = param ? 1 : 0;
-			}
-		});
-		uniformsToUpdate.forEach(function (item) {
-			return item.time.value = elapsed;
-		});
-	}
-
-	function resizeUniforms(width, height) {
-		uniforms.resolution.value[0] = width;
-		uniforms.resolution.value[1] = height;
-		uniformsToUpdate.forEach(function (item) {
-			return item.resolution.value = [width, height];
-		});
-	}
-
-	return {
-		setters: [function (_) {
-			clamp = _.clamp;
-			lerp = _.lerp;
-			lerpArray = _.lerpArray;
-			lerpVector = _.lerpVector;
-			lerpVectorArray = _.lerpVectorArray;
-			saturate = _.saturate;
-		}, function (_a) {
-			_Object$keys = _a['default'];
-		}, function (_b) {
-			parameters = _b['default'];
-		}, function (_c) {
-			assets = _c['default'];
-		}, function (_d) {
-			engine = _d.engine;
-		}, function (_e) {
-			Mouse = _e['default'];
-		}],
-		execute: function () {
-			'use strict';
-
-			_export('initUniforms', initUniforms);
-
-			_export('updateUniforms', updateUniforms);
-
-			_export('resizeUniforms', resizeUniforms);
-
-			keys = [];
-			deltas = {};
-			params = [];
-			uniformsToUpdate = [];
-
-			_export('uniformsToUpdate', uniformsToUpdate);
-
-			uniforms = {
-				time: { value: 0 },
-				resolution: { value: [window.innerWidth, window.innerHeight] },
-				mouse: { value: [window.innerWidth / 2, window.innerHeight / 2] },
-				cameraPos: { value: [0, 0, 0] },
-				cameraTarget: { value: [0, 0, 0] },
-				frame: { value: 0 },
-				blur: { value: 0 },
-				bloom: { value: 0 }
-			};
-
-			_export('uniforms', uniforms);
-		}
-	};
-});
-
-$__System.registerDynamic('f', ['10'], true, function ($__require, exports, module) {
-  var global = this || self,
-      GLOBAL = global;
-  /* */
-  var $ = $__require('10');
-  module.exports = function create(P, D) {
-    return $.create(P, D);
-  };
-});
-$__System.registerDynamic("11", ["f"], true, function ($__require, exports, module) {
-  var global = this || self,
-      GLOBAL = global;
-  /* */
-  module.exports = { "default": $__require("f"), __esModule: true };
-});
-$__System.registerDynamic('12', ['10'], true, function ($__require, exports, module) {
-  var global = this || self,
-      GLOBAL = global;
-  /* */
-  var $ = $__require('10');
-  module.exports = function defineProperties(T, D) {
-    return $.setDescs(T, D);
-  };
-});
-$__System.registerDynamic("13", ["12"], true, function ($__require, exports, module) {
-  var global = this || self,
-      GLOBAL = global;
-  /* */
-  module.exports = { "default": $__require("12"), __esModule: true };
-});
-$__System.register('14', ['3', '11', '13'], function (_export) {
-		var THREE, _Object$create, _Object$defineProperties, OrbitControls;
-
-		return {
-				setters: [function (_3) {
-						THREE = _3;
-				}, function (_) {
-						_Object$create = _['default'];
-				}, function (_2) {
-						_Object$defineProperties = _2['default'];
-				}],
-				execute: function () {
-						/**
-       * @author qiao / https://github.com/qiao
-       * @author mrdoob / http://mrdoob.com
-       * @author alteredq / http://alteredqualia.com/
-       * @author WestLangley / http://github.com/WestLangley
-       * @author erich666 / http://erichaines.com
-       */
-
-						// This set of controls performs orbiting, dollying (zooming), and panning.
-						// Unlike TrackballControls, it maintains the "up" direction object.up (+Y by default).
-						//
-						//    Orbit - left mouse / touch: one finger move
-						//    Zoom - middle mouse, or mousewheel / touch: two finger spread or squish
-						//    Pan - right mouse, or arrow keys / touch: three finger swipe
-
-						'use strict';
-
-						OrbitControls = function OrbitControls(object, domElement) {
-
-								this.object = object;
-
-								this.domElement = domElement !== undefined ? domElement : document;
-
-								// Set to false to disable this control
-								this.enabled = true;
-
-								// "target" sets the location of focus, where the object orbits around
-								this.target = new THREE.Vector3();
-
-								// How far you can dolly in and out ( PerspectiveCamera only )
-								this.minDistance = 0;
-								this.maxDistance = Infinity;
-
-								// How far you can zoom in and out ( OrthographicCamera only )
-								this.minZoom = 0;
-								this.maxZoom = Infinity;
-
-								// How far you can orbit vertically, upper and lower limits.
-								// Range is 0 to Math.PI radians.
-								this.minPolarAngle = 0; // radians
-								this.maxPolarAngle = Math.PI; // radians
-
-								// How far you can orbit horizontally, upper and lower limits.
-								// If set, must be a sub-interval of the interval [ - Math.PI, Math.PI ].
-								this.minAzimuthAngle = -Infinity; // radians
-								this.maxAzimuthAngle = Infinity; // radians
-
-								// Set to true to enable damping (inertia)
-								// If damping is enabled, you must call controls.update() in your animation loop
-								this.enableDamping = false;
-								this.dampingFactor = 0.25;
-
-								// This option actually enables dollying in and out; left as "zoom" for backwards compatibility.
-								// Set to false to disable zooming
-								this.enableZoom = true;
-								this.zoomSpeed = 1.0;
-
-								// Set to false to disable rotating
-								this.enableRotate = true;
-								this.rotateSpeed = 1.0;
-
-								// Set to false to disable panning
-								this.enablePan = true;
-								this.keyPanSpeed = 7.0; // pixels moved per arrow key push
-
-								// Set to true to automatically rotate around the target
-								// If auto-rotate is enabled, you must call controls.update() in your animation loop
-								this.autoRotate = false;
-								this.autoRotateSpeed = 2.0; // 30 seconds per round when fps is 60
-
-								// Set to false to disable use of the keys
-								this.enableKeys = true;
-
-								// The four arrow keys
-								this.keys = { LEFT: 37, UP: 38, RIGHT: 39, BOTTOM: 40 };
-
-								// Mouse buttons
-								this.mouseButtons = { ORBIT: THREE.MOUSE.LEFT, ZOOM: THREE.MOUSE.MIDDLE, PAN: THREE.MOUSE.RIGHT };
-
-								// for reset
-								this.target0 = this.target.clone();
-								this.position0 = this.object.position.clone();
-								this.zoom0 = this.object.zoom;
-
-								//
-								// public methods
-								//
-
-								this.getPolarAngle = function () {
-
-										return spherical.phi;
-								};
-
-								this.getAzimuthalAngle = function () {
-
-										return spherical.theta;
-								};
-
-								this.reset = function () {
-
-										scope.target.copy(scope.target0);
-										scope.object.position.copy(scope.position0);
-										scope.object.zoom = scope.zoom0;
-
-										scope.object.updateProjectionMatrix();
-										scope.dispatchEvent(changeEvent);
-
-										scope.update();
-
-										state = STATE.NONE;
-								};
-
-								// this method is exposed, but perhaps it would be better if we can make it private...
-								this.update = (function () {
-
-										var offset = new THREE.Vector3();
-
-										// so camera.up is the orbit axis
-										var quat = new THREE.Quaternion().setFromUnitVectors(object.up, new THREE.Vector3(0, 1, 0));
-										var quatInverse = quat.clone().inverse();
-
-										var lastPosition = new THREE.Vector3();
-										var lastQuaternion = new THREE.Quaternion();
-
-										return function update() {
-
-												var position = scope.object.position;
-
-												offset.copy(position).sub(scope.target);
-
-												// rotate offset to "y-axis-is-up" space
-												offset.applyQuaternion(quat);
-
-												// angle from z-axis around y-axis
-												spherical.setFromVector3(offset);
-
-												if (scope.autoRotate && state === STATE.NONE) {
-
-														rotateLeft(getAutoRotationAngle());
-												}
-
-												spherical.theta += sphericalDelta.theta;
-												spherical.phi += sphericalDelta.phi;
-
-												// restrict theta to be between desired limits
-												spherical.theta = Math.max(scope.minAzimuthAngle, Math.min(scope.maxAzimuthAngle, spherical.theta));
-
-												// restrict phi to be between desired limits
-												spherical.phi = Math.max(scope.minPolarAngle, Math.min(scope.maxPolarAngle, spherical.phi));
-
-												spherical.makeSafe();
-
-												spherical.radius *= scale;
-
-												// restrict radius to be between desired limits
-												spherical.radius = Math.max(scope.minDistance, Math.min(scope.maxDistance, spherical.radius));
-
-												// move target to panned location
-												scope.target.add(panOffset);
-
-												offset.setFromSpherical(spherical);
-
-												// rotate offset back to "camera-up-vector-is-up" space
-												offset.applyQuaternion(quatInverse);
-
-												position.copy(scope.target).add(offset);
-
-												scope.object.lookAt(scope.target);
-
-												if (scope.enableDamping === true) {
-
-														sphericalDelta.theta *= 1 - scope.dampingFactor;
-														sphericalDelta.phi *= 1 - scope.dampingFactor;
-												} else {
-
-														sphericalDelta.set(0, 0, 0);
-												}
-
-												scale = 1;
-												panOffset.set(0, 0, 0);
-
-												// update condition is:
-												// min(camera displacement, camera rotation in radians)^2 > EPS
-												// using small-angle approximation cos(x/2) = 1 - x^2 / 8
-
-												if (zoomChanged || lastPosition.distanceToSquared(scope.object.position) > EPS || 8 * (1 - lastQuaternion.dot(scope.object.quaternion)) > EPS) {
-
-														scope.dispatchEvent(changeEvent);
-
-														lastPosition.copy(scope.object.position);
-														lastQuaternion.copy(scope.object.quaternion);
-														zoomChanged = false;
-
-														return true;
-												}
-
-												return false;
-										};
-								})();
-
-								this.dispose = function () {
-
-										scope.domElement.removeEventListener('contextmenu', onContextMenu, false);
-										scope.domElement.removeEventListener('mousedown', onMouseDown, false);
-										scope.domElement.removeEventListener('wheel', onMouseWheel, false);
-
-										scope.domElement.removeEventListener('touchstart', onTouchStart, false);
-										scope.domElement.removeEventListener('touchend', onTouchEnd, false);
-										scope.domElement.removeEventListener('touchmove', onTouchMove, false);
-
-										document.removeEventListener('mousemove', onMouseMove, false);
-										document.removeEventListener('mouseup', onMouseUp, false);
-
-										// window.removeEventListener( 'keydown', onKeyDown, false );
-
-										//scope.dispatchEvent( { type: 'dispose' } ); // should this be added here?
-								};
-
-								//
-								// internals
-								//
-
-								var scope = this;
-
-								var changeEvent = { type: 'change' };
-								var startEvent = { type: 'start' };
-								var endEvent = { type: 'end' };
-
-								var STATE = { NONE: -1, ROTATE: 0, DOLLY: 1, PAN: 2, TOUCH_ROTATE: 3, TOUCH_DOLLY: 4, TOUCH_PAN: 5 };
-
-								var state = STATE.NONE;
-
-								var EPS = 0.000001;
-
-								// current position in spherical coordinates
-								var spherical = new THREE.Spherical();
-								var sphericalDelta = new THREE.Spherical();
-
-								var scale = 1;
-								var panOffset = new THREE.Vector3();
-								var zoomChanged = false;
-
-								var rotateStart = new THREE.Vector2();
-								var rotateEnd = new THREE.Vector2();
-								var rotateDelta = new THREE.Vector2();
-
-								var panStart = new THREE.Vector2();
-								var panEnd = new THREE.Vector2();
-								var panDelta = new THREE.Vector2();
-
-								var dollyStart = new THREE.Vector2();
-								var dollyEnd = new THREE.Vector2();
-								var dollyDelta = new THREE.Vector2();
-
-								function getAutoRotationAngle() {
-
-										return 2 * Math.PI / 60 / 60 * scope.autoRotateSpeed;
-								}
-
-								function getZoomScale() {
-
-										return Math.pow(0.95, scope.zoomSpeed);
-								}
-
-								function rotateLeft(angle) {
-
-										sphericalDelta.theta -= angle;
-								}
-
-								function rotateUp(angle) {
-
-										sphericalDelta.phi -= angle;
-								}
-
-								var panLeft = (function () {
-
-										var v = new THREE.Vector3();
-
-										return function panLeft(distance, objectMatrix) {
-
-												v.setFromMatrixColumn(objectMatrix, 0); // get X column of objectMatrix
-												v.multiplyScalar(-distance);
-
-												panOffset.add(v);
-										};
-								})();
-
-								var panUp = (function () {
-
-										var v = new THREE.Vector3();
-
-										return function panUp(distance, objectMatrix) {
-
-												v.setFromMatrixColumn(objectMatrix, 1); // get Y column of objectMatrix
-												v.multiplyScalar(distance);
-
-												panOffset.add(v);
-										};
-								})();
-
-								// deltaX and deltaY are in pixels; right and down are positive
-								var pan = (function () {
-
-										var offset = new THREE.Vector3();
-
-										return function pan(deltaX, deltaY) {
-
-												var element = scope.domElement === document ? scope.domElement.body : scope.domElement;
-
-												if (scope.object instanceof THREE.PerspectiveCamera) {
-
-														// perspective
-														var position = scope.object.position;
-														offset.copy(position).sub(scope.target);
-														var targetDistance = offset.length();
-
-														// half of the fov is center to top of screen
-														targetDistance *= Math.tan(scope.object.fov / 2 * Math.PI / 180.0);
-
-														// we actually don't use screenWidth, since perspective camera is fixed to screen height
-														panLeft(2 * deltaX * targetDistance / element.clientHeight, scope.object.matrix);
-														panUp(2 * deltaY * targetDistance / element.clientHeight, scope.object.matrix);
-												} else if (scope.object instanceof THREE.OrthographicCamera) {
-
-														// orthographic
-														panLeft(deltaX * (scope.object.right - scope.object.left) / scope.object.zoom / element.clientWidth, scope.object.matrix);
-														panUp(deltaY * (scope.object.top - scope.object.bottom) / scope.object.zoom / element.clientHeight, scope.object.matrix);
-												} else {
-
-														// camera neither orthographic nor perspective
-														console.warn('WARNING: OrbitControls.js encountered an unknown camera type - pan disabled.');
-														scope.enablePan = false;
-												}
-										};
-								})();
-
-								function dollyIn(dollyScale) {
-
-										if (scope.object instanceof THREE.PerspectiveCamera) {
-
-												scale /= dollyScale;
-										} else if (scope.object instanceof THREE.OrthographicCamera) {
-
-												scope.object.zoom = Math.max(scope.minZoom, Math.min(scope.maxZoom, scope.object.zoom * dollyScale));
-												scope.object.updateProjectionMatrix();
-												zoomChanged = true;
-										} else {
-
-												console.warn('WARNING: OrbitControls.js encountered an unknown camera type - dolly/zoom disabled.');
-												scope.enableZoom = false;
-										}
-								}
-
-								function dollyOut(dollyScale) {
-
-										if (scope.object instanceof THREE.PerspectiveCamera) {
-
-												scale *= dollyScale;
-										} else if (scope.object instanceof THREE.OrthographicCamera) {
-
-												scope.object.zoom = Math.max(scope.minZoom, Math.min(scope.maxZoom, scope.object.zoom / dollyScale));
-												scope.object.updateProjectionMatrix();
-												zoomChanged = true;
-										} else {
-
-												console.warn('WARNING: OrbitControls.js encountered an unknown camera type - dolly/zoom disabled.');
-												scope.enableZoom = false;
-										}
-								}
-
-								//
-								// event callbacks - update the object state
-								//
-
-								function handleMouseDownRotate(event) {
-
-										//console.log( 'handleMouseDownRotate' );
-
-										rotateStart.set(event.clientX, event.clientY);
-								}
-
-								function handleMouseDownDolly(event) {
-
-										//console.log( 'handleMouseDownDolly' );
-
-										dollyStart.set(event.clientX, event.clientY);
-								}
-
-								function handleMouseDownPan(event) {
-
-										//console.log( 'handleMouseDownPan' );
-
-										panStart.set(event.clientX, event.clientY);
-								}
-
-								function handleMouseMoveRotate(event) {
-
-										//console.log( 'handleMouseMoveRotate' );
-
-										rotateEnd.set(event.clientX, event.clientY);
-										rotateDelta.subVectors(rotateEnd, rotateStart);
-
-										var element = scope.domElement === document ? scope.domElement.body : scope.domElement;
-
-										// rotating across whole screen goes 360 degrees around
-										rotateLeft(2 * Math.PI * rotateDelta.x / element.clientWidth * scope.rotateSpeed);
-
-										// rotating up and down along whole screen attempts to go 360, but limited to 180
-										rotateUp(2 * Math.PI * rotateDelta.y / element.clientHeight * scope.rotateSpeed);
-
-										rotateStart.copy(rotateEnd);
-
-										scope.update();
-								}
-
-								function handleMouseMoveDolly(event) {
-
-										//console.log( 'handleMouseMoveDolly' );
-
-										dollyEnd.set(event.clientX, event.clientY);
-
-										dollyDelta.subVectors(dollyEnd, dollyStart);
-
-										if (dollyDelta.y > 0) {
-
-												dollyIn(getZoomScale());
-										} else if (dollyDelta.y < 0) {
-
-												dollyOut(getZoomScale());
-										}
-
-										dollyStart.copy(dollyEnd);
-
-										scope.update();
-								}
-
-								function handleMouseMovePan(event) {
-
-										//console.log( 'handleMouseMovePan' );
-
-										panEnd.set(event.clientX, event.clientY);
-
-										panDelta.subVectors(panEnd, panStart);
-
-										pan(panDelta.x, panDelta.y);
-
-										panStart.copy(panEnd);
-
-										scope.update();
-								}
-
-								function handleMouseUp(event) {
-
-										// console.log( 'handleMouseUp' );
-
-								}
-
-								function handleMouseWheel(event) {
-
-										// console.log( 'handleMouseWheel' );
-
-										if (event.deltaY < 0) {
-
-												dollyOut(getZoomScale());
-										} else if (event.deltaY > 0) {
-
-												dollyIn(getZoomScale());
-										}
-
-										scope.update();
-								}
-
-								function handleKeyDown(event) {
-
-										//console.log( 'handleKeyDown' );
-
-										switch (event.keyCode) {
-
-												case scope.keys.UP:
-														pan(0, scope.keyPanSpeed);
-														scope.update();
-														break;
-
-												case scope.keys.BOTTOM:
-														pan(0, -scope.keyPanSpeed);
-														scope.update();
-														break;
-
-												case scope.keys.LEFT:
-														pan(scope.keyPanSpeed, 0);
-														scope.update();
-														break;
-
-												case scope.keys.RIGHT:
-														pan(-scope.keyPanSpeed, 0);
-														scope.update();
-														break;
-
-										}
-								}
-
-								function handleTouchStartRotate(event) {
-
-										//console.log( 'handleTouchStartRotate' );
-
-										rotateStart.set(event.touches[0].pageX, event.touches[0].pageY);
-								}
-
-								function handleTouchStartDolly(event) {
-
-										//console.log( 'handleTouchStartDolly' );
-
-										var dx = event.touches[0].pageX - event.touches[1].pageX;
-										var dy = event.touches[0].pageY - event.touches[1].pageY;
-
-										var distance = Math.sqrt(dx * dx + dy * dy);
-
-										dollyStart.set(0, distance);
-								}
-
-								function handleTouchStartPan(event) {
-
-										//console.log( 'handleTouchStartPan' );
-
-										panStart.set(event.touches[0].pageX, event.touches[0].pageY);
-								}
-
-								function handleTouchMoveRotate(event) {
-
-										//console.log( 'handleTouchMoveRotate' );
-
-										rotateEnd.set(event.touches[0].pageX, event.touches[0].pageY);
-										rotateDelta.subVectors(rotateEnd, rotateStart);
-
-										var element = scope.domElement === document ? scope.domElement.body : scope.domElement;
-
-										// rotating across whole screen goes 360 degrees around
-										rotateLeft(2 * Math.PI * rotateDelta.x / element.clientWidth * scope.rotateSpeed);
-
-										// rotating up and down along whole screen attempts to go 360, but limited to 180
-										rotateUp(2 * Math.PI * rotateDelta.y / element.clientHeight * scope.rotateSpeed);
-
-										rotateStart.copy(rotateEnd);
-
-										scope.update();
-								}
-
-								function handleTouchMoveDolly(event) {
-
-										//console.log( 'handleTouchMoveDolly' );
-
-										var dx = event.touches[0].pageX - event.touches[1].pageX;
-										var dy = event.touches[0].pageY - event.touches[1].pageY;
-
-										var distance = Math.sqrt(dx * dx + dy * dy);
-
-										dollyEnd.set(0, distance);
-
-										dollyDelta.subVectors(dollyEnd, dollyStart);
-
-										if (dollyDelta.y > 0) {
-
-												dollyOut(getZoomScale());
-										} else if (dollyDelta.y < 0) {
-
-												dollyIn(getZoomScale());
-										}
-
-										dollyStart.copy(dollyEnd);
-
-										scope.update();
-								}
-
-								function handleTouchMovePan(event) {
-
-										//console.log( 'handleTouchMovePan' );
-
-										panEnd.set(event.touches[0].pageX, event.touches[0].pageY);
-
-										panDelta.subVectors(panEnd, panStart);
-
-										pan(panDelta.x, panDelta.y);
-
-										panStart.copy(panEnd);
-
-										scope.update();
-								}
-
-								function handleTouchEnd(event) {}
-
-								//console.log( 'handleTouchEnd' );
-
-								//
-								// event handlers - FSM: listen for events and reset state
-								//
-
-								function onMouseDown(event) {
-
-										if (scope.enabled === false) return;
-
-										event.preventDefault();
-
-										if (event.button === scope.mouseButtons.ORBIT) {
-
-												if (scope.enableRotate === false) return;
-
-												handleMouseDownRotate(event);
-
-												state = STATE.ROTATE;
-										} else if (event.button === scope.mouseButtons.ZOOM) {
-
-												if (scope.enableZoom === false) return;
-
-												handleMouseDownDolly(event);
-
-												state = STATE.DOLLY;
-										} else if (event.button === scope.mouseButtons.PAN) {
-
-												if (scope.enablePan === false) return;
-
-												handleMouseDownPan(event);
-
-												state = STATE.PAN;
-										}
-
-										if (state !== STATE.NONE) {
-
-												document.addEventListener('mousemove', onMouseMove, false);
-												document.addEventListener('mouseup', onMouseUp, false);
-
-												scope.dispatchEvent(startEvent);
-										}
-								}
-
-								function onMouseMove(event) {
-
-										if (scope.enabled === false) return;
-
-										event.preventDefault();
-
-										if (state === STATE.ROTATE) {
-
-												if (scope.enableRotate === false) return;
-
-												handleMouseMoveRotate(event);
-										} else if (state === STATE.DOLLY) {
-
-												if (scope.enableZoom === false) return;
-
-												handleMouseMoveDolly(event);
-										} else if (state === STATE.PAN) {
-
-												if (scope.enablePan === false) return;
-
-												handleMouseMovePan(event);
-										}
-								}
-
-								function onMouseUp(event) {
-
-										if (scope.enabled === false) return;
-
-										handleMouseUp(event);
-
-										document.removeEventListener('mousemove', onMouseMove, false);
-										document.removeEventListener('mouseup', onMouseUp, false);
-
-										scope.dispatchEvent(endEvent);
-
-										state = STATE.NONE;
-								}
-
-								function onMouseWheel(event) {
-
-										if (scope.enabled === false || scope.enableZoom === false || state !== STATE.NONE && state !== STATE.ROTATE) return;
-
-										event.preventDefault();
-										event.stopPropagation();
-
-										handleMouseWheel(event);
-
-										scope.dispatchEvent(startEvent); // not sure why these are here...
-										scope.dispatchEvent(endEvent);
-								}
-
-								function onKeyDown(event) {
-
-										if (scope.enabled === false || scope.enableKeys === false || scope.enablePan === false) return;
-
-										handleKeyDown(event);
-								}
-
-								function onTouchStart(event) {
-
-										if (scope.enabled === false) return;
-
-										switch (event.touches.length) {
-
-												case 1:
-														// one-fingered touch: rotate
-
-														if (scope.enableRotate === false) return;
-
-														handleTouchStartRotate(event);
-
-														state = STATE.TOUCH_ROTATE;
-
-														break;
-
-												case 2:
-														// two-fingered touch: dolly
-
-														if (scope.enableZoom === false) return;
-
-														handleTouchStartDolly(event);
-
-														state = STATE.TOUCH_DOLLY;
-
-														break;
-
-												case 3:
-														// three-fingered touch: pan
-
-														if (scope.enablePan === false) return;
-
-														handleTouchStartPan(event);
-
-														state = STATE.TOUCH_PAN;
-
-														break;
-
-												default:
-
-														state = STATE.NONE;
-
-										}
-
-										if (state !== STATE.NONE) {
-
-												scope.dispatchEvent(startEvent);
-										}
-								}
-
-								function onTouchMove(event) {
-
-										if (scope.enabled === false) return;
-
-										event.preventDefault();
-										event.stopPropagation();
-
-										switch (event.touches.length) {
-
-												case 1:
-														// one-fingered touch: rotate
-
-														if (scope.enableRotate === false) return;
-														if (state !== STATE.TOUCH_ROTATE) return; // is this needed?...
-
-														handleTouchMoveRotate(event);
-
-														break;
-
-												case 2:
-														// two-fingered touch: dolly
-
-														if (scope.enableZoom === false) return;
-														if (state !== STATE.TOUCH_DOLLY) return; // is this needed?...
-
-														handleTouchMoveDolly(event);
-
-														break;
-
-												case 3:
-														// three-fingered touch: pan
-
-														if (scope.enablePan === false) return;
-														if (state !== STATE.TOUCH_PAN) return; // is this needed?...
-
-														handleTouchMovePan(event);
-
-														break;
-
-												default:
-
-														state = STATE.NONE;
-
-										}
-								}
-
-								function onTouchEnd(event) {
-
-										if (scope.enabled === false) return;
-
-										handleTouchEnd(event);
-
-										scope.dispatchEvent(endEvent);
-
-										state = STATE.NONE;
-								}
-
-								function onContextMenu(event) {
-
-										event.preventDefault();
-								}
-
-								//
-
-								scope.domElement.addEventListener('contextmenu', onContextMenu, false);
-
-								scope.domElement.addEventListener('mousedown', onMouseDown, false);
-								scope.domElement.addEventListener('wheel', onMouseWheel, false);
-
-								scope.domElement.addEventListener('touchstart', onTouchStart, false);
-								scope.domElement.addEventListener('touchend', onTouchEnd, false);
-								scope.domElement.addEventListener('touchmove', onTouchMove, false);
-
-								// window.addEventListener( 'keydown', onKeyDown, false );
-
-								// force an update at start
-
-								this.update();
-						};
-
-						_export('OrbitControls', OrbitControls);
-
-						OrbitControls.prototype = _Object$create(THREE.EventDispatcher.prototype);
-						OrbitControls.prototype.constructor = OrbitControls;
-
-						_Object$defineProperties(OrbitControls.prototype, {
-
-								center: {
-
-										get: function get() {
-
-												console.warn('OrbitControls: .center has been renamed to .target');
-												return this.target;
-										}
-
-								},
-
-								// backward compatibility
-
-								noZoom: {
-
-										get: function get() {
-
-												console.warn('OrbitControls: .noZoom has been deprecated. Use .enableZoom instead.');
-												return !this.enableZoom;
-										},
-
-										set: function set(value) {
-
-												console.warn('OrbitControls: .noZoom has been deprecated. Use .enableZoom instead.');
-												this.enableZoom = !value;
-										}
-
-								},
-
-								noRotate: {
-
-										get: function get() {
-
-												console.warn('OrbitControls: .noRotate has been deprecated. Use .enableRotate instead.');
-												return !this.enableRotate;
-										},
-
-										set: function set(value) {
-
-												console.warn('OrbitControls: .noRotate has been deprecated. Use .enableRotate instead.');
-												this.enableRotate = !value;
-										}
-
-								},
-
-								noPan: {
-
-										get: function get() {
-
-												console.warn('OrbitControls: .noPan has been deprecated. Use .enablePan instead.');
-												return !this.enablePan;
-										},
-
-										set: function set(value) {
-
-												console.warn('OrbitControls: .noPan has been deprecated. Use .enablePan instead.');
-												this.enablePan = !value;
-										}
-
-								},
-
-								noKeys: {
-
-										get: function get() {
-
-												console.warn('OrbitControls: .noKeys has been deprecated. Use .enableKeys instead.');
-												return !this.enableKeys;
-										},
-
-										set: function set(value) {
-
-												console.warn('OrbitControls: .noKeys has been deprecated. Use .enableKeys instead.');
-												this.enableKeys = !value;
-										}
-
-								},
-
-								staticMoving: {
-
-										get: function get() {
-
-												console.warn('OrbitControls: .staticMoving has been deprecated. Use .enableDamping instead.');
-												return !this.enableDamping;
-										},
-
-										set: function set(value) {
-
-												console.warn('OrbitControls: .staticMoving has been deprecated. Use .enableDamping instead.');
-												this.enableDamping = !value;
-										}
-
-								},
-
-								dynamicDampingFactor: {
-
-										get: function get() {
-
-												console.warn('OrbitControls: .dynamicDampingFactor has been renamed. Use .dampingFactor instead.');
-												return this.dampingFactor;
-										},
-
-										set: function set(value) {
-
-												console.warn('OrbitControls: .dynamicDampingFactor has been renamed. Use .dampingFactor instead.');
-												this.dampingFactor = value;
-										}
-
-								}
-
-						});
-				}
-		};
-});
-
-$__System.register('8', ['3'], function (_export) {
-	'use strict';
-
-	var THREE, renderer;
-	return {
-		setters: [function (_) {
-			THREE = _;
-		}],
-		execute: function () {
-			renderer = new THREE.WebGLRenderer({
-				alpha: true,
-				antialias: true
-			});
-
-			renderer.scale = 1.;
-			renderer.setPixelRatio(window.devicePixelRatio / renderer.scale);
-			renderer.setSize(window.innerWidth, window.innerHeight);
-			document.body.appendChild(renderer.domElement);
-
-			_export('default', renderer);
-		}
-	};
-});
-
-$__System.register('15', ['3', '5', '6', 'c'], function (_export) {
-  var THREE, _createClass, _classCallCheck, assets, PlaneBright;
-
-  return {
-    setters: [function (_3) {
-      THREE = _3;
-    }, function (_) {
-      _createClass = _['default'];
-    }, function (_2) {
-      _classCallCheck = _2['default'];
-    }, function (_c) {
-      assets = _c['default'];
-    }],
-    execute: function () {
-      'use strict';
-
-      PlaneBright = (function () {
-        function PlaneBright(texture) {
-          _classCallCheck(this, PlaneBright);
-
-          this.uniforms = null;
-          this.minBright = 0.2;
-          this.texture = texture;
-          this.mesh = this.createMesh();
-        }
-
-        _createClass(PlaneBright, [{
-          key: 'createMesh',
-          value: function createMesh() {
-            this.uniforms = {
-              minBright: {
-                type: 'f',
-                value: this.minBright
-              },
-              texture: {
-                type: 't',
-                value: this.texture
-              }
-            };
-            var material = assets.shaders.bright.clone();
-            material.uniforms = this.uniforms;
-            return new THREE.Mesh(new THREE.PlaneBufferGeometry(2, 2), material);
-          }
-        }]);
-
-        return PlaneBright;
-      })();
-
-      _export('default', PlaneBright);
-    }
-  };
-});
-
-$__System.register('16', ['3', '5', '6', 'c'], function (_export) {
-  var THREE, _createClass, _classCallCheck, assets, PlaneBlur;
-
-  return {
-    setters: [function (_3) {
-      THREE = _3;
-    }, function (_) {
-      _createClass = _['default'];
-    }, function (_2) {
-      _classCallCheck = _2['default'];
-    }, function (_c) {
-      assets = _c['default'];
-    }],
-    execute: function () {
-      'use strict';
-
-      PlaneBlur = (function () {
-        function PlaneBlur(texture, direction) {
-          _classCallCheck(this, PlaneBlur);
-
-          this.uniforms = null;
-          this.texture = texture;
-          this.direction = direction;
-          this.mesh = this.createMesh();
-        }
-
-        _createClass(PlaneBlur, [{
-          key: 'createMesh',
-          value: function createMesh() {
-            this.uniforms = {
-              resolution: {
-                type: 'v2',
-                value: new THREE.Vector2(window.innerWidth / 10, window.innerHeight / 10)
-              },
-              direction: {
-                type: 'v2',
-                value: this.direction
-              },
-              texture: {
-                type: 't',
-                value: this.texture
-              }
-            };
-            var material = assets.shaders.gaussian_blur.clone();
-            material.uniforms = this.uniforms;
-            return new THREE.Mesh(new THREE.PlaneBufferGeometry(2, 2), material);
-          }
-        }, {
-          key: 'resize',
-          value: function resize() {
-            this.uniforms.resolution.value.set(window.innerWidth / 10, window.innerHeight / 10);
-          }
-        }]);
-
-        return PlaneBlur;
-      })();
-
-      _export('default', PlaneBlur);
-    }
-  };
-});
-
-$__System.registerDynamic("17", [], true, function ($__require, exports, module) {
+$__System.registerDynamic("2", [], true, function ($__require, exports, module) {
   var global = this || self,
       GLOBAL = global;
   /* */
@@ -1422,23 +13,23 @@ $__System.registerDynamic("17", [], true, function ($__require, exports, module)
     return toString.call(it).slice(8, -1);
   };
 });
-$__System.registerDynamic('18', ['17'], true, function ($__require, exports, module) {
+$__System.registerDynamic('3', ['2'], true, function ($__require, exports, module) {
   var global = this || self,
       GLOBAL = global;
   /* */
-  var cof = $__require('17');
+  var cof = $__require('2');
   module.exports = Object('z').propertyIsEnumerable(0) ? Object : function (it) {
     return cof(it) == 'String' ? it.split('') : Object(it);
   };
 });
-$__System.registerDynamic('19', ['10', '1a', '18', '1b'], true, function ($__require, exports, module) {
+$__System.registerDynamic('4', ['5', '6', '3', '7'], true, function ($__require, exports, module) {
   var global = this || self,
       GLOBAL = global;
   /* */
-  var $ = $__require('10'),
-      toObject = $__require('1a'),
-      IObject = $__require('18');
-  module.exports = $__require('1b')(function () {
+  var $ = $__require('5'),
+      toObject = $__require('6'),
+      IObject = $__require('3');
+  module.exports = $__require('7')(function () {
     var a = Object.assign,
         A = {},
         B = {},
@@ -1468,30 +59,30 @@ $__System.registerDynamic('19', ['10', '1a', '18', '1b'], true, function ($__req
     return T;
   } : Object.assign;
 });
-$__System.registerDynamic('1c', ['1d', '19'], true, function ($__require, exports, module) {
+$__System.registerDynamic('8', ['9', '4'], true, function ($__require, exports, module) {
   var global = this || self,
       GLOBAL = global;
   /* */
-  var $export = $__require('1d');
-  $export($export.S + $export.F, 'Object', { assign: $__require('19') });
+  var $export = $__require('9');
+  $export($export.S + $export.F, 'Object', { assign: $__require('4') });
 });
-$__System.registerDynamic('1e', ['1c', '1f'], true, function ($__require, exports, module) {
+$__System.registerDynamic('a', ['8', 'b'], true, function ($__require, exports, module) {
   var global = this || self,
       GLOBAL = global;
   /* */
-  $__require('1c');
-  module.exports = $__require('1f').Object.assign;
+  $__require('8');
+  module.exports = $__require('b').Object.assign;
 });
-$__System.registerDynamic("20", ["1e"], true, function ($__require, exports, module) {
+$__System.registerDynamic("c", ["a"], true, function ($__require, exports, module) {
   var global = this || self,
       GLOBAL = global;
   /* */
-  module.exports = { "default": $__require("1e"), __esModule: true };
+  module.exports = { "default": $__require("a"), __esModule: true };
 });
-$__System.register("21", [], function (_export, _context) {
+$__System.register("d", [], function (_export, _context) {
   "use strict";
 
-  var __useDefault, animations, fonts, textures, geometries, shaders;
+  var __useDefault, animations, fonts, geometries, shaders;
 
   return {
     setters: [],
@@ -1508,22 +99,17 @@ $__System.register("21", [], function (_export, _context) {
 
       _export("fonts", fonts);
 
-      _export("textures", textures = {});
-
-      _export("textures", textures);
-
       _export("geometries", geometries = { "cookie": { "file": "mesh/cookie.ply" } });
 
       _export("geometries", geometries);
 
-      _export("shaders", shaders = { "wireframe": { "vertexShader": "shader/wireframe.vert", "fragmentShader": "shader/wireframe.frag" }, "desert": { "vertexShader": "shader/desert.vert", "fragmentShader": "shader/desert.frag" }, "star": { "vertexShader": "shader/star.vert", "fragmentShader": "shader/star.frag" }, "chocolat": { "vertexShader": "shader/chocolat.vert", "fragmentShader": "shader/chocolat.frag" }, "shape2D": { "vertexShader": "shader/shape2D.vert", "fragmentShader": "shader/shape2D.frag", "depthTest": false, "transparent": true }, "bloom": { "vertexShader": "shader/bloom/bloom.vert", "fragmentShader": "shader/bloom/bloom.frag" }, "bright": { "vertexShader": "shader/bloom/bright.vert", "fragmentShader": "shader/bloom/bright.frag" }, "gaussian_blur": { "vertexShader": "shader/bloom/gaussian_blur.vert", "fragmentShader": "shader/bloom/gaussian_blur.frag" }, "render": { "vertexShader": "shader/fullscreen.vert", "fragmentShader": "shader/render.frag" } });
+      _export("shaders", shaders = { "line": { "vertexShader": "shader/line.vert", "fragmentShader": "shader/line.frag", "depthTest": false, "transparent": true }, "star": { "vertexShader": "shader/star.vert", "fragmentShader": "shader/star.frag", "depthTest": false, "transparent": true }, "ray": { "vertexShader": "shader/ray.vert", "fragmentShader": "shader/ray.frag", "depthTest": false, "transparent": true } });
 
       _export("shaders", shaders);
 
       _export("default", {
         animations: animations,
         fonts: fonts,
-        textures: textures,
         geometries: geometries,
         shaders: shaders
       });
@@ -1536,7 +122,7 @@ var define = $__System.amdDefine;
   if (typeof exports === 'object' && typeof module === 'object')
     module.exports = factory();
   else if (typeof define === 'function' && define.amd)
-    define("22", [], factory);
+    define("e", [], factory);
   else {
     var a = factory();
     for (var i in a)
@@ -5378,7 +3964,7 @@ var define = $__System.amdDefine;
 })();
 (function() {
 var define = $__System.amdDefine;
-define("23", ["22"], function(main) {
+define("f", ["e"], function(main) {
   return main;
 });
 
@@ -5389,7 +3975,7 @@ var define = $__System.amdDefine;
   if (typeof exports === 'object' && typeof module === 'object')
     module.exports = factory(require("gl-matrix"));
   else if (typeof define === 'function' && define.amd)
-    define("24", ["23"], factory);
+    define("10", ["f"], factory);
   else if (typeof exports === 'object')
     exports["blenderHTML5Animations"] = factory(require("gl-matrix"));
   else
@@ -6111,7 +4697,7 @@ var define = $__System.amdDefine;
 ;
 
 })();
-$__System.register('25', ['24'], function (_export) {
+$__System.register('11', ['10'], function (_export) {
 	'use strict';
 
 	var blenderHTML5Animations;
@@ -6159,7 +4745,7 @@ $__System.register('25', ['24'], function (_export) {
 	};
 });
 
-$__System.register('26', ['3'], function (_export) {
+$__System.register('12', ['13'], function (_export) {
 				/**
      * @author mrdoob / http://mrdoob.com/
      */
@@ -6823,7 +5409,7 @@ $__System.register('26', ['3'], function (_export) {
 				};
 });
 
-$__System.register('27', ['3'], function (_export) {
+$__System.register('14', ['13'], function (_export) {
 			/**
     * @author Wei Meng / http://about.me/menway
     *
@@ -7295,7 +5881,7 @@ $__System.register('27', ['3'], function (_export) {
 			};
 });
 
-$__System.register("28", [], function (_export, _context) {
+$__System.register("15", [], function (_export, _context) {
   "use strict";
 
   var __useDefault;
@@ -7303,7 +5889,7 @@ $__System.register("28", [], function (_export, _context) {
   return {
     setters: [],
     execute: function () {
-      _export("__useDefault", __useDefault = "\r\nconst float PI = 3.14159;\r\nconst float PI2 = 6.28318;\r\nconst float TAU = 6.28318;\r\nconst float HALFPI = 1.57079;\r\nconst float PIHALF = 1.57079;\r\nconst float PIQUART = 0.785397;\r\nconst float HALF3PI = 4.71238;\r\n\r\n#define repeat(p,r) (mod(p,r)-r/2.)\r\n#define sdist(p,r) (length(p)-r)\r\nfloat box (vec3 p, vec3 b) { vec3 d = abs(p) - b; return min(max(d.x,max(d.y,d.z)),0.0) + length(max(d,0.0)); }\r\nfloat torus (vec3 p, vec2 t) { vec2 q = vec2(length(p.xz)-t.x,p.y); return length(q)-t.y; }\r\nfloat smoothmin (float a, float b, float r) { float h = clamp(.5+.5*(b-a)/r, 0., 1.); return mix(b, a, h)-r*h*(1.-h); }\r\nmat2 rot (float a) { float c=cos(a),s=sin(a); return mat2(c,-s,s,c); }\r\nvec3 look (vec3 eye, vec3 target, vec2 anchor) {\r\n    vec3 forward = normalize(target-eye);\r\n    vec3 right = normalize(cross(forward, vec3(0,1,0)));\r\n    vec3 up = normalize(cross(right, forward));\r\n    return normalize(forward + right * anchor.x + up * anchor.y);\r\n}\r\nfloat sdCapsule( vec3 p, vec3 a, vec3 b, float r ) {\r\n    vec3 pa = p - a, ba = b - a;\r\n    float h = clamp( dot(pa,ba)/dot(ba,ba), 0.0, 1.0 );\r\n    return length( pa - ba*h ) - r;\r\n}\r\n\r\n\r\n// https://www.shadertoy.com/view/4dS3Wd\r\nfloat random (in vec2 st) { return fract(sin(dot(st.xy,vec2(12.9898,78.233)))*43758.5453123); }\r\nfloat hash(float n) { return fract(sin(n) * 1e4); }\r\nfloat hash(vec2 p) { return fract(1e4 * sin(17.0 * p.x + p.y * 0.1) * (0.1 + abs(sin(p.y * 13.0 + p.x)))); }\r\nfloat noise(float x) {\r\n    float i = floor(x);\r\n    float f = fract(x);\r\n    float u = f * f * (3.0 - 2.0 * f);\r\n    return mix(hash(i), hash(i + 1.0), u);\r\n}\r\nfloat noise (in vec2 st) {\r\n    vec2 i = floor(st);\r\n    vec2 f = fract(st);\r\n    float a = random(i);\r\n    float b = random(i + vec2(1.0, 0.0));\r\n    float c = random(i + vec2(0.0, 1.0));\r\n    float d = random(i + vec2(1.0, 1.0));\r\n    vec2 u = f * f * (3.0 - 2.0 * f);\r\n    return mix(a, b, u.x) +\r\n            (c - a)* u.y * (1.0 - u.x) +\r\n            (d - b) * u.x * u.y;\r\n}\r\nfloat noise(vec3 x) {\r\n    const vec3 step = vec3(110, 241, 171);\r\n    vec3 i = floor(x);\r\n    vec3 f = fract(x);\r\n    float n = dot(i, step);\r\n    vec3 u = f * f * (3.0 - 2.0 * f);\r\n    return mix(mix(mix( hash(n + dot(step, vec3(0, 0, 0))), hash(n + dot(step, vec3(1, 0, 0))), u.x),\r\n                   mix( hash(n + dot(step, vec3(0, 1, 0))), hash(n + dot(step, vec3(1, 1, 0))), u.x), u.y),\r\n               mix(mix( hash(n + dot(step, vec3(0, 0, 1))), hash(n + dot(step, vec3(1, 0, 1))), u.x),\r\n                   mix( hash(n + dot(step, vec3(0, 1, 1))), hash(n + dot(step, vec3(1, 1, 1))), u.x), u.y), u.z);\r\n}\r\n\r\nvec3 lookAt (vec3 eye, vec3 target, vec2 anchor) {\r\n\tvec3 forward = normalize(target-eye);\r\n\tvec3 right = normalize(cross(forward, vec3(0,1,0)));\r\n\tvec3 up = normalize(cross(right, forward));\r\n\treturn normalize(forward + right * anchor.x + up * anchor.y);\r\n}\r\n\r\nmat2 rotation (float a) { float c=cos(a),s=sin(a); return mat2(c,-s,s,c); }\r\nmat4 rotationMatrix(vec3 axis, float angle) {\r\n    axis = normalize(axis);\r\n    float s = sin(angle);\r\n    float c = cos(angle);\r\n    float oc = 1.0 - c;\r\n    return mat4(oc*axis.x*axis.x + c, oc*axis.x*axis.y - axis.z*s, oc*axis.z*axis.x + axis.y*s, 0.0,\r\n                oc*axis.x*axis.y + axis.z*s, oc*axis.y*axis.y + c, oc*axis.y*axis.z - axis.x*s, 0.0,\r\n                oc*axis.z*axis.x - axis.y*s, oc*axis.y*axis.z + axis.x*s, oc*axis.z*axis.z + c, 0.0,\r\n                0.0, 0.0, 0.0, 1.0);\r\n}\r\n\r\nfloat pModPolar(inout vec2 p, float repetitions) {\r\n\tfloat angle = 2.*PI/repetitions;\r\n\tfloat a = atan(p.y, p.x) + angle/2.;\r\n\tfloat r = length(p);\r\n\tfloat c = floor(a/angle);\r\n\ta = mod(a,angle) - angle/2.;\r\n\tp = vec2(cos(a), sin(a))*r;\r\n\tif (abs(c) >= (repetitions/2.)) c = abs(c);\r\n\treturn c;\r\n}\r\n\r\nfloat luminance ( vec3 color ) { return (color.r + color.g + color.b) / 3.0; }\r\nfloat reflectance(vec3 a, vec3 b) { return dot(normalize(a), normalize(b)) * 0.5 + 0.5; }\r\nvec2 kaelidoGrid(vec2 p) { return vec2(step(mod(p, 2.0), vec2(1.0))); }\r\n\r\nvec4 edgeSD (sampler2D bitmap, vec2 uv, vec2 dimension)\r\n{\r\n    vec4 color = vec4(0.0, 0.0, 0.0, 0.0);\r\n\r\n    color += abs(texture2D(bitmap, uv + vec2(1, 0) / dimension) - texture2D(bitmap, uv + vec2(-1, 0) / dimension));\r\n    color += abs(texture2D(bitmap, uv + vec2(0, 1) / dimension) - texture2D(bitmap, uv + vec2(0, -1) / dimension));\r\n\r\n    return color / 2.;\r\n}\r\n\r\nvec4 edge (sampler2D bitmap, vec2 uv, vec2 dimension)\r\n{\r\n    vec4 color = vec4(0.0, 0.0, 0.0, 0.0);\r\n\r\n    color += -1.0 * texture2D(bitmap, uv + vec2(-2, -2) / dimension);\r\n    color += -1.0 * texture2D(bitmap, uv + vec2(-2, -1) / dimension);\r\n    color += -1.0 * texture2D(bitmap, uv + vec2(-2,  0) / dimension);\r\n    color += -1.0 * texture2D(bitmap, uv + vec2(-2,  1) / dimension);\r\n    color += -1.0 * texture2D(bitmap, uv + vec2(-2,  2) / dimension);\r\n\r\n    color += -1.0 * texture2D(bitmap, uv + vec2(-1, -2) / dimension);\r\n    color += -1.0 * texture2D(bitmap, uv + vec2(-1, -1) / dimension);\r\n    color += -1.0 * texture2D(bitmap, uv + vec2(-1,  0) / dimension);\r\n    color += -1.0 * texture2D(bitmap, uv + vec2(-1,  1) / dimension);\r\n    color += -1.0 * texture2D(bitmap, uv + vec2(-1,  2) / dimension);\r\n\r\n    color += -1.0 * texture2D(bitmap, uv + vec2( 0, -2) / dimension);\r\n    color += -1.0 * texture2D(bitmap, uv + vec2( 0, -1) / dimension);\r\n    color += 24.0 * texture2D(bitmap, uv + vec2( 0,  0) / dimension);\r\n    color += -1.0 * texture2D(bitmap, uv + vec2( 0,  1) / dimension);\r\n    color += -1.0 * texture2D(bitmap, uv + vec2( 0,  2) / dimension);\r\n\r\n    color += -1.0 * texture2D(bitmap, uv + vec2( 1, -2) / dimension);\r\n    color += -1.0 * texture2D(bitmap, uv + vec2( 1, -1) / dimension);\r\n    color += -1.0 * texture2D(bitmap, uv + vec2( 1,  0) / dimension);\r\n    color += -1.0 * texture2D(bitmap, uv + vec2( 1,  1) / dimension);\r\n    color += -1.0 * texture2D(bitmap, uv + vec2( 1,  2) / dimension);\r\n\r\n    color += -1.0 * texture2D(bitmap, uv + vec2( 2, -2) / dimension);\r\n    color += -1.0 * texture2D(bitmap, uv + vec2( 2, -1) / dimension);\r\n    color += -1.0 * texture2D(bitmap, uv + vec2( 2,  0) / dimension);\r\n    color += -1.0 * texture2D(bitmap, uv + vec2( 2,  1) / dimension);\r\n    color += -1.0 * texture2D(bitmap, uv + vec2( 2,  2) / dimension);\r\n\r\n    return color;\r\n}\r\n\r\nvec3 rgb2hsv(vec3 c) {\r\n\tvec4 K = vec4(0.0, -1.0 / 3.0, 2.0 / 3.0, -1.0);\r\n\tvec4 p = mix(vec4(c.bg, K.wz), vec4(c.gb, K.xy), step(c.b, c.g));\r\n\tvec4 q = mix(vec4(p.xyw, c.r), vec4(c.r, p.yzx), step(p.x, c.r));\r\n\tfloat d = q.x - min(q.w, q.y);\r\n\tfloat e = 1.0e-10;\r\n\treturn vec3(abs(q.z + (q.w - q.y) / (6.0 * d + e)), d / (q.x + e), q.x);\r\n}\r\nvec3 hsv2rgb(vec3 c) {\r\n\tvec4 K = vec4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);\r\n\tvec3 p = abs(fract(c.xxx + K.xyz) * 6.0 - K.www);\r\n\treturn c.z * mix(K.xxx, clamp(p - K.xxx, 0.0, 1.0), c.y);\r\n}");
+      _export("__useDefault", __useDefault = "\r\nconst float PI = 3.14159; const float PI2 = 6.28318; const float TAU = 6.28318; const float HALFPI = 1.57079; const float PIHALF = 1.57079; const float PIQUART = 0.785397; const float HALF3PI = 4.71238;\r\nfloat random (in vec2 st) { return fract(sin(dot(st.xy,vec2(12.9898,78.233)))*43758.5453123); }\r\nvec3 lookAt (vec3 eye, vec3 target, vec2 anchor) {\r\n\tvec3 forward = normalize(target-eye);\r\n\tvec3 right = normalize(cross(forward, vec3(0,1,0)));\r\n\tvec3 up = normalize(cross(right, forward));\r\n\treturn normalize(forward + right * anchor.x + up * anchor.y);\r\n}\r\nmat2 rotation (float a) { float c=cos(a),s=sin(a); return mat2(c,-s,s,c); }\r\nmat4 rotationMatrix(vec3 axis, float angle) {\r\n    axis = normalize(axis);\r\n    float s = sin(angle);\r\n    float c = cos(angle);\r\n    float oc = 1.0 - c;\r\n    return mat4(oc*axis.x*axis.x + c, oc*axis.x*axis.y - axis.z*s, oc*axis.z*axis.x + axis.y*s, 0.0,\r\n                oc*axis.x*axis.y + axis.z*s, oc*axis.y*axis.y + c, oc*axis.y*axis.z - axis.x*s, 0.0,\r\n                oc*axis.z*axis.x - axis.y*s, oc*axis.y*axis.z + axis.x*s, oc*axis.z*axis.z + c, 0.0,\r\n                0.0, 0.0, 0.0, 1.0);\r\n}\r\n");
 
       _export("__useDefault", __useDefault);
 
@@ -7311,7 +5897,7 @@ $__System.register("28", [], function (_export, _context) {
     }
   };
 });
-$__System.register("29", [], function (_export, _context) {
+$__System.register("16", [], function (_export, _context) {
   "use strict";
 
   var __useDefault;
@@ -7319,7 +5905,7 @@ $__System.register("29", [], function (_export, _context) {
   return {
     setters: [],
     execute: function () {
-      _export("__useDefault", __useDefault = "{\"target\":[{\"location\":[[[[0.0,0.0,-0.016666666666666666,0.0,0.016666666666666666,0.0,2]],0],[[[0.0,0.0,-0.016666666666666666,0.0,0.016666666666666666,0.0,2]],0],[[[0.0,0.0,-0.016666666666666666,0.0,0.016666666666666666,0.0,2]],0]]}],\"camera\":[{\"location\":[[[[0.0,2.278582811355591,-0.016666666666666666,2.278582811355591,0.016666666666666666,2.278582811355591,2]],0],[[[0.0,-1.8260838985443115,-0.016666666666666666,-1.8260838985443115,0.016666666666666666,-1.8260838985443115,2]],0],[[[0.0,1.0440658330917358,-0.016666666666666666,1.0440658330917358,0.016666666666666666,1.0440658330917358,2]],0]]}]}");
+      _export("__useDefault", __useDefault = "{\"title\":[{\"scale\":[[[[0.0,0.6251092553138733,0.8026248931884765,0.6251092553138733,1.8307084401448568,0.6251092553138733,2]],0],[[[0.0,0.6251092553138733,0.8026248931884765,0.6251092553138733,1.8307084401448568,0.6251092553138733,2]],0],[[[0.0,0.6251092553138733,0.8026248931884765,0.6251092553138733,1.8307084401448568,0.6251092553138733,2]],0]],\"rotation_euler\":[[[[0.0,1.5707963705062866,0.8026248931884765,1.5707963705062866,1.8307084401448568,1.5707963705062866,2]],0],[[[0.0,-0.0,0.8026248931884765,-0.0,1.8307084401448568,-0.0,2]],0],[[[0.0,0.0,0.8026248931884765,0.0,1.8307084401448568,0.0,2]],0]],\"location\":[[[[0.0,-0.05528847873210907,0.8026248931884765,-0.05528847873210907,1.8307084401448568,-0.05528847873210907,2]],0],[[[0.0,-102.4488296508789,0.8026248931884765,-102.4488296508789,1.8307084401448568,-102.4488296508789,2]],0],[[[0.0,1.0962374210357666,0.8026248931884765,1.0962374210357666,1.8307084401448568,1.0962374210357666,2]],0]]}],\"dangerLight\":[{\"scale\":[[[[3.466666666666667,1.0,3.421118672688802,1.0,3.5122146606445312,1.0,2],[3.5833333333333335,1.0,3.5377853393554686,1.0,3.6223744710286456,1.0,2],[3.683333333333333,1.0,3.644292195638021,1.0,3.7223744710286457,1.0,2],[3.783333333333333,1.0,3.7442921956380206,1.0,3.822374471028646,1.0,2],[3.8833333333333333,1.0,3.8442921956380207,1.0,3.9288813273111978,1.0,2],[4.0,1.0,3.9544520060221355,1.0,4.039041137695312,1.0,2],[4.1,1.0,4.0609588623046875,1.0,4.139041137695313,1.0,2],[4.2,1.0,4.160958862304687,1.0,4.239041137695312,1.0,2],[4.3,1.0,4.260958862304688,1.0,4.345547993977864,1.0,2],[4.416666666666667,1.0,4.371118672688802,1.0,4.455707804361979,1.0,2],[4.516666666666667,1.0,4.4776255289713545,1.0,4.555707804361979,1.0,2],[4.616666666666666,1.0,4.577625528971354,1.0,4.655707804361979,1.0,2],[4.716666666666667,1.0,4.677625528971354,1.0,4.762214660644531,1.0,2],[4.833333333333333,1.0,4.787785339355469,1.0,4.872374471028646,1.0,2],[4.933333333333334,1.0,4.8942921956380205,1.0,4.972374471028646,1.0,2],[5.033333333333333,1.0,4.994292195638021,1.0,5.072374471028645,1.0,2],[5.133333333333333,1.0,5.094292195638021,1.0,5.178881327311198,1.0,2],[5.25,1.0,5.2044520060221355,1.0,5.289041137695312,1.0,2],[5.35,1.0,5.3109588623046875,1.0,5.389041137695313,1.0,2],[5.45,1.0,5.410958862304687,1.0,5.489041137695312,1.0,2],[5.55,1.0,5.510958862304688,1.0,5.589041137695313,1.0,2],[5.65,1.0,5.610958862304687,1.0,5.6890411376953125,1.0,2],[5.75,1.0,5.710958862304688,1.0,5.789041137695312,1.0,2],[5.85,1.0,5.8109588623046875,1.0,5.889041137695313,1.0,2],[5.95,1.0,5.910958862304687,1.0,6.002054850260417,1.0,2],[6.083333333333333,1.0,6.031278483072916,1.0,6.122374471028646,1.0,2],[6.183333333333334,1.0,6.1442921956380205,1.0,6.222374471028646,1.0,2],[6.283333333333333,1.0,6.244292195638021,1.0,6.322374471028645,1.0,2],[6.383333333333333,1.0,6.344292195638021,1.0,6.428881327311198,1.0,2],[6.5,1.0,6.4544520060221355,1.0,6.539041137695312,1.0,2],[6.6,1.0,6.5609588623046875,1.0,6.639041137695313,1.0,2],[6.7,1.0,6.660958862304687,1.0,6.739041137695312,1.0,2],[6.8,1.0,6.760958862304688,1.0,6.845547993977864,1.0,2],[6.916666666666667,1.0,6.871118672688802,1.0,6.955707804361979,1.0,2],[7.016666666666667,1.0,6.9776255289713545,1.0,7.055707804361979,1.0,2],[7.116666666666666,1.0,7.077625528971354,1.0,7.155707804361979,1.0,2],[7.216666666666667,1.0,7.177625528971354,1.0,7.262214660644531,1.0,2],[7.333333333333333,1.0,7.287785339355469,1.0,7.372374471028646,1.0,2],[7.433333333333334,1.0,7.3942921956380205,1.0,7.472374471028646,1.0,2],[7.533333333333333,1.0,7.494292195638021,1.0,7.572374471028645,1.0,2],[7.633333333333333,1.0,7.594292195638021,1.0,7.678881327311198,1.0,2],[7.75,1.0,7.7044520060221355,1.0,7.789041137695312,1.0,2],[7.85,1.0,7.8109588623046875,1.0,7.889041137695313,1.0,2],[7.95,1.0,7.910958862304687,1.0,7.989041137695312,1.0,2],[8.05,1.0,8.010958862304687,1.0,8.095547993977865,1.0,2],[8.166666666666666,1.0,8.121118672688802,1.0,8.205707804361978,1.0,2],[8.266666666666666,1.0,8.227625528971354,1.0,8.30570780436198,1.0,2],[8.366666666666667,1.0,8.327625528971353,1.0,8.40570780436198,1.0,2],[8.466666666666667,1.0,8.427625528971355,1.0,8.512214660644531,1.0,2],[8.583333333333334,1.0,8.537784830729166,1.0,8.622374471028646,1.0,2],[8.683333333333334,1.0,8.644292195638021,1.0,8.722374471028646,1.0,2],[8.783333333333333,1.0,8.744292195638021,1.0,8.822374471028645,1.0,2],[8.883333333333333,1.0,8.84429219563802,1.0,8.9288818359375,1.0,2],[9.0,1.0,8.954451497395834,1.0,9.039041137695312,1.0,2],[9.1,1.0,9.060958862304688,1.0,9.139041137695312,1.0,2],[9.2,1.0,9.160958862304687,1.0,9.239041137695313,1.0,2],[9.3,1.0,9.260958862304687,1.0,9.339041137695313,1.0,2],[9.4,1.0,9.360958862304688,1.0,9.439041137695312,1.0,2],[9.5,1.0,9.460958862304688,1.0,9.539041137695312,1.0,2],[9.6,1.0,9.560958862304688,1.0,9.639041137695312,1.0,2],[9.7,1.0,9.660958862304687,1.0,9.745548502604166,1.0,2],[9.816666666666666,1.0,9.7711181640625,1.0,9.855707804361979,1.0,2],[9.916666666666666,1.0,9.877625528971354,1.0,9.955707804361978,1.0,2],[10.016666666666666,1.0,9.977625528971354,1.0,10.05570780436198,1.0,2],[10.116666666666667,1.0,10.077625528971353,1.0,10.162215169270834,1.0,2],[10.233333333333333,1.0,10.187784830729166,1.0,10.272374471028646,1.0,2],[10.333333333333334,1.0,10.29429219563802,1.0,10.372374471028646,1.0,2],[10.433333333333334,1.0,10.394292195638021,1.0,10.472374471028646,1.0,2],[10.533333333333333,1.0,10.494292195638021,1.0,10.5788818359375,1.0,2],[10.65,1.0,10.604451497395834,1.0,10.689041137695312,1.0,2],[10.75,1.0,10.710958862304688,1.0,10.789041137695312,1.0,2],[10.85,1.0,10.810958862304688,1.0,10.889041137695312,1.0,2],[10.95,1.0,10.910958862304687,1.0,10.989041137695313,1.0,2]],0],[[[3.466666666666667,1.0,3.421118672688802,1.0,3.5122146606445312,1.0,2],[3.5833333333333335,1.0,3.5377853393554686,1.0,3.6223744710286456,1.0,2],[3.683333333333333,1.0,3.644292195638021,1.0,3.7223744710286457,1.0,2],[3.783333333333333,1.0,3.7442921956380206,1.0,3.822374471028646,1.0,2],[3.8833333333333333,1.0,3.8442921956380207,1.0,3.9288813273111978,1.0,2],[4.0,1.0,3.9544520060221355,1.0,4.039041137695312,1.0,2],[4.1,1.0,4.0609588623046875,1.0,4.139041137695313,1.0,2],[4.2,1.0,4.160958862304687,1.0,4.239041137695312,1.0,2],[4.3,1.0,4.260958862304688,1.0,4.345547993977864,1.0,2],[4.416666666666667,1.0,4.371118672688802,1.0,4.455707804361979,1.0,2],[4.516666666666667,1.0,4.4776255289713545,1.0,4.555707804361979,1.0,2],[4.616666666666666,1.0,4.577625528971354,1.0,4.655707804361979,1.0,2],[4.716666666666667,1.0,4.677625528971354,1.0,4.762214660644531,1.0,2],[4.833333333333333,1.0,4.787785339355469,1.0,4.872374471028646,1.0,2],[4.933333333333334,1.0,4.8942921956380205,1.0,4.972374471028646,1.0,2],[5.033333333333333,1.0,4.994292195638021,1.0,5.072374471028645,1.0,2],[5.133333333333333,1.0,5.094292195638021,1.0,5.178881327311198,1.0,2],[5.25,1.0,5.2044520060221355,1.0,5.289041137695312,1.0,2],[5.35,1.0,5.3109588623046875,1.0,5.389041137695313,1.0,2],[5.45,1.0,5.410958862304687,1.0,5.489041137695312,1.0,2],[5.55,1.0,5.510958862304688,1.0,5.589041137695313,1.0,2],[5.65,1.0,5.610958862304687,1.0,5.6890411376953125,1.0,2],[5.75,1.0,5.710958862304688,1.0,5.789041137695312,1.0,2],[5.85,1.0,5.8109588623046875,1.0,5.889041137695313,1.0,2],[5.95,1.0,5.910958862304687,1.0,6.002054850260417,1.0,2],[6.083333333333333,1.0,6.031278483072916,1.0,6.122374471028646,1.0,2],[6.183333333333334,1.0,6.1442921956380205,1.0,6.222374471028646,1.0,2],[6.283333333333333,1.0,6.244292195638021,1.0,6.322374471028645,1.0,2],[6.383333333333333,1.0,6.344292195638021,1.0,6.428881327311198,1.0,2],[6.5,1.0,6.4544520060221355,1.0,6.539041137695312,1.0,2],[6.6,1.0,6.5609588623046875,1.0,6.639041137695313,1.0,2],[6.7,1.0,6.660958862304687,1.0,6.739041137695312,1.0,2],[6.8,1.0,6.760958862304688,1.0,6.845547993977864,1.0,2],[6.916666666666667,1.0,6.871118672688802,1.0,6.955707804361979,1.0,2],[7.016666666666667,1.0,6.9776255289713545,1.0,7.055707804361979,1.0,2],[7.116666666666666,1.0,7.077625528971354,1.0,7.155707804361979,1.0,2],[7.216666666666667,1.0,7.177625528971354,1.0,7.262214660644531,1.0,2],[7.333333333333333,1.0,7.287785339355469,1.0,7.372374471028646,1.0,2],[7.433333333333334,1.0,7.3942921956380205,1.0,7.472374471028646,1.0,2],[7.533333333333333,1.0,7.494292195638021,1.0,7.572374471028645,1.0,2],[7.633333333333333,1.0,7.594292195638021,1.0,7.678881327311198,1.0,2],[7.75,1.0,7.7044520060221355,1.0,7.789041137695312,1.0,2],[7.85,1.0,7.8109588623046875,1.0,7.889041137695313,1.0,2],[7.95,1.0,7.910958862304687,1.0,7.989041137695312,1.0,2],[8.05,1.0,8.010958862304687,1.0,8.095547993977865,1.0,2],[8.166666666666666,1.0,8.121118672688802,1.0,8.205707804361978,1.0,2],[8.266666666666666,1.0,8.227625528971354,1.0,8.30570780436198,1.0,2],[8.366666666666667,1.0,8.327625528971353,1.0,8.40570780436198,1.0,2],[8.466666666666667,1.0,8.427625528971355,1.0,8.512214660644531,1.0,2],[8.583333333333334,1.0,8.537784830729166,1.0,8.622374471028646,1.0,2],[8.683333333333334,1.0,8.644292195638021,1.0,8.722374471028646,1.0,2],[8.783333333333333,1.0,8.744292195638021,1.0,8.822374471028645,1.0,2],[8.883333333333333,1.0,8.84429219563802,1.0,8.9288818359375,1.0,2],[9.0,1.0,8.954451497395834,1.0,9.039041137695312,1.0,2],[9.1,1.0,9.060958862304688,1.0,9.139041137695312,1.0,2],[9.2,1.0,9.160958862304687,1.0,9.239041137695313,1.0,2],[9.3,1.0,9.260958862304687,1.0,9.339041137695313,1.0,2],[9.4,1.0,9.360958862304688,1.0,9.439041137695312,1.0,2],[9.5,1.0,9.460958862304688,1.0,9.539041137695312,1.0,2],[9.6,1.0,9.560958862304688,1.0,9.639041137695312,1.0,2],[9.7,1.0,9.660958862304687,1.0,9.745548502604166,1.0,2],[9.816666666666666,1.0,9.7711181640625,1.0,9.855707804361979,1.0,2],[9.916666666666666,1.0,9.877625528971354,1.0,9.955707804361978,1.0,2],[10.016666666666666,1.0,9.977625528971354,1.0,10.05570780436198,1.0,2],[10.116666666666667,1.0,10.077625528971353,1.0,10.162215169270834,1.0,2],[10.233333333333333,1.0,10.187784830729166,1.0,10.272374471028646,1.0,2],[10.333333333333334,1.0,10.29429219563802,1.0,10.372374471028646,1.0,2],[10.433333333333334,1.0,10.394292195638021,1.0,10.472374471028646,1.0,2],[10.533333333333333,1.0,10.494292195638021,1.0,10.5788818359375,1.0,2],[10.65,1.0,10.604451497395834,1.0,10.689041137695312,1.0,2],[10.75,1.0,10.710958862304688,1.0,10.789041137695312,1.0,2],[10.85,1.0,10.810958862304688,1.0,10.889041137695312,1.0,2],[10.95,1.0,10.910958862304687,1.0,10.989041137695313,1.0,2]],0],[[[3.466666666666667,1.0,3.421118672688802,1.0,3.5122146606445312,1.0,2],[3.5833333333333335,1.0,3.5377853393554686,1.0,3.6223744710286456,1.0,2],[3.683333333333333,1.0,3.644292195638021,1.0,3.7223744710286457,1.0,2],[3.783333333333333,1.0,3.7442921956380206,1.0,3.822374471028646,1.0,2],[3.8833333333333333,1.0,3.8442921956380207,1.0,3.9288813273111978,1.0,2],[4.0,1.0,3.9544520060221355,1.0,4.039041137695312,1.0,2],[4.1,1.0,4.0609588623046875,1.0,4.139041137695313,1.0,2],[4.2,1.0,4.160958862304687,1.0,4.239041137695312,1.0,2],[4.3,1.0,4.260958862304688,1.0,4.345547993977864,1.0,2],[4.416666666666667,1.0,4.371118672688802,1.0,4.455707804361979,1.0,2],[4.516666666666667,1.0,4.4776255289713545,1.0,4.555707804361979,1.0,2],[4.616666666666666,1.0,4.577625528971354,1.0,4.655707804361979,1.0,2],[4.716666666666667,1.0,4.677625528971354,1.0,4.762214660644531,1.0,2],[4.833333333333333,1.0,4.787785339355469,1.0,4.872374471028646,1.0,2],[4.933333333333334,1.0,4.8942921956380205,1.0,4.972374471028646,1.0,2],[5.033333333333333,1.0,4.994292195638021,1.0,5.072374471028645,1.0,2],[5.133333333333333,1.0,5.094292195638021,1.0,5.178881327311198,1.0,2],[5.25,1.0,5.2044520060221355,1.0,5.289041137695312,1.0,2],[5.35,1.0,5.3109588623046875,1.0,5.389041137695313,1.0,2],[5.45,1.0,5.410958862304687,1.0,5.489041137695312,1.0,2],[5.55,1.0,5.510958862304688,1.0,5.589041137695313,1.0,2],[5.65,1.0,5.610958862304687,1.0,5.6890411376953125,1.0,2],[5.75,1.0,5.710958862304688,1.0,5.789041137695312,1.0,2],[5.85,1.0,5.8109588623046875,1.0,5.889041137695313,1.0,2],[5.95,1.0,5.910958862304687,1.0,6.002054850260417,1.0,2],[6.083333333333333,1.0,6.031278483072916,1.0,6.122374471028646,1.0,2],[6.183333333333334,1.0,6.1442921956380205,1.0,6.222374471028646,1.0,2],[6.283333333333333,1.0,6.244292195638021,1.0,6.322374471028645,1.0,2],[6.383333333333333,1.0,6.344292195638021,1.0,6.428881327311198,1.0,2],[6.5,1.0,6.4544520060221355,1.0,6.539041137695312,1.0,2],[6.6,1.0,6.5609588623046875,1.0,6.639041137695313,1.0,2],[6.7,1.0,6.660958862304687,1.0,6.739041137695312,1.0,2],[6.8,1.0,6.760958862304688,1.0,6.845547993977864,1.0,2],[6.916666666666667,1.0,6.871118672688802,1.0,6.955707804361979,1.0,2],[7.016666666666667,1.0,6.9776255289713545,1.0,7.055707804361979,1.0,2],[7.116666666666666,1.0,7.077625528971354,1.0,7.155707804361979,1.0,2],[7.216666666666667,1.0,7.177625528971354,1.0,7.262214660644531,1.0,2],[7.333333333333333,1.0,7.287785339355469,1.0,7.372374471028646,1.0,2],[7.433333333333334,1.0,7.3942921956380205,1.0,7.472374471028646,1.0,2],[7.533333333333333,1.0,7.494292195638021,1.0,7.572374471028645,1.0,2],[7.633333333333333,1.0,7.594292195638021,1.0,7.678881327311198,1.0,2],[7.75,1.0,7.7044520060221355,1.0,7.789041137695312,1.0,2],[7.85,1.0,7.8109588623046875,1.0,7.889041137695313,1.0,2],[7.95,1.0,7.910958862304687,1.0,7.989041137695312,1.0,2],[8.05,1.0,8.010958862304687,1.0,8.095547993977865,1.0,2],[8.166666666666666,1.0,8.121118672688802,1.0,8.205707804361978,1.0,2],[8.266666666666666,1.0,8.227625528971354,1.0,8.30570780436198,1.0,2],[8.366666666666667,1.0,8.327625528971353,1.0,8.40570780436198,1.0,2],[8.466666666666667,1.0,8.427625528971355,1.0,8.512214660644531,1.0,2],[8.583333333333334,1.0,8.537784830729166,1.0,8.622374471028646,1.0,2],[8.683333333333334,1.0,8.644292195638021,1.0,8.722374471028646,1.0,2],[8.783333333333333,1.0,8.744292195638021,1.0,8.822374471028645,1.0,2],[8.883333333333333,1.0,8.84429219563802,1.0,8.9288818359375,1.0,2],[9.0,1.0,8.954451497395834,1.0,9.039041137695312,1.0,2],[9.1,1.0,9.060958862304688,1.0,9.139041137695312,1.0,2],[9.2,1.0,9.160958862304687,1.0,9.239041137695313,1.0,2],[9.3,1.0,9.260958862304687,1.0,9.339041137695313,1.0,2],[9.4,1.0,9.360958862304688,1.0,9.439041137695312,1.0,2],[9.5,1.0,9.460958862304688,1.0,9.539041137695312,1.0,2],[9.6,1.0,9.560958862304688,1.0,9.639041137695312,1.0,2],[9.7,1.0,9.660958862304687,1.0,9.745548502604166,1.0,2],[9.816666666666666,1.0,9.7711181640625,1.0,9.855707804361979,1.0,2],[9.916666666666666,1.0,9.877625528971354,1.0,9.955707804361978,1.0,2],[10.016666666666666,1.0,9.977625528971354,1.0,10.05570780436198,1.0,2],[10.116666666666667,1.0,10.077625528971353,1.0,10.162215169270834,1.0,2],[10.233333333333333,1.0,10.187784830729166,1.0,10.272374471028646,1.0,2],[10.333333333333334,1.0,10.29429219563802,1.0,10.372374471028646,1.0,2],[10.433333333333334,1.0,10.394292195638021,1.0,10.472374471028646,1.0,2],[10.533333333333333,1.0,10.494292195638021,1.0,10.5788818359375,1.0,2],[10.65,1.0,10.604451497395834,1.0,10.689041137695312,1.0,2],[10.75,1.0,10.710958862304688,1.0,10.789041137695312,1.0,2],[10.85,1.0,10.810958862304688,1.0,10.889041137695312,1.0,2],[10.95,1.0,10.910958862304687,1.0,10.989041137695313,1.0,2]],0]],\"rotation_euler\":[[[[3.466666666666667,0.0,3.421118672688802,0.0,3.5122146606445312,0.0,2],[3.5833333333333335,0.0,3.5377853393554686,0.0,3.6223744710286456,0.0,2],[3.683333333333333,0.0,3.644292195638021,0.0,3.7223744710286457,0.0,2],[3.783333333333333,0.0,3.7442921956380206,0.0,3.822374471028646,0.0,2],[3.8833333333333333,0.0,3.8442921956380207,0.0,3.9288813273111978,0.0,2],[4.0,0.0,3.9544520060221355,0.0,4.039041137695312,0.0,2],[4.1,0.0,4.0609588623046875,0.0,4.139041137695313,0.0,2],[4.2,0.0,4.160958862304687,0.0,4.239041137695312,0.0,2],[4.3,0.0,4.260958862304688,0.0,4.345547993977864,0.0,2],[4.416666666666667,0.0,4.371118672688802,0.0,4.455707804361979,0.0,2],[4.516666666666667,0.0,4.4776255289713545,0.0,4.555707804361979,0.0,2],[4.616666666666666,0.0,4.577625528971354,0.0,4.655707804361979,0.0,2],[4.716666666666667,0.0,4.677625528971354,0.0,4.762214660644531,0.0,2],[4.833333333333333,0.0,4.787785339355469,0.0,4.872374471028646,0.0,2],[4.933333333333334,0.0,4.8942921956380205,0.0,4.972374471028646,0.0,2],[5.033333333333333,0.0,4.994292195638021,0.0,5.072374471028645,0.0,2],[5.133333333333333,0.0,5.094292195638021,0.0,5.178881327311198,0.0,2],[5.25,0.0,5.2044520060221355,0.0,5.289041137695312,0.0,2],[5.35,0.0,5.3109588623046875,0.0,5.389041137695313,0.0,2],[5.45,0.0,5.410958862304687,0.0,5.489041137695312,0.0,2],[5.55,0.0,5.510958862304688,0.0,5.589041137695313,0.0,2],[5.65,0.0,5.610958862304687,0.0,5.6890411376953125,0.0,2],[5.75,0.0,5.710958862304688,0.0,5.789041137695312,0.0,2],[5.85,0.0,5.8109588623046875,0.0,5.889041137695313,0.0,2],[5.95,0.0,5.910958862304687,0.0,6.002054850260417,0.0,2],[6.083333333333333,0.0,6.031278483072916,0.0,6.122374471028646,0.0,2],[6.183333333333334,0.0,6.1442921956380205,0.0,6.222374471028646,0.0,2],[6.283333333333333,0.0,6.244292195638021,0.0,6.322374471028645,0.0,2],[6.383333333333333,0.0,6.344292195638021,0.0,6.428881327311198,0.0,2],[6.5,0.0,6.4544520060221355,0.0,6.539041137695312,0.0,2],[6.6,0.0,6.5609588623046875,0.0,6.639041137695313,0.0,2],[6.7,0.0,6.660958862304687,0.0,6.739041137695312,0.0,2],[6.8,0.0,6.760958862304688,0.0,6.845547993977864,0.0,2],[6.916666666666667,0.0,6.871118672688802,0.0,6.955707804361979,0.0,2],[7.016666666666667,0.0,6.9776255289713545,0.0,7.055707804361979,0.0,2],[7.116666666666666,0.0,7.077625528971354,0.0,7.155707804361979,0.0,2],[7.216666666666667,0.0,7.177625528971354,0.0,7.262214660644531,0.0,2],[7.333333333333333,0.0,7.287785339355469,0.0,7.372374471028646,0.0,2],[7.433333333333334,0.0,7.3942921956380205,0.0,7.472374471028646,0.0,2],[7.533333333333333,0.0,7.494292195638021,0.0,7.572374471028645,0.0,2],[7.633333333333333,0.0,7.594292195638021,0.0,7.678881327311198,0.0,2],[7.75,0.0,7.7044520060221355,0.0,7.789041137695312,0.0,2],[7.85,0.0,7.8109588623046875,0.0,7.889041137695313,0.0,2],[7.95,0.0,7.910958862304687,0.0,7.989041137695312,0.0,2],[8.05,0.0,8.010958862304687,0.0,8.095547993977865,0.0,2],[8.166666666666666,0.0,8.121118672688802,0.0,8.205707804361978,0.0,2],[8.266666666666666,0.0,8.227625528971354,0.0,8.30570780436198,0.0,2],[8.366666666666667,0.0,8.327625528971353,0.0,8.40570780436198,0.0,2],[8.466666666666667,0.0,8.427625528971355,0.0,8.512214660644531,0.0,2],[8.583333333333334,0.0,8.537784830729166,0.0,8.622374471028646,0.0,2],[8.683333333333334,0.0,8.644292195638021,0.0,8.722374471028646,0.0,2],[8.783333333333333,0.0,8.744292195638021,0.0,8.822374471028645,0.0,2],[8.883333333333333,0.0,8.84429219563802,0.0,8.9288818359375,0.0,2],[9.0,0.0,8.954451497395834,0.0,9.039041137695312,0.0,2],[9.1,0.0,9.060958862304688,0.0,9.139041137695312,0.0,2],[9.2,0.0,9.160958862304687,0.0,9.239041137695313,0.0,2],[9.3,0.0,9.260958862304687,0.0,9.339041137695313,0.0,2],[9.4,0.0,9.360958862304688,0.0,9.439041137695312,0.0,2],[9.5,0.0,9.460958862304688,0.0,9.539041137695312,0.0,2],[9.6,0.0,9.560958862304688,0.0,9.639041137695312,0.0,2],[9.7,0.0,9.660958862304687,0.0,9.745548502604166,0.0,2],[9.816666666666666,0.0,9.7711181640625,0.0,9.855707804361979,0.0,2],[9.916666666666666,0.0,9.877625528971354,0.0,9.955707804361978,0.0,2],[10.016666666666666,0.0,9.977625528971354,0.0,10.05570780436198,0.0,2],[10.116666666666667,0.0,10.077625528971353,0.0,10.162215169270834,0.0,2],[10.233333333333333,0.0,10.187784830729166,0.0,10.272374471028646,0.0,2],[10.333333333333334,0.0,10.29429219563802,0.0,10.372374471028646,0.0,2],[10.433333333333334,0.0,10.394292195638021,0.0,10.472374471028646,0.0,2],[10.533333333333333,0.0,10.494292195638021,0.0,10.5788818359375,0.0,2],[10.65,0.0,10.604451497395834,0.0,10.689041137695312,0.0,2],[10.75,0.0,10.710958862304688,0.0,10.789041137695312,0.0,2],[10.85,0.0,10.810958862304688,0.0,10.889041137695312,0.0,2],[10.95,0.0,10.910958862304687,0.0,10.989041137695313,0.0,2]],0],[[[3.466666666666667,0.0,3.421118672688802,0.0,3.5122146606445312,0.0,2],[3.5833333333333335,0.0,3.5377853393554686,0.0,3.6223744710286456,0.0,2],[3.683333333333333,0.0,3.644292195638021,0.0,3.7223744710286457,0.0,2],[3.783333333333333,0.0,3.7442921956380206,0.0,3.822374471028646,0.0,2],[3.8833333333333333,0.0,3.8442921956380207,0.0,3.9288813273111978,0.0,2],[4.0,0.0,3.9544520060221355,0.0,4.039041137695312,0.0,2],[4.1,0.0,4.0609588623046875,0.0,4.139041137695313,0.0,2],[4.2,0.0,4.160958862304687,0.0,4.239041137695312,0.0,2],[4.3,0.0,4.260958862304688,0.0,4.345547993977864,0.0,2],[4.416666666666667,0.0,4.371118672688802,0.0,4.455707804361979,0.0,2],[4.516666666666667,0.0,4.4776255289713545,0.0,4.555707804361979,0.0,2],[4.616666666666666,0.0,4.577625528971354,0.0,4.655707804361979,0.0,2],[4.716666666666667,0.0,4.677625528971354,0.0,4.762214660644531,0.0,2],[4.833333333333333,0.0,4.787785339355469,0.0,4.872374471028646,0.0,2],[4.933333333333334,0.0,4.8942921956380205,0.0,4.972374471028646,0.0,2],[5.033333333333333,0.0,4.994292195638021,0.0,5.072374471028645,0.0,2],[5.133333333333333,0.0,5.094292195638021,0.0,5.178881327311198,0.0,2],[5.25,0.0,5.2044520060221355,0.0,5.289041137695312,0.0,2],[5.35,0.0,5.3109588623046875,0.0,5.389041137695313,0.0,2],[5.45,0.0,5.410958862304687,0.0,5.489041137695312,0.0,2],[5.55,0.0,5.510958862304688,0.0,5.589041137695313,0.0,2],[5.65,0.0,5.610958862304687,0.0,5.6890411376953125,0.0,2],[5.75,0.0,5.710958862304688,0.0,5.789041137695312,0.0,2],[5.85,0.0,5.8109588623046875,0.0,5.889041137695313,0.0,2],[5.95,0.0,5.910958862304687,0.0,6.002054850260417,0.0,2],[6.083333333333333,0.0,6.031278483072916,0.0,6.122374471028646,0.0,2],[6.183333333333334,0.0,6.1442921956380205,0.0,6.222374471028646,0.0,2],[6.283333333333333,0.0,6.244292195638021,0.0,6.322374471028645,0.0,2],[6.383333333333333,0.0,6.344292195638021,0.0,6.428881327311198,0.0,2],[6.5,0.0,6.4544520060221355,0.0,6.539041137695312,0.0,2],[6.6,0.0,6.5609588623046875,0.0,6.639041137695313,0.0,2],[6.7,0.0,6.660958862304687,0.0,6.739041137695312,0.0,2],[6.8,0.0,6.760958862304688,0.0,6.845547993977864,0.0,2],[6.916666666666667,0.0,6.871118672688802,0.0,6.955707804361979,0.0,2],[7.016666666666667,0.0,6.9776255289713545,0.0,7.055707804361979,0.0,2],[7.116666666666666,0.0,7.077625528971354,0.0,7.155707804361979,0.0,2],[7.216666666666667,0.0,7.177625528971354,0.0,7.262214660644531,0.0,2],[7.333333333333333,0.0,7.287785339355469,0.0,7.372374471028646,0.0,2],[7.433333333333334,0.0,7.3942921956380205,0.0,7.472374471028646,0.0,2],[7.533333333333333,0.0,7.494292195638021,0.0,7.572374471028645,0.0,2],[7.633333333333333,0.0,7.594292195638021,0.0,7.678881327311198,0.0,2],[7.75,0.0,7.7044520060221355,0.0,7.789041137695312,0.0,2],[7.85,0.0,7.8109588623046875,0.0,7.889041137695313,0.0,2],[7.95,0.0,7.910958862304687,0.0,7.989041137695312,0.0,2],[8.05,0.0,8.010958862304687,0.0,8.095547993977865,0.0,2],[8.166666666666666,0.0,8.121118672688802,0.0,8.205707804361978,0.0,2],[8.266666666666666,0.0,8.227625528971354,0.0,8.30570780436198,0.0,2],[8.366666666666667,0.0,8.327625528971353,0.0,8.40570780436198,0.0,2],[8.466666666666667,0.0,8.427625528971355,0.0,8.512214660644531,0.0,2],[8.583333333333334,0.0,8.537784830729166,0.0,8.622374471028646,0.0,2],[8.683333333333334,0.0,8.644292195638021,0.0,8.722374471028646,0.0,2],[8.783333333333333,0.0,8.744292195638021,0.0,8.822374471028645,0.0,2],[8.883333333333333,0.0,8.84429219563802,0.0,8.9288818359375,0.0,2],[9.0,0.0,8.954451497395834,0.0,9.039041137695312,0.0,2],[9.1,0.0,9.060958862304688,0.0,9.139041137695312,0.0,2],[9.2,0.0,9.160958862304687,0.0,9.239041137695313,0.0,2],[9.3,0.0,9.260958862304687,0.0,9.339041137695313,0.0,2],[9.4,0.0,9.360958862304688,0.0,9.439041137695312,0.0,2],[9.5,0.0,9.460958862304688,0.0,9.539041137695312,0.0,2],[9.6,0.0,9.560958862304688,0.0,9.639041137695312,0.0,2],[9.7,0.0,9.660958862304687,0.0,9.745548502604166,0.0,2],[9.816666666666666,0.0,9.7711181640625,0.0,9.855707804361979,0.0,2],[9.916666666666666,0.0,9.877625528971354,0.0,9.955707804361978,0.0,2],[10.016666666666666,0.0,9.977625528971354,0.0,10.05570780436198,0.0,2],[10.116666666666667,0.0,10.077625528971353,0.0,10.162215169270834,0.0,2],[10.233333333333333,0.0,10.187784830729166,0.0,10.272374471028646,0.0,2],[10.333333333333334,0.0,10.29429219563802,0.0,10.372374471028646,0.0,2],[10.433333333333334,0.0,10.394292195638021,0.0,10.472374471028646,0.0,2],[10.533333333333333,0.0,10.494292195638021,0.0,10.5788818359375,0.0,2],[10.65,0.0,10.604451497395834,0.0,10.689041137695312,0.0,2],[10.75,0.0,10.710958862304688,0.0,10.789041137695312,0.0,2],[10.85,0.0,10.810958862304688,0.0,10.889041137695312,0.0,2],[10.95,0.0,10.910958862304687,0.0,10.989041137695313,0.0,2]],0],[[[3.466666666666667,0.0,3.421118672688802,0.0,3.5122146606445312,0.0,2],[3.5833333333333335,0.0,3.5377853393554686,0.0,3.6223744710286456,0.0,2],[3.683333333333333,0.0,3.644292195638021,0.0,3.7223744710286457,0.0,2],[3.783333333333333,0.0,3.7442921956380206,0.0,3.822374471028646,0.0,2],[3.8833333333333333,0.0,3.8442921956380207,0.0,3.9288813273111978,0.0,2],[4.0,0.0,3.9544520060221355,0.0,4.039041137695312,0.0,2],[4.1,0.0,4.0609588623046875,0.0,4.139041137695313,0.0,2],[4.2,0.0,4.160958862304687,0.0,4.239041137695312,0.0,2],[4.3,0.0,4.260958862304688,0.0,4.345547993977864,0.0,2],[4.416666666666667,0.0,4.371118672688802,0.0,4.455707804361979,0.0,2],[4.516666666666667,0.0,4.4776255289713545,0.0,4.555707804361979,0.0,2],[4.616666666666666,0.0,4.577625528971354,0.0,4.655707804361979,0.0,2],[4.716666666666667,0.0,4.677625528971354,0.0,4.762214660644531,0.0,2],[4.833333333333333,0.0,4.787785339355469,0.0,4.872374471028646,0.0,2],[4.933333333333334,0.0,4.8942921956380205,0.0,4.972374471028646,0.0,2],[5.033333333333333,0.0,4.994292195638021,0.0,5.072374471028645,0.0,2],[5.133333333333333,0.0,5.094292195638021,0.0,5.178881327311198,0.0,2],[5.25,0.0,5.2044520060221355,0.0,5.289041137695312,0.0,2],[5.35,0.0,5.3109588623046875,0.0,5.389041137695313,0.0,2],[5.45,0.0,5.410958862304687,0.0,5.489041137695312,0.0,2],[5.55,0.0,5.510958862304688,0.0,5.589041137695313,0.0,2],[5.65,0.0,5.610958862304687,0.0,5.6890411376953125,0.0,2],[5.75,0.0,5.710958862304688,0.0,5.789041137695312,0.0,2],[5.85,0.0,5.8109588623046875,0.0,5.889041137695313,0.0,2],[5.95,0.0,5.910958862304687,0.0,6.002054850260417,0.0,2],[6.083333333333333,0.0,6.031278483072916,0.0,6.122374471028646,0.0,2],[6.183333333333334,0.0,6.1442921956380205,0.0,6.222374471028646,0.0,2],[6.283333333333333,0.0,6.244292195638021,0.0,6.322374471028645,0.0,2],[6.383333333333333,0.0,6.344292195638021,0.0,6.428881327311198,0.0,2],[6.5,0.0,6.4544520060221355,0.0,6.539041137695312,0.0,2],[6.6,0.0,6.5609588623046875,0.0,6.639041137695313,0.0,2],[6.7,0.0,6.660958862304687,0.0,6.739041137695312,0.0,2],[6.8,0.0,6.760958862304688,0.0,6.845547993977864,0.0,2],[6.916666666666667,0.0,6.871118672688802,0.0,6.955707804361979,0.0,2],[7.016666666666667,0.0,6.9776255289713545,0.0,7.055707804361979,0.0,2],[7.116666666666666,0.0,7.077625528971354,0.0,7.155707804361979,0.0,2],[7.216666666666667,0.0,7.177625528971354,0.0,7.262214660644531,0.0,2],[7.333333333333333,0.0,7.287785339355469,0.0,7.372374471028646,0.0,2],[7.433333333333334,0.0,7.3942921956380205,0.0,7.472374471028646,0.0,2],[7.533333333333333,0.0,7.494292195638021,0.0,7.572374471028645,0.0,2],[7.633333333333333,0.0,7.594292195638021,0.0,7.678881327311198,0.0,2],[7.75,0.0,7.7044520060221355,0.0,7.789041137695312,0.0,2],[7.85,0.0,7.8109588623046875,0.0,7.889041137695313,0.0,2],[7.95,0.0,7.910958862304687,0.0,7.989041137695312,0.0,2],[8.05,0.0,8.010958862304687,0.0,8.095547993977865,0.0,2],[8.166666666666666,0.0,8.121118672688802,0.0,8.205707804361978,0.0,2],[8.266666666666666,0.0,8.227625528971354,0.0,8.30570780436198,0.0,2],[8.366666666666667,0.0,8.327625528971353,0.0,8.40570780436198,0.0,2],[8.466666666666667,0.0,8.427625528971355,0.0,8.512214660644531,0.0,2],[8.583333333333334,0.0,8.537784830729166,0.0,8.622374471028646,0.0,2],[8.683333333333334,0.0,8.644292195638021,0.0,8.722374471028646,0.0,2],[8.783333333333333,0.0,8.744292195638021,0.0,8.822374471028645,0.0,2],[8.883333333333333,0.0,8.84429219563802,0.0,8.9288818359375,0.0,2],[9.0,0.0,8.954451497395834,0.0,9.039041137695312,0.0,2],[9.1,0.0,9.060958862304688,0.0,9.139041137695312,0.0,2],[9.2,0.0,9.160958862304687,0.0,9.239041137695313,0.0,2],[9.3,0.0,9.260958862304687,0.0,9.339041137695313,0.0,2],[9.4,0.0,9.360958862304688,0.0,9.439041137695312,0.0,2],[9.5,0.0,9.460958862304688,0.0,9.539041137695312,0.0,2],[9.6,0.0,9.560958862304688,0.0,9.639041137695312,0.0,2],[9.7,0.0,9.660958862304687,0.0,9.745548502604166,0.0,2],[9.816666666666666,0.0,9.7711181640625,0.0,9.855707804361979,0.0,2],[9.916666666666666,0.0,9.877625528971354,0.0,9.955707804361978,0.0,2],[10.016666666666666,0.0,9.977625528971354,0.0,10.05570780436198,0.0,2],[10.116666666666667,0.0,10.077625528971353,0.0,10.162215169270834,0.0,2],[10.233333333333333,0.0,10.187784830729166,0.0,10.272374471028646,0.0,2],[10.333333333333334,0.0,10.29429219563802,0.0,10.372374471028646,0.0,2],[10.433333333333334,0.0,10.394292195638021,0.0,10.472374471028646,0.0,2],[10.533333333333333,0.0,10.494292195638021,0.0,10.5788818359375,0.0,2],[10.65,0.0,10.604451497395834,0.0,10.689041137695312,0.0,2],[10.75,0.0,10.710958862304688,0.0,10.789041137695312,0.0,2],[10.85,0.0,10.810958862304688,0.0,10.889041137695312,0.0,2],[10.95,0.0,10.910958862304687,0.0,10.989041137695313,0.0,2]],0]],\"location\":[[[[3.466666666666667,4.0,3.421118672688802,4.0,3.5122146606445312,4.0,2],[3.5833333333333335,4.0,3.5377853393554686,4.0,3.6223744710286456,4.0,2],[3.683333333333333,4.0,3.644292195638021,4.0,3.7223744710286457,4.0,2],[3.783333333333333,4.0,3.7442921956380206,4.0,3.822374471028646,4.0,2],[3.8833333333333333,4.0,3.8442921956380207,4.0,3.9288813273111978,4.0,2],[4.0,4.0,3.9544520060221355,4.0,4.039041137695312,4.0,2],[4.1,4.0,4.0609588623046875,4.0,4.139041137695313,4.0,2],[4.2,4.0,4.160958862304687,4.0,4.239041137695312,4.0,2],[4.3,4.0,4.260958862304688,4.0,4.345547993977864,4.0,2],[4.416666666666667,4.0,4.371118672688802,4.0,4.455707804361979,4.0,2],[4.516666666666667,4.0,4.4776255289713545,4.0,4.555707804361979,4.0,2],[4.616666666666666,4.0,4.577625528971354,4.0,4.655707804361979,4.0,2],[4.716666666666667,4.0,4.677625528971354,4.0,4.762214660644531,4.0,2],[4.833333333333333,4.0,4.787785339355469,4.0,4.872374471028646,4.0,2],[4.933333333333334,4.0,4.8942921956380205,4.0,4.972374471028646,4.0,2],[5.033333333333333,4.0,4.994292195638021,4.0,5.072374471028645,4.0,2],[5.133333333333333,4.0,5.094292195638021,4.0,5.178881327311198,4.0,2],[5.25,4.0,5.2044520060221355,4.0,5.289041137695312,4.0,2],[5.35,4.0,5.3109588623046875,4.0,5.389041137695313,4.0,2],[5.45,4.0,5.410958862304687,4.0,5.489041137695312,4.0,2],[5.55,4.0,5.510958862304688,4.0,5.589041137695313,4.0,2],[5.65,4.0,5.610958862304687,4.0,5.6890411376953125,4.0,2],[5.75,4.0,5.710958862304688,4.0,5.789041137695312,4.0,2],[5.85,4.0,5.8109588623046875,4.0,5.889041137695313,4.0,2],[5.95,4.0,5.910958862304687,4.0,6.002054850260417,4.0,2],[6.083333333333333,4.0,6.031278483072916,4.0,6.122374471028646,4.0,2],[6.183333333333334,4.0,6.1442921956380205,4.0,6.222374471028646,4.0,2],[6.283333333333333,4.0,6.244292195638021,4.0,6.322374471028645,4.0,2],[6.383333333333333,4.0,6.344292195638021,4.0,6.428881327311198,4.0,2],[6.5,4.0,6.4544520060221355,4.0,6.539041137695312,4.0,2],[6.6,4.0,6.5609588623046875,4.0,6.639041137695313,4.0,2],[6.7,4.0,6.660958862304687,4.0,6.739041137695312,4.0,2],[6.8,4.0,6.760958862304688,4.0,6.845547993977864,4.0,2],[6.916666666666667,4.0,6.871118672688802,4.0,6.955707804361979,4.0,2],[7.016666666666667,4.0,6.9776255289713545,4.0,7.055707804361979,4.0,2],[7.116666666666666,4.0,7.077625528971354,4.0,7.155707804361979,4.0,2],[7.216666666666667,4.0,7.177625528971354,4.0,7.262214660644531,4.0,2],[7.333333333333333,4.0,7.287785339355469,4.0,7.372374471028646,4.0,2],[7.433333333333334,4.0,7.3942921956380205,4.0,7.472374471028646,4.0,2],[7.533333333333333,4.0,7.494292195638021,4.0,7.572374471028645,4.0,2],[7.633333333333333,4.0,7.594292195638021,4.0,7.678881327311198,4.0,2],[7.75,4.0,7.7044520060221355,4.0,7.789041137695312,4.0,2],[7.85,4.0,7.8109588623046875,4.0,7.889041137695313,4.0,2],[7.95,4.0,7.910958862304687,4.0,7.989041137695312,4.0,2],[8.05,4.0,8.010958862304687,4.0,8.095547993977865,4.0,2],[8.166666666666666,4.0,8.121118672688802,4.0,8.205707804361978,4.0,2],[8.266666666666666,4.0,8.227625528971354,4.0,8.30570780436198,4.0,2],[8.366666666666667,4.0,8.327625528971353,4.0,8.40570780436198,4.0,2],[8.466666666666667,4.0,8.427625528971355,4.0,8.512214660644531,4.0,2],[8.583333333333334,4.0,8.537784830729166,4.0,8.622374471028646,4.0,2],[8.683333333333334,4.0,8.644292195638021,4.0,8.722374471028646,4.0,2],[8.783333333333333,4.0,8.744292195638021,4.0,8.822374471028645,4.0,2],[8.883333333333333,4.0,8.84429219563802,4.0,8.9288818359375,4.0,2],[9.0,4.0,8.954451497395834,4.0,9.039041137695312,4.0,2],[9.1,4.0,9.060958862304688,4.0,9.139041137695312,4.0,2],[9.2,4.0,9.160958862304687,4.0,9.239041137695313,4.0,2],[9.3,4.0,9.260958862304687,4.0,9.339041137695313,4.0,2],[9.4,4.0,9.360958862304688,4.0,9.439041137695312,4.0,2],[9.5,4.0,9.460958862304688,4.0,9.539041137695312,4.0,2],[9.6,4.0,9.560958862304688,4.0,9.639041137695312,4.0,2],[9.7,4.0,9.660958862304687,4.0,9.745548502604166,4.0,2],[9.816666666666666,4.0,9.7711181640625,4.0,9.855707804361979,4.0,2],[9.916666666666666,4.0,9.877625528971354,4.0,9.955707804361978,4.0,2],[10.016666666666666,4.0,9.977625528971354,4.0,10.05570780436198,4.0,2],[10.116666666666667,4.0,10.077625528971353,4.0,10.162215169270834,4.0,2],[10.233333333333333,4.0,10.187784830729166,4.0,10.272374471028646,4.0,2],[10.333333333333334,4.0,10.29429219563802,4.0,10.372374471028646,4.0,2],[10.433333333333334,4.0,10.394292195638021,4.0,10.472374471028646,4.0,2],[10.533333333333333,4.0,10.494292195638021,4.0,10.5788818359375,4.0,2],[10.65,4.0,10.604451497395834,4.0,10.689041137695312,4.0,2],[10.75,4.0,10.710958862304688,4.0,10.789041137695312,4.0,2],[10.85,4.0,10.810958862304688,4.0,10.889041137695312,4.0,2],[10.95,4.0,10.910958862304687,4.0,10.989041137695313,4.0,2]],0],[[[3.466666666666667,0.0,3.421118672688802,0.0,3.5122146606445312,0.0,2],[3.5833333333333335,0.0,3.5377853393554686,0.0,3.6223744710286456,0.0,2],[3.683333333333333,0.0,3.644292195638021,0.0,3.7223744710286457,0.0,2],[3.783333333333333,0.0,3.7442921956380206,0.0,3.822374471028646,0.0,2],[3.8833333333333333,0.0,3.8442921956380207,0.0,3.9288813273111978,0.0,2],[4.0,0.0,3.9544520060221355,0.0,4.039041137695312,0.0,2],[4.1,0.0,4.0609588623046875,0.0,4.139041137695313,0.0,2],[4.2,0.0,4.160958862304687,0.0,4.239041137695312,0.0,2],[4.3,0.0,4.260958862304688,0.0,4.345547993977864,0.0,2],[4.416666666666667,0.0,4.371118672688802,0.0,4.455707804361979,0.0,2],[4.516666666666667,0.0,4.4776255289713545,0.0,4.555707804361979,0.0,2],[4.616666666666666,0.0,4.577625528971354,0.0,4.655707804361979,0.0,2],[4.716666666666667,0.0,4.677625528971354,0.0,4.762214660644531,0.0,2],[4.833333333333333,0.0,4.787785339355469,0.0,4.872374471028646,0.0,2],[4.933333333333334,0.0,4.8942921956380205,0.0,4.972374471028646,0.0,2],[5.033333333333333,0.0,4.994292195638021,0.0,5.072374471028645,0.0,2],[5.133333333333333,0.0,5.094292195638021,0.0,5.178881327311198,0.0,2],[5.25,0.0,5.2044520060221355,0.0,5.289041137695312,0.0,2],[5.35,0.0,5.3109588623046875,0.0,5.389041137695313,0.0,2],[5.45,0.0,5.410958862304687,0.0,5.489041137695312,0.0,2],[5.55,0.0,5.510958862304688,0.0,5.589041137695313,0.0,2],[5.65,0.0,5.610958862304687,0.0,5.6890411376953125,0.0,2],[5.75,0.0,5.710958862304688,0.0,5.789041137695312,0.0,2],[5.85,0.0,5.8109588623046875,0.0,5.889041137695313,0.0,2],[5.95,0.0,5.910958862304687,0.0,6.002054850260417,0.0,2],[6.083333333333333,0.0,6.031278483072916,0.0,6.122374471028646,0.0,2],[6.183333333333334,0.0,6.1442921956380205,0.0,6.222374471028646,0.0,2],[6.283333333333333,0.0,6.244292195638021,0.0,6.322374471028645,0.0,2],[6.383333333333333,0.0,6.344292195638021,0.0,6.428881327311198,0.0,2],[6.5,0.0,6.4544520060221355,0.0,6.539041137695312,0.0,2],[6.6,0.0,6.5609588623046875,0.0,6.639041137695313,0.0,2],[6.7,0.0,6.660958862304687,0.0,6.739041137695312,0.0,2],[6.8,0.0,6.760958862304688,0.0,6.845547993977864,0.0,2],[6.916666666666667,0.0,6.871118672688802,0.0,6.955707804361979,0.0,2],[7.016666666666667,0.0,6.9776255289713545,0.0,7.055707804361979,0.0,2],[7.116666666666666,0.0,7.077625528971354,0.0,7.155707804361979,0.0,2],[7.216666666666667,0.0,7.177625528971354,0.0,7.262214660644531,0.0,2],[7.333333333333333,0.0,7.287785339355469,0.0,7.372374471028646,0.0,2],[7.433333333333334,0.0,7.3942921956380205,0.0,7.472374471028646,0.0,2],[7.533333333333333,0.0,7.494292195638021,0.0,7.572374471028645,0.0,2],[7.633333333333333,0.0,7.594292195638021,0.0,7.678881327311198,0.0,2],[7.75,0.0,7.7044520060221355,0.0,7.789041137695312,0.0,2],[7.85,0.0,7.8109588623046875,0.0,7.889041137695313,0.0,2],[7.95,0.0,7.910958862304687,0.0,7.989041137695312,0.0,2],[8.05,0.0,8.010958862304687,0.0,8.095547993977865,0.0,2],[8.166666666666666,0.0,8.121118672688802,0.0,8.205707804361978,0.0,2],[8.266666666666666,0.0,8.227625528971354,0.0,8.30570780436198,0.0,2],[8.366666666666667,0.0,8.327625528971353,0.0,8.40570780436198,0.0,2],[8.466666666666667,0.0,8.427625528971355,0.0,8.512214660644531,0.0,2],[8.583333333333334,0.0,8.537784830729166,0.0,8.622374471028646,0.0,2],[8.683333333333334,0.0,8.644292195638021,0.0,8.722374471028646,0.0,2],[8.783333333333333,0.0,8.744292195638021,0.0,8.822374471028645,0.0,2],[8.883333333333333,0.0,8.84429219563802,0.0,8.9288818359375,0.0,2],[9.0,0.0,8.954451497395834,0.0,9.039041137695312,0.0,2],[9.1,0.0,9.060958862304688,0.0,9.139041137695312,0.0,2],[9.2,0.0,9.160958862304687,0.0,9.239041137695313,0.0,2],[9.3,0.0,9.260958862304687,0.0,9.339041137695313,0.0,2],[9.4,0.0,9.360958862304688,0.0,9.439041137695312,0.0,2],[9.5,0.0,9.460958862304688,0.0,9.539041137695312,0.0,2],[9.6,0.0,9.560958862304688,0.0,9.639041137695312,0.0,2],[9.7,0.0,9.660958862304687,0.0,9.745548502604166,0.0,2],[9.816666666666666,0.0,9.7711181640625,0.0,9.855707804361979,0.0,2],[9.916666666666666,0.0,9.877625528971354,0.0,9.955707804361978,0.0,2],[10.016666666666666,0.0,9.977625528971354,0.0,10.05570780436198,0.0,2],[10.116666666666667,0.0,10.077625528971353,0.0,10.162215169270834,0.0,2],[10.233333333333333,0.0,10.187784830729166,0.0,10.272374471028646,0.0,2],[10.333333333333334,0.0,10.29429219563802,0.0,10.372374471028646,0.0,2],[10.433333333333334,0.0,10.394292195638021,0.0,10.472374471028646,0.0,2],[10.533333333333333,0.0,10.494292195638021,0.0,10.5788818359375,0.0,2],[10.65,0.0,10.604451497395834,0.0,10.689041137695312,0.0,2],[10.75,0.0,10.710958862304688,0.0,10.789041137695312,0.0,2],[10.85,0.0,10.810958862304688,0.0,10.889041137695312,0.0,2],[10.95,0.0,10.910958862304687,0.0,10.989041137695313,0.0,2]],0],[[[3.466666666666667,0.0,3.421118672688802,0.0,3.5122146606445312,0.0,2],[3.5833333333333335,1.0,3.5377853393554686,1.0,3.6223744710286456,1.0,2],[3.683333333333333,0.5,3.644292195638021,0.5,3.7223744710286457,0.5,2],[3.783333333333333,1.0,3.7442921956380206,1.0,3.822374471028646,1.0,2],[3.8833333333333333,0.5,3.8442921956380207,0.5,3.9288813273111978,0.5,2],[4.0,1.0,3.9544520060221355,1.0,4.039041137695312,1.0,2],[4.1,0.5,4.0609588623046875,0.5,4.139041137695313,0.5,2],[4.2,1.0,4.160958862304687,1.0,4.239041137695312,1.0,2],[4.3,0.5,4.260958862304688,0.5,4.345547993977864,0.5,2],[4.416666666666667,1.0,4.371118672688802,1.0,4.455707804361979,1.0,2],[4.516666666666667,0.5,4.4776255289713545,0.5,4.555707804361979,0.5,2],[4.616666666666666,1.0,4.577625528971354,1.0,4.655707804361979,1.0,2],[4.716666666666667,0.5,4.677625528971354,0.5,4.762214660644531,0.5,2],[4.833333333333333,1.0,4.787785339355469,1.0,4.872374471028646,1.0,2],[4.933333333333334,0.5,4.8942921956380205,0.5,4.972374471028646,0.5,2],[5.033333333333333,1.0,4.994292195638021,1.0,5.072374471028645,1.0,2],[5.133333333333333,0.5,5.094292195638021,0.5,5.178881327311198,0.5,2],[5.25,1.0,5.2044520060221355,1.0,5.289041137695312,1.0,2],[5.35,0.5,5.3109588623046875,0.5,5.389041137695313,0.5,2],[5.45,1.0,5.410958862304687,1.0,5.489041137695312,1.0,2],[5.55,0.5,5.510958862304688,0.5,5.589041137695313,0.5,2],[5.65,1.0,5.610958862304687,1.0,5.6890411376953125,1.0,2],[5.75,0.5,5.710958862304688,0.5,5.789041137695312,0.5,2],[5.85,1.0,5.8109588623046875,1.0,5.889041137695313,1.0,2],[5.95,0.5,5.910958862304687,0.5,6.002054850260417,0.5,2],[6.083333333333333,1.0,6.031278483072916,1.0,6.122374471028646,1.0,2],[6.183333333333334,0.5,6.1442921956380205,0.5,6.222374471028646,0.5,2],[6.283333333333333,1.0,6.244292195638021,1.0,6.322374471028645,1.0,2],[6.383333333333333,0.5,6.344292195638021,0.5,6.428881327311198,0.5,2],[6.5,1.0,6.4544520060221355,1.0,6.539041137695312,1.0,2],[6.6,0.5,6.5609588623046875,0.5,6.639041137695313,0.5,2],[6.7,1.0,6.660958862304687,1.0,6.739041137695312,1.0,2],[6.8,0.5,6.760958862304688,0.5,6.845547993977864,0.5,2],[6.916666666666667,1.0,6.871118672688802,1.0,6.955707804361979,1.0,2],[7.016666666666667,0.5,6.9776255289713545,0.5,7.055707804361979,0.5,2],[7.116666666666666,1.0,7.077625528971354,1.0,7.155707804361979,1.0,2],[7.216666666666667,0.5,7.177625528971354,0.5,7.262214660644531,0.5,2],[7.333333333333333,1.0,7.287785339355469,1.0,7.372374471028646,1.0,2],[7.433333333333334,0.5,7.3942921956380205,0.5,7.472374471028646,0.5,2],[7.533333333333333,1.0,7.494292195638021,1.0,7.572374471028645,1.0,2],[7.633333333333333,0.5,7.594292195638021,0.5,7.678881327311198,0.5,2],[7.75,1.0,7.7044520060221355,1.0,7.789041137695312,1.0,2],[7.85,0.5,7.8109588623046875,0.5,7.889041137695313,0.5,2],[7.95,1.0,7.910958862304687,1.0,7.989041137695312,1.0,2],[8.05,0.5,8.010958862304687,0.5,8.095547993977865,0.5,2],[8.166666666666666,1.0,8.121118672688802,1.0,8.205707804361978,1.0,2],[8.266666666666666,0.5,8.227625528971354,0.5,8.30570780436198,0.5,2],[8.366666666666667,1.0,8.327625528971353,1.0,8.40570780436198,1.0,2],[8.466666666666667,0.5,8.427625528971355,0.5,8.512214660644531,0.5,2],[8.583333333333334,1.0,8.537784830729166,1.0,8.622374471028646,1.0,2],[8.683333333333334,0.5,8.644292195638021,0.5,8.722374471028646,0.5,2],[8.783333333333333,1.0,8.744292195638021,1.0,8.822374471028645,1.0,2],[8.883333333333333,0.5,8.84429219563802,0.5,8.9288818359375,0.5,2],[9.0,1.0,8.954451497395834,1.0,9.039041137695312,1.0,2],[9.1,0.5,9.060958862304688,0.5,9.139041137695312,0.5,2],[9.2,1.0,9.160958862304687,1.0,9.239041137695313,1.0,2],[9.3,0.5,9.260958862304687,0.5,9.339041137695313,0.5,2],[9.4,1.0,9.360958862304688,1.0,9.439041137695312,1.0,2],[9.5,0.5,9.460958862304688,0.5,9.539041137695312,0.5,2],[9.6,1.0,9.560958862304688,1.0,9.639041137695312,1.0,2],[9.7,0.5,9.660958862304687,0.5,9.745548502604166,0.5,2],[9.816666666666666,1.0,9.7711181640625,1.0,9.855707804361979,1.0,2],[9.916666666666666,0.5,9.877625528971354,0.5,9.955707804361978,0.5,2],[10.016666666666666,1.0,9.977625528971354,1.0,10.05570780436198,1.0,2],[10.116666666666667,0.5,10.077625528971353,0.5,10.162215169270834,0.5,2],[10.233333333333333,1.0,10.187784830729166,1.0,10.272374471028646,1.0,2],[10.333333333333334,0.5,10.29429219563802,0.5,10.372374471028646,0.5,2],[10.433333333333334,1.0,10.394292195638021,1.0,10.472374471028646,1.0,2],[10.533333333333333,0.5,10.494292195638021,0.5,10.5788818359375,0.5,2],[10.65,1.0,10.604451497395834,1.0,10.689041137695312,1.0,2],[10.75,0.5,10.710958862304688,0.5,10.789041137695312,0.5,2],[10.85,1.0,10.810958862304688,1.0,10.889041137695312,1.0,2],[10.95,0.5,10.910958862304687,0.5,10.989041137695313,0.5,2]],0]]}],\"fov\":[{\"scale\":[[[[5.05,1.0,5.366666666666666,1.0,5.4,1.0,2]],0],[[[5.05,1.0,5.366666666666666,1.0,5.4,1.0,2]],0],[[[5.05,1.0,5.366666666666666,1.0,5.4,1.0,2]],0]],\"rotation_euler\":[[[[5.05,0.0,5.366666666666666,0.0,5.4,0.0,2]],0],[[[5.05,0.0,5.366666666666666,0.0,5.4,0.0,2]],0],[[[5.05,0.0,5.366666666666666,0.0,5.4,0.0,2]],0]],\"location\":[[[[5.05,6.0,5.366666666666666,6.0,5.4,6.0,2]],0],[[[5.05,0.0,5.366666666666666,0.0,5.4,0.0,2]],0],[[[0.0,60.0,-1.9715780893961588,60.0,1.9715780893961588,60.0,2],[5.05,60.0,3.078422037760417,60.0,6.897947692871093,60.0,2],[9.783333333333333,60.0,7.93538564046224,60.0,11.631281534830729,60.0,2]],0]]}],\"moon\":[{\"scale\":[[[[78.01666666666667,1.0,53.36868489583333,1.0,102.66464843749999,1.0,2]],0],[[[78.01666666666667,1.0,53.36868489583333,1.0,102.66464843749999,1.0,2]],0],[[[78.01666666666667,1.0,53.36868489583333,1.0,102.66464843749999,1.0,2]],0]],\"rotation_euler\":[[[[78.01666666666667,0.0,53.36868489583333,0.0,102.66464843749999,0.0,2]],0],[[[78.01666666666667,0.0,53.36868489583333,0.0,102.66464843749999,0.0,2]],0],[[[78.01666666666667,0.0,53.36868489583333,0.0,102.66464843749999,0.0,2]],0]],\"location\":[[[[78.01666666666667,-190.74295043945312,53.36868489583333,-190.74295043945312,102.66464843749999,-190.74295043945312,2]],0],[[[78.01666666666667,279.8765869140625,53.36868489583333,279.8765869140625,102.66464843749999,279.8765869140625,2]],0],[[[78.01666666666667,350.82696533203125,-12.165677897135417,350.82696533203125,41.93234456380208,350.82696533203125,2]],0]]}],\"PlaneAction\":[{\"location\":[[[[16.166666666666668,0.0,16.15,0.0,16.183333333333334,0.0,2]],0],[[[16.166666666666668,0.0,16.15,0.0,16.183333333333334,0.0,2]],0],[[[16.166666666666668,0.0,16.15,0.0,16.183333333333334,0.0,2]],0]]}],\"led\":[{\"scale\":[[[[0.0,1.0,1.9506832122802733,1.0,4.449316914876302,1.0,2]],0],[[[0.0,1.0,1.9506832122802733,1.0,4.449316914876302,1.0,2]],0],[[[0.0,1.0,1.9506832122802733,1.0,4.449316914876302,1.0,2]],0]],\"rotation_euler\":[[[[0.0,0.0,1.9506832122802733,0.0,4.449316914876302,0.0,2]],0],[[[0.0,0.0,1.9506832122802733,0.0,4.449316914876302,0.0,2]],0],[[[0.0,0.0,1.9506832122802733,0.0,4.449316914876302,0.0,2]],0]],\"location\":[[[[0.0,-0.08973441272974014,1.9506832122802733,-0.08973441272974014,4.449316914876302,-0.08973441272974014,2]],0],[[[0.0,-103.4742660522461,1.9506832122802733,-103.4742660522461,4.449316914876302,-103.4742660522461,2]],0],[[[0.0,0.38715508580207825,1.9506832122802733,0.38715508580207825,4.449316914876302,0.38715508580207825,2]],0]]}],\"satelitte\":[{\"scale\":[[[[16.166666666666668,1.0,16.15,1.0,16.183333333333334,1.0,2]],0],[[[16.166666666666668,1.0,16.15,1.0,16.183333333333334,1.0,2]],0],[[[16.166666666666668,1.0,16.15,1.0,16.183333333333334,1.0,2]],0]],\"rotation_euler\":[[[[16.166666666666668,1.5707964897155762,16.15,1.5707964897155762,16.183333333333334,1.5707964897155762,2]],0],[[[16.166666666666668,0.0,16.15,0.0,16.183333333333334,0.0,2]],0],[[[16.166666666666668,0.0,16.15,0.0,16.183333333333334,0.0,2]],0]],\"location\":[[[[16.166666666666668,0.0,16.15,0.0,16.183333333333334,0.0,2]],0],[[[16.166666666666668,0.0,16.15,0.0,16.183333333333334,0.0,2]],0],[[[16.166666666666668,0.0,16.15,0.0,16.183333333333334,0.0,2]],0]]}],\"fade\":[{\"scale\":[[[[1.0,1.0,0.9833333333333333,1.0,1.0166666666666666,1.0,2]],0],[[[1.0,1.0,0.9833333333333333,1.0,1.0166666666666666,1.0,2]],0],[[[1.0,1.0,0.9833333333333333,1.0,1.0166666666666666,1.0,2]],0]],\"rotation_euler\":[[[[1.0,0.0,0.9833333333333333,0.0,1.0166666666666666,0.0,2]],0],[[[1.0,0.0,0.9833333333333333,0.0,1.0166666666666666,0.0,2]],0],[[[1.0,0.0,0.9833333333333333,0.0,1.0166666666666666,0.0,2]],0]],\"location\":[[[[1.0,0.0,0.6030816396077474,0.0,1.3969183603922526,0.0,2]],0],[[[1.0,0.0,0.6030816396077474,0.0,1.3969183603922526,0.0,2]],0],[[[1.0,1.0,0.6030816396077474,1.0,1.3969183603922526,1.0,2]],0]]}],\"timeElapsed\":[{\"scale\":[[[[78.03333333333333,1.0,78.01666666666667,1.0,78.05,1.0,2]],0],[[[78.03333333333333,1.0,78.01666666666667,1.0,78.05,1.0,2]],0],[[[78.03333333333333,1.0,78.01666666666667,1.0,78.05,1.0,2]],0]],\"rotation_euler\":[[[[78.03333333333333,0.0,78.01666666666667,0.0,78.05,0.0,2]],0],[[[78.03333333333333,0.0,78.01666666666667,0.0,78.05,0.0,2]],0],[[[78.03333333333333,0.0,78.01666666666667,0.0,78.05,0.0,2]],0]],\"location\":[[[[0.0,0.0,-30.46511027018229,0.0,30.46511027018229,0.0,1],[78.03333333333333,0.0,47.56822102864583,0.0,108.49844563802083,0.0,2]],0],[[[0.0,0.0,-30.46511027018229,0.0,30.46511027018229,0.0,1],[78.03333333333333,0.0,47.56822102864583,0.0,108.49844563802083,0.0,2]],0],[[[0.0,0.0,-23.828114827473957,0.0,23.828114827473957,0.0,1],[61.03333333333333,60.0,37.184261067708334,57.450775146484375,65.66001383463542,60.494544982910156,2],[78.03333333333333,210.0557861328125,71.2632080078125,112.4013442993164,84.48648274739583,303.1380615234375,2]],0]]}],\"satelitteRotation\":[{\"scale\":[[[[67.51666666666667,1.0,67.46461181640625,1.0,67.56872151692708,1.0,2],[67.65,1.0,67.59794514973959,1.0,67.91027425130208,1.0,2],[69.76666666666667,1.0,69.53892415364584,1.0,69.81221516927083,1.0,2],[69.88333333333333,1.0,69.83778483072916,1.0,70.11107584635417,1.0,2],[71.65,1.0,71.35719401041666,1.0,71.70856119791667,1.0,2],[71.8,1.0,71.74143880208334,1.0,72.09280598958333,1.0,2],[73.3,1.0,73.07225748697917,1.0,73.34554850260416,1.0,2],[73.41666666666667,1.0,73.3711181640625,1.0,73.46221516927083,1.0,2]],0],[[[67.51666666666667,1.0,67.46461181640625,1.0,67.56872151692708,1.0,2],[67.65,1.0,67.59794514973959,1.0,67.91027425130208,1.0,2],[69.76666666666667,1.0,69.53892415364584,1.0,69.81221516927083,1.0,2],[69.88333333333333,1.0,69.83778483072916,1.0,70.11107584635417,1.0,2],[71.65,1.0,71.35719401041666,1.0,71.70856119791667,1.0,2],[71.8,1.0,71.74143880208334,1.0,72.09280598958333,1.0,2],[73.3,1.0,73.07225748697917,1.0,73.34554850260416,1.0,2],[73.41666666666667,1.0,73.3711181640625,1.0,73.46221516927083,1.0,2]],0],[[[67.51666666666667,1.0,67.46461181640625,1.0,67.56872151692708,1.0,2],[67.65,1.0,67.59794514973959,1.0,67.91027425130208,1.0,2],[69.76666666666667,1.0,69.53892415364584,1.0,69.81221516927083,1.0,2],[69.88333333333333,1.0,69.83778483072916,1.0,70.11107584635417,1.0,2],[71.65,1.0,71.35719401041666,1.0,71.70856119791667,1.0,2],[71.8,1.0,71.74143880208334,1.0,72.09280598958333,1.0,2],[73.3,1.0,73.07225748697917,1.0,73.34554850260416,1.0,2],[73.41666666666667,1.0,73.3711181640625,1.0,73.46221516927083,1.0,2]],0]],\"rotation_euler\":[[[[67.51666666666667,0.0,67.46461181640625,0.0,67.56872151692708,0.0,2],[67.65,0.0,67.59794514973959,0.0,67.91027425130208,0.0,2],[69.76666666666667,0.0,69.53892415364584,0.0,69.81221516927083,0.0,2],[69.88333333333333,0.0,69.83778483072916,0.0,70.11107584635417,0.0,2],[71.65,0.0,71.35719401041666,0.0,71.70856119791667,0.0,2],[71.8,0.0,71.74143880208334,0.0,72.09280598958333,0.0,2],[73.3,0.0,73.07225748697917,0.0,73.34554850260416,0.0,2],[73.41666666666667,0.0,73.3711181640625,0.0,73.46221516927083,0.0,2]],0],[[[67.51666666666667,0.0,67.46461181640625,0.0,67.56872151692708,0.0,2],[67.65,0.0,67.59794514973959,0.0,67.91027425130208,0.0,2],[69.76666666666667,0.0,69.53892415364584,0.0,69.81221516927083,0.0,2],[69.88333333333333,0.0,69.83778483072916,0.0,70.11107584635417,0.0,2],[71.65,0.0,71.35719401041666,0.0,71.70856119791667,0.0,2],[71.8,0.0,71.74143880208334,0.0,72.09280598958333,0.0,2],[73.3,0.0,73.07225748697917,0.0,73.34554850260416,0.0,2],[73.41666666666667,0.0,73.3711181640625,0.0,73.46221516927083,0.0,2]],0],[[[67.51666666666667,0.0,67.46461181640625,0.0,67.56872151692708,0.0,2],[67.65,0.0,67.59794514973959,0.0,67.91027425130208,0.0,2],[69.76666666666667,0.0,69.53892415364584,0.0,69.81221516927083,0.0,2],[69.88333333333333,0.0,69.83778483072916,0.0,70.11107584635417,0.0,2],[71.65,0.0,71.35719401041666,0.0,71.70856119791667,0.0,2],[71.8,0.0,71.74143880208334,0.0,72.09280598958333,0.0,2],[73.3,0.0,73.07225748697917,0.0,73.34554850260416,0.0,2],[73.41666666666667,0.0,73.3711181640625,0.0,73.46221516927083,0.0,2]],0]],\"location\":[[[[67.51666666666667,6.0,67.46461181640625,6.0,67.56872151692708,6.0,2],[67.65,6.0,67.59794514973959,6.0,67.91027425130208,6.0,2],[69.76666666666667,6.0,69.53892415364584,6.0,69.81221516927083,6.0,2],[69.88333333333333,6.0,69.83778483072916,6.0,70.11107584635417,6.0,2],[71.65,6.0,71.35719401041666,6.0,71.70856119791667,6.0,2],[71.8,6.0,71.74143880208334,6.0,72.09280598958333,6.0,2],[73.3,6.0,73.07225748697917,6.0,73.34554850260416,6.0,2],[73.41666666666667,6.0,73.3711181640625,6.0,73.46221516927083,6.0,2]],0],[[[67.51666666666667,0.0,67.46461181640625,0.0,67.56872151692708,0.0,2],[67.65,1.0,67.59794514973959,1.0,67.91027425130208,1.0,2],[69.76666666666667,1.0,69.53892415364584,1.0,69.81221516927083,1.0,2],[69.88333333333333,-0.9702872037887573,69.83778483072916,-0.9702872037887573,70.11107584635417,-0.9702872037887573,2],[71.65,-0.9702872037887573,71.35719401041666,-0.9702872037887573,71.70856119791667,-0.9702872037887573,2],[71.8,3.6961822509765625,71.74143880208334,3.6961822509765625,72.09280598958333,3.6961822509765625,2],[73.3,3.6961822509765625,73.07225748697917,3.6961822509765625,73.34554850260416,3.6961822509765625,2],[73.41666666666667,1.8036695718765259,73.3711181640625,1.8036695718765259,73.46221516927083,1.8036695718765259,2]],0],[[[67.51666666666667,0.0,67.46461181640625,0.0,67.56872151692708,0.0,2],[67.65,0.8342624306678772,67.59794514973959,0.8342624306678772,67.91027425130208,0.8342624306678772,2],[69.76666666666667,0.8342624306678772,69.53892415364584,0.8342624306678772,69.81221516927083,0.8342624306678772,2],[69.88333333333333,-0.5078118443489075,69.83778483072916,-0.5078118443489075,70.11107584635417,-0.5078118443489075,2],[71.65,-0.5078118443489075,71.35719401041666,-0.5078118443489075,71.70856119791667,-0.5078118443489075,2],[71.8,-0.5078118443489075,71.74143880208334,-0.5078118443489075,72.09280598958333,-0.5078118443489075,2],[73.3,-0.5078118443489075,73.07225748697917,-0.5078118443489075,73.34554850260416,-0.5078118443489075,2],[73.41666666666667,-1.0337599515914917,73.3711181640625,-1.0337599515914917,73.46221516927083,-1.0337599515914917,2]],0]]}],\"target\":[{\"scale\":[[[[57.85,1.0,55.026025390625,1.0,60.673974609375,1.0,2],[65.08333333333333,1.0,62.259358723958336,1.0,79.20321451822916,1.0,2],[127.38333333333333,1.0,103.060693359375,1.0,151.70597330729166,1.0,2]],0],[[[57.85,1.0,55.026025390625,1.0,60.673974609375,1.0,2],[65.08333333333333,1.0,62.259358723958336,1.0,79.20321451822916,1.0,2],[127.38333333333333,1.0,103.060693359375,1.0,151.70597330729166,1.0,2]],0],[[[57.85,1.0,55.026025390625,1.0,60.673974609375,1.0,2],[65.08333333333333,1.0,62.259358723958336,1.0,79.20321451822916,1.0,2],[127.38333333333333,1.0,103.060693359375,1.0,151.70597330729166,1.0,2]],0]],\"rotation_euler\":[[[[57.85,0.0,55.026025390625,0.0,60.673974609375,0.0,2],[65.08333333333333,0.0,62.259358723958336,0.0,79.20321451822916,0.0,2],[127.38333333333333,0.0,103.060693359375,0.0,151.70597330729166,0.0,2]],0],[[[57.85,0.0,55.026025390625,0.0,60.673974609375,0.0,2],[65.08333333333333,0.0,62.259358723958336,0.0,79.20321451822916,0.0,2],[127.38333333333333,0.0,103.060693359375,0.0,151.70597330729166,0.0,2]],0],[[[57.85,0.0,55.026025390625,0.0,60.673974609375,0.0,2],[65.08333333333333,0.0,62.259358723958336,0.0,79.20321451822916,0.0,2],[127.38333333333333,0.0,103.060693359375,0.0,151.70597330729166,0.0,2]],0]],\"location\":[[[[57.85,0.13772201538085938,55.026025390625,0.13772201538085938,60.673974609375,0.13772201538085938,2],[65.08333333333333,0.13772201538085938,62.259358723958336,0.13772201538085938,79.20321451822916,0.13772201538085938,2],[120.2,0.13772201538085938,106.17771809895834,0.13772201538085938,123.00445963541667,0.13772201538085938,2],[127.38333333333333,-0.011605006642639637,124.57887369791666,-0.011605006642639637,130.18779296875,-0.011605006642639637,2]],0],[[[57.85,-0.04519176483154297,55.026025390625,-0.04519176483154297,60.673974609375,-0.04519176483154297,2],[65.08333333333333,-0.04519176483154297,62.259358723958336,-0.04519176483154297,79.20321451822916,-0.04519176483154297,2],[120.2,-0.04519176483154297,106.17771809895834,-0.04519176483154297,123.00445963541667,-0.04519176483154297,2],[127.38333333333333,3.6624128818511963,124.57887369791666,3.6624128818511963,130.18779296875,3.6624128818511963,2]],0],[[[57.85,2.3332180976867676,55.026025390625,2.3332180976867676,60.673974609375,2.3332180976867676,2],[65.08333333333333,5.612602233886719,62.259358723958336,5.612602233886719,79.20321451822916,5.612602233886719,2],[120.2,5.612602233886719,106.17771809895834,5.612602233886719,123.00445963541667,5.612602233886719,2],[127.38333333333333,877.7259521484375,124.57887369791666,877.7259521484375,130.18779296875,877.7259521484375,2]],0]]}],\"panel\":[{\"scale\":[[[[0.0,1.0,-2.7003461201985677,1.0,2.7003461201985677,1.0,2]],0],[[[0.0,1.0,-2.7003461201985677,1.0,2.7003461201985677,1.0,2]],0],[[[0.0,1.0,-2.7003461201985677,1.0,2.7003461201985677,1.0,2]],0]],\"rotation_euler\":[[[[0.0,0.0,-2.7003461201985677,0.0,2.7003461201985677,0.0,2]],0],[[[0.0,0.0,-2.7003461201985677,0.0,2.7003461201985677,0.0,2]],0],[[[0.0,0.0,-2.7003461201985677,0.0,2.7003461201985677,0.0,2]],0]],\"location\":[[[[0.0,-0.00032308977097272873,-2.7003461201985677,-0.00032308977097272873,2.7003461201985677,-0.00032308977097272873,2]],0],[[[0.0,-103.43450164794922,-2.7003461201985677,-103.43450164794922,2.7003461201985677,-103.43450164794922,2]],0],[[[0.0,-2.659114215930458e-05,-2.7003461201985677,-2.659114215930458e-05,2.7003461201985677,-2.659114215930458e-05,2]],0]]}],\"camera\":[{\"scale\":[[[[0.0,1.0,-2.0952083587646486,1.0,2.0952083587646486,1.0,2],[5.366666666666666,1.0,3.2714584350585936,1.0,6.381736755371094,1.0,2],[7.966666666666667,1.0,6.951596577962239,1.0,13.0420166015625,1.0,2],[59.03333333333333,1.0,39.09632161458333,1.0,85.71796061197917,1.0,2],[127.38333333333333,1.0,100.6987060546875,1.0,154.06795247395834,1.0,2]],0],[[[0.0,1.0000001192092896,-2.0952083587646486,1.0000001192092896,2.0952083587646486,1.0000001192092896,2],[5.366666666666666,1.0000001192092896,3.2714584350585936,1.0000001192092896,6.381736755371094,1.0000001192092896,2],[7.966666666666667,1.0000001192092896,6.951596577962239,1.0000001192092896,13.0420166015625,1.0000001192092896,2],[59.03333333333333,1.0000001192092896,39.09632161458333,1.0000001192092896,85.71796061197917,1.0000001192092896,2],[127.38333333333333,1.0000001192092896,100.6987060546875,1.0000001192092896,154.06795247395834,1.0000001192092896,2]],0],[[[0.0,1.0000001192092896,-2.0952083587646486,1.0000001192092896,2.0952083587646486,1.0000001192092896,2],[5.366666666666666,1.0000001192092896,3.2714584350585936,1.0000001192092896,6.381736755371094,1.0000001192092896,2],[7.966666666666667,1.0000001192092896,6.951596577962239,1.0000001192092896,13.0420166015625,1.0000001192092896,2],[59.03333333333333,1.0000001192092896,39.09632161458333,1.0000001192092896,85.71796061197917,1.0000001192092896,2],[127.38333333333333,1.0000001192092896,100.6987060546875,1.0000001192092896,154.06795247395834,1.0000001192092896,2]],0]],\"rotation_euler\":[[[[0.0,1.2907236814498901,-2.0952083587646486,1.2907236814498901,2.0952083587646486,1.2907236814498901,2],[5.366666666666666,1.2907236814498901,3.2714584350585936,1.2907236814498901,6.381736755371094,1.2907236814498901,2],[7.966666666666667,1.2907236814498901,6.951596577962239,1.2907236814498901,13.0420166015625,1.2907236814498901,2],[59.03333333333333,1.2907236814498901,39.09632161458333,1.2907236814498901,85.71796061197917,1.2907236814498901,2],[127.38333333333333,1.2907236814498901,100.6987060546875,1.2907236814498901,154.06795247395834,1.2907236814498901,2]],0],[[[0.0,0.014107974246144295,-2.0952083587646486,0.014107974246144295,2.0952083587646486,0.014107974246144295,2],[5.366666666666666,0.014107974246144295,3.2714584350585936,0.014107974246144295,6.381736755371094,0.014107974246144295,2],[7.966666666666667,0.014107974246144295,6.951596577962239,0.014107974246144295,13.0420166015625,0.014107974246144295,2],[59.03333333333333,0.014107974246144295,39.09632161458333,0.014107974246144295,85.71796061197917,0.014107974246144295,2],[127.38333333333333,0.014107974246144295,100.6987060546875,0.014107974246144295,154.06795247395834,0.014107974246144295,2]],0],[[[0.0,0.6744938492774963,-2.0952083587646486,0.6744938492774963,2.0952083587646486,0.6744938492774963,2],[5.366666666666666,0.6744938492774963,3.2714584350585936,0.6744938492774963,6.381736755371094,0.6744938492774963,2],[7.966666666666667,0.6744938492774963,6.951596577962239,0.6744938492774963,13.0420166015625,0.6744938492774963,2],[59.03333333333333,0.6744938492774963,39.09632161458333,0.6744938492774963,85.71796061197917,0.6744938492774963,2],[127.38333333333333,0.6744938492774963,100.6987060546875,0.6744938492774963,154.06795247395834,0.6744938492774963,2]],0]],\"location\":[[[[0.0,-0.0001984965056180954,-2.0952083587646486,-0.0001984965056180954,2.0952083587646486,-0.0001984965056180954,2],[5.366666666666666,-0.0001984965056180954,3.2714584350585936,-0.0001984965056180954,6.381736755371094,-0.0001984965056180954,2],[7.966666666666667,0.0003001181175932288,6.951596577962239,-9.070785017684102e-05,13.0420166015625,0.0022542481310665607,2],[59.03333333333333,0.02983056753873825,39.09632161458333,0.02983056753873825,82.9135009765625,0.02983056753873825,2],[120.2,0.02983056753873825,106.17771809895834,0.02983056753873825,123.00445963541667,0.02983056753873825,2],[127.38333333333333,-4.263808250427246,124.57887369791666,-4.263808250427246,130.18779296875,-4.263808250427246,2]],0],[[[0.0,-104.70845031738281,-2.0952083587646486,-104.70845031738281,2.0952083587646486,-104.70845031738281,2],[5.366666666666666,-104.70845031738281,3.2714584350585936,-104.70845031738281,6.381736755371094,-104.70845031738281,2],[7.966666666666667,-103.05665588378906,6.951596577962239,-104.35136413574219,13.0420166015625,-96.58309936523438,2],[59.03333333333333,-5.229580402374268,39.09632161458333,-5.229580402374268,82.9135009765625,-5.229580402374268,2],[120.2,-5.229580402374268,106.17771809895834,-5.229580402374268,123.00445963541667,-5.229580402374268,2],[127.38333333333333,56.225616455078125,124.57887369791666,56.225616455078125,130.18779296875,56.225616455078125,2]],0],[[[0.0,0.36136171221733093,-2.0952083587646486,0.36136171221733093,2.0952083587646486,0.36136171221733093,2],[5.366666666666666,0.36136171221733093,3.2714584350585936,0.36136171221733093,6.381736755371094,0.36136171221733093,2],[7.966666666666667,0.5075799226760864,6.951596577962239,0.5075799226760864,13.0420166015625,0.5075799226760864,2],[59.03333333333333,0.053137920796871185,39.09632161458333,0.053137920796871185,82.9135009765625,0.053137920796871185,2],[120.2,0.053137920796871185,106.17771809895834,0.053137920796871185,123.00445963541667,0.053137920796871185,2],[127.38333333333333,951.984375,124.57887369791666,951.984375,130.18779296875,951.984375,2]],0]]}],\"sun\":[{\"scale\":[[[[5.25,1.0,2.97910639444987,1.0,7.520893351236979,1.0,2],[11.066666666666666,1.0,8.795773315429688,1.0,14.124890136718749,1.0,2],[18.9,1.0,15.841776529947916,1.0,32.56440226236979,1.0,2],[53.9,1.0,40.235595703125,1.0,58.51986897786458,1.0,2],[65.73333333333333,1.0,61.5689453125,1.0,66.5662109375,1.0,2],[67.86666666666666,1.0,67.0337890625,1.0,68.60194498697916,1.0,2],[69.75,1.0,69.0147216796875,1.0,71.31815592447917,1.0,2],[73.76666666666667,1.0,72.1985107421875,1.0,75.33482259114584,1.0,2]],0],[[[5.25,1.0,2.97910639444987,1.0,7.520893351236979,1.0,2],[11.066666666666666,1.0,8.795773315429688,1.0,14.124890136718749,1.0,2],[18.9,1.0,15.841776529947916,1.0,32.56440226236979,1.0,2],[53.9,1.0,40.235595703125,1.0,58.51986897786458,1.0,2],[65.73333333333333,1.0,61.5689453125,1.0,66.5662109375,1.0,2],[67.86666666666666,1.0,67.0337890625,1.0,68.60194498697916,1.0,2],[69.75,1.0,69.0147216796875,1.0,71.31815592447917,1.0,2],[73.76666666666667,1.0,72.1985107421875,1.0,75.33482259114584,1.0,2]],0],[[[5.25,1.0,2.97910639444987,1.0,7.520893351236979,1.0,2],[11.066666666666666,1.0,8.795773315429688,1.0,14.124890136718749,1.0,2],[18.9,1.0,15.841776529947916,1.0,32.56440226236979,1.0,2],[53.9,1.0,40.235595703125,1.0,58.51986897786458,1.0,2],[65.73333333333333,1.0,61.5689453125,1.0,66.5662109375,1.0,2],[67.86666666666666,1.0,67.0337890625,1.0,68.60194498697916,1.0,2],[69.75,1.0,69.0147216796875,1.0,71.31815592447917,1.0,2],[73.76666666666667,1.0,72.1985107421875,1.0,75.33482259114584,1.0,2]],0]],\"rotation_euler\":[[[[5.25,0.0,2.97910639444987,0.0,7.520893351236979,0.0,2],[11.066666666666666,0.0,8.795773315429688,0.0,14.124890136718749,0.0,2],[18.9,0.0,15.841776529947916,0.0,32.56440226236979,0.0,2],[53.9,0.0,40.235595703125,0.0,58.51986897786458,0.0,2],[65.73333333333333,0.0,61.5689453125,0.0,66.5662109375,0.0,2],[67.86666666666666,0.0,67.0337890625,0.0,68.60194498697916,0.0,2],[69.75,0.0,69.0147216796875,0.0,71.31815592447917,0.0,2],[73.76666666666667,0.0,72.1985107421875,0.0,75.33482259114584,0.0,2]],0],[[[5.25,0.0,2.97910639444987,0.0,7.520893351236979,0.0,2],[11.066666666666666,0.0,8.795773315429688,0.0,14.124890136718749,0.0,2],[18.9,0.0,15.841776529947916,0.0,32.56440226236979,0.0,2],[53.9,0.0,40.235595703125,0.0,58.51986897786458,0.0,2],[65.73333333333333,0.0,61.5689453125,0.0,66.5662109375,0.0,2],[67.86666666666666,0.0,67.0337890625,0.0,68.60194498697916,0.0,2],[69.75,0.0,69.0147216796875,0.0,71.31815592447917,0.0,2],[73.76666666666667,0.0,72.1985107421875,0.0,75.33482259114584,0.0,2]],0],[[[5.25,0.0,2.97910639444987,0.0,7.520893351236979,0.0,2],[11.066666666666666,0.0,8.795773315429688,0.0,14.124890136718749,0.0,2],[18.9,0.0,15.841776529947916,0.0,32.56440226236979,0.0,2],[53.9,0.0,40.235595703125,0.0,58.51986897786458,0.0,2],[65.73333333333333,0.0,61.5689453125,0.0,66.5662109375,0.0,2],[67.86666666666666,0.0,67.0337890625,0.0,68.60194498697916,0.0,2],[69.75,0.0,69.0147216796875,0.0,71.31815592447917,0.0,2],[73.76666666666667,0.0,72.1985107421875,0.0,75.33482259114584,0.0,2]],0]],\"location\":[[[[5.25,-59.22434616088867,2.97910639444987,-59.22434616088867,7.520893351236979,-59.22434616088867,2],[11.066666666666666,40.605228424072266,8.795773315429688,1.4696540832519531,14.124890136718749,93.30929565429688,2],[18.9,176.15664672851562,15.841776529947916,176.15664672851562,32.56440226236979,176.15664672851562,2],[53.9,159.16468811035156,40.235595703125,159.16468811035156,58.51986897786458,159.16468811035156,2],[65.73333333333333,159.16468811035156,61.5689453125,159.16468811035156,66.5662109375,159.16468811035156,2],[67.86666666666666,-29.089920043945312,67.0337890625,-29.089920043945312,68.60194498697916,-29.089920043945312,2],[69.75,48.873016357421875,69.0147216796875,23.55942726135254,71.31815592447917,102.86040496826172,2],[73.76666666666667,159.16468811035156,72.1985107421875,159.16468811035156,75.33482259114584,159.16468811035156,2]],0],[[[5.25,243.78866577148438,2.97910639444987,243.78866577148438,7.520893351236979,243.78866577148438,2],[11.066666666666666,132.4595489501953,8.795773315429688,173.24649047851562,14.124890136718749,77.53157043457031,2],[18.9,1.001965045928955,15.841776529947916,24.611568450927734,32.56440226236979,-104.48774719238281,2],[53.9,-104.48774719238281,40.235595703125,-104.48774719238281,58.51986897786458,-104.48774719238281,2],[65.73333333333333,-104.48774719238281,61.5689453125,-104.48774719238281,66.5662109375,-104.48774719238281,2],[67.86666666666666,162.61083984375,67.0337890625,162.61083984375,68.60194498697916,162.61083984375,2],[69.75,115.03565979003906,69.0147216796875,144.41514587402344,71.31815592447917,52.37675094604492,2],[73.76666666666667,-104.48774719238281,72.1985107421875,-104.48774719238281,75.33482259114584,-104.48774719238281,2]],0],[[[5.25,-79.44241333007812,2.97910639444987,-79.44241333007812,7.520893351236979,-79.44241333007812,2],[11.066666666666666,53.403053283691406,8.795773315429688,18.726818084716797,14.124890136718749,100.10171508789062,2],[18.9,113.727294921875,15.841776529947916,90.75762176513672,32.56440226236979,216.3577423095703,2],[53.9,369.94873046875,40.235595703125,369.94873046875,58.51986897786458,369.94873046875,2],[65.73333333333333,-68.11761474609375,61.5689453125,-68.11761474609375,66.5662109375,-68.11761474609375,2],[67.86666666666666,-5.205715656280518,67.0337890625,-58.527469635009766,68.60194498697916,41.86739730834961,2],[69.75,180.4010009765625,69.0147216796875,180.4010009765625,71.31815592447917,180.4010009765625,2],[73.76666666666667,-68.11761474609375,72.1985107421875,-68.11761474609375,75.33482259114584,-68.11761474609375,2]],0]]}],\"warningLight\":[{\"scale\":[[[[0.0,1.0,-0.14965774218241373,1.0,0.14965774218241373,1.0,2],[0.3833333333333333,1.0,0.2336755911509196,1.0,0.5655253728230795,1.0,2],[0.85,1.0,0.6678079605102539,1.0,1.019178326924642,1.0,2],[1.2833333333333332,1.0,1.114155069986979,1.0,1.468421427408854,1.0,2],[1.7574179331461588,1.0,1.572329839070638,1.0,1.928947067260742,1.0,2],[2.19677251180013,1.0,2.025243377685547,1.0,2.3672108968098957,1.0,2],[2.6333333333333333,1.0,2.4628949483235676,1.0,2.8025115966796874,1.0,2],[3.0666666666666664,1.0,2.8974884033203123,1.0,3.2293380737304687,1.0,2],[3.4833333333333334,1.0,3.320661926269531,1.0,3.632991027832031,1.0,2],[3.8666666666666667,1.0,3.7170089721679687,1.0,4.3742014567057295,1.0,2],[5.166666666666667,1.0,4.659131876627604,1.0,5.674201456705729,1.0,2]],0],[[[0.0,1.0,-0.14965774218241373,1.0,0.14965774218241373,1.0,2],[0.3833333333333333,1.0,0.2336755911509196,1.0,0.5655253728230795,1.0,2],[0.85,1.0,0.6678079605102539,1.0,1.019178326924642,1.0,2],[1.2833333333333332,1.0,1.114155069986979,1.0,1.468421427408854,1.0,2],[1.7574179331461588,1.0,1.572329839070638,1.0,1.928947067260742,1.0,2],[2.19677251180013,1.0,2.025243377685547,1.0,2.3672108968098957,1.0,2],[2.6333333333333333,1.0,2.4628949483235676,1.0,2.8025115966796874,1.0,2],[3.0666666666666664,1.0,2.8974884033203123,1.0,3.2293380737304687,1.0,2],[3.4833333333333334,1.0,3.320661926269531,1.0,3.632991027832031,1.0,2],[3.8666666666666667,1.0,3.7170089721679687,1.0,4.3742014567057295,1.0,2],[5.166666666666667,1.0,4.659131876627604,1.0,5.674201456705729,1.0,2]],0],[[[0.0,1.0,-0.14965774218241373,1.0,0.14965774218241373,1.0,2],[0.3833333333333333,1.0,0.2336755911509196,1.0,0.5655253728230795,1.0,2],[0.85,1.0,0.6678079605102539,1.0,1.019178326924642,1.0,2],[1.2833333333333332,1.0,1.114155069986979,1.0,1.468421427408854,1.0,2],[1.7574179331461588,1.0,1.572329839070638,1.0,1.928947067260742,1.0,2],[2.19677251180013,1.0,2.025243377685547,1.0,2.3672108968098957,1.0,2],[2.6333333333333333,1.0,2.4628949483235676,1.0,2.8025115966796874,1.0,2],[3.0666666666666664,1.0,2.8974884033203123,1.0,3.2293380737304687,1.0,2],[3.4833333333333334,1.0,3.320661926269531,1.0,3.632991027832031,1.0,2],[3.8666666666666667,1.0,3.7170089721679687,1.0,4.3742014567057295,1.0,2],[5.166666666666667,1.0,4.659131876627604,1.0,5.674201456705729,1.0,2]],0]],\"rotation_euler\":[[[[0.0,0.0,-0.14965774218241373,0.0,0.14965774218241373,0.0,2],[0.3833333333333333,0.0,0.2336755911509196,0.0,0.5655253728230795,0.0,2],[0.85,0.0,0.6678079605102539,0.0,1.019178326924642,0.0,2],[1.2833333333333332,0.0,1.114155069986979,0.0,1.468421427408854,0.0,2],[1.7574179331461588,0.0,1.572329839070638,0.0,1.928947067260742,0.0,2],[2.19677251180013,0.0,2.025243377685547,0.0,2.3672108968098957,0.0,2],[2.6333333333333333,0.0,2.4628949483235676,0.0,2.8025115966796874,0.0,2],[3.0666666666666664,0.0,2.8974884033203123,0.0,3.2293380737304687,0.0,2],[3.4833333333333334,0.0,3.320661926269531,0.0,3.632991027832031,0.0,2],[3.8666666666666667,0.0,3.7170089721679687,0.0,4.3742014567057295,0.0,2],[5.166666666666667,0.0,4.659131876627604,0.0,5.674201456705729,0.0,2]],0],[[[0.0,0.0,-0.14965774218241373,0.0,0.14965774218241373,0.0,2],[0.3833333333333333,0.0,0.2336755911509196,0.0,0.5655253728230795,0.0,2],[0.85,0.0,0.6678079605102539,0.0,1.019178326924642,0.0,2],[1.2833333333333332,0.0,1.114155069986979,0.0,1.468421427408854,0.0,2],[1.7574179331461588,0.0,1.572329839070638,0.0,1.928947067260742,0.0,2],[2.19677251180013,0.0,2.025243377685547,0.0,2.3672108968098957,0.0,2],[2.6333333333333333,0.0,2.4628949483235676,0.0,2.8025115966796874,0.0,2],[3.0666666666666664,0.0,2.8974884033203123,0.0,3.2293380737304687,0.0,2],[3.4833333333333334,0.0,3.320661926269531,0.0,3.632991027832031,0.0,2],[3.8666666666666667,0.0,3.7170089721679687,0.0,4.3742014567057295,0.0,2],[5.166666666666667,0.0,4.659131876627604,0.0,5.674201456705729,0.0,2]],0],[[[0.0,0.0,-0.14965774218241373,0.0,0.14965774218241373,0.0,2],[0.3833333333333333,0.0,0.2336755911509196,0.0,0.5655253728230795,0.0,2],[0.85,0.0,0.6678079605102539,0.0,1.019178326924642,0.0,2],[1.2833333333333332,0.0,1.114155069986979,0.0,1.468421427408854,0.0,2],[1.7574179331461588,0.0,1.572329839070638,0.0,1.928947067260742,0.0,2],[2.19677251180013,0.0,2.025243377685547,0.0,2.3672108968098957,0.0,2],[2.6333333333333333,0.0,2.4628949483235676,0.0,2.8025115966796874,0.0,2],[3.0666666666666664,0.0,2.8974884033203123,0.0,3.2293380737304687,0.0,2],[3.4833333333333334,0.0,3.320661926269531,0.0,3.632991027832031,0.0,2],[3.8666666666666667,0.0,3.7170089721679687,0.0,4.3742014567057295,0.0,2],[5.166666666666667,0.0,4.659131876627604,0.0,5.674201456705729,0.0,2]],0]],\"location\":[[[[0.0,2.0,-0.14965774218241373,2.0,0.14965774218241373,2.0,2],[0.3833333333333333,2.0,0.2336755911509196,2.0,0.5655253728230795,2.0,2],[0.85,2.0,0.6678079605102539,2.0,1.019178326924642,2.0,2],[1.2833333333333332,2.0,1.114155069986979,2.0,1.468421427408854,2.0,2],[1.7574179331461588,2.0,1.572329839070638,2.0,1.928947067260742,2.0,2],[2.19677251180013,2.0,2.025243377685547,2.0,2.3672108968098957,2.0,2],[2.6333333333333333,2.0,2.4628949483235676,2.0,2.8025115966796874,2.0,2],[3.0666666666666664,2.0,2.8974884033203123,2.0,3.2293380737304687,2.0,2],[3.4833333333333334,2.0,3.320661926269531,2.0,3.632991027832031,2.0,2],[3.8666666666666667,2.0,3.7170089721679687,2.0,4.3742014567057295,2.0,2],[5.166666666666667,2.0,4.659131876627604,2.0,5.674201456705729,2.0,2]],0],[[[0.0,0.0,-0.14965774218241373,0.0,0.14965774218241373,0.0,2],[0.3833333333333333,0.0,0.2336755911509196,0.0,0.5655253728230795,0.0,2],[0.85,0.0,0.6678079605102539,0.0,1.019178326924642,0.0,2],[1.2833333333333332,0.0,1.114155069986979,0.0,1.468421427408854,0.0,2],[1.7574179331461588,0.0,1.572329839070638,0.0,1.928947067260742,0.0,2],[2.19677251180013,0.0,2.025243377685547,0.0,2.3672108968098957,0.0,2],[2.6333333333333333,0.0,2.4628949483235676,0.0,2.8025115966796874,0.0,2],[3.0666666666666664,0.0,2.8974884033203123,0.0,3.2293380737304687,0.0,2],[3.4833333333333334,0.0,3.320661926269531,0.0,3.632991027832031,0.0,2],[3.8666666666666667,0.0,3.7170089721679687,0.0,4.3742014567057295,0.0,2],[5.166666666666667,0.0,4.659131876627604,0.0,5.674201456705729,0.0,2]],0],[[[0.0,0.5,-0.14965774218241373,0.5,0.14965774218241373,0.5,2],[0.3833333333333333,1.0,0.2336755911509196,1.0,0.5655253728230795,1.0,2],[0.85,0.5,0.6678079605102539,0.5,1.019178326924642,0.5,2],[1.2833333333333332,1.0,1.114155069986979,1.0,1.468421427408854,1.0,2],[1.7574179331461588,0.5,1.572329839070638,0.5,1.928947067260742,0.5,2],[2.19677251180013,1.0,2.025243377685547,1.0,2.3672108968098957,1.0,2],[2.6333333333333333,0.5,2.4628949483235676,0.5,2.8025115966796874,0.5,2],[3.0666666666666664,1.0,2.8974884033203123,1.0,3.2293380737304687,1.0,2],[3.4833333333333334,0.5,3.320661926269531,0.5,3.632991027832031,0.5,2],[3.8666666666666667,1.0,3.7170089721679687,1.0,4.3742014567057295,1.0,2],[5.166666666666667,0.0,4.659131876627604,0.0,5.674201456705729,0.0,2]],0]]}],\"cookie\":[{\"scale\":[[[[127.38333333333333,1.0,126.00388183593749,1.0,128.76278483072917,1.0,2],[130.91666666666666,1.0,129.53721516927084,1.0,132.2961181640625,1.0,2]],0],[[[127.38333333333333,1.0,126.00388183593749,1.0,128.76278483072917,1.0,2],[130.91666666666666,1.0,129.53721516927084,1.0,132.2961181640625,1.0,2]],0],[[[127.38333333333333,1.0,126.00388183593749,1.0,128.76278483072917,1.0,2],[130.91666666666666,1.0,129.53721516927084,1.0,132.2961181640625,1.0,2]],0]],\"rotation_euler\":[[[[127.38333333333333,1.5707963705062866,126.00388183593749,1.5707963705062866,128.76278483072917,1.5707963705062866,2],[130.91666666666666,1.5707963705062866,129.53721516927084,1.5707963705062866,132.2961181640625,1.5707963705062866,2]],0],[[[127.38333333333333,0.0,126.00388183593749,0.0,128.76278483072917,0.0,2],[130.91666666666666,0.0,129.53721516927084,0.0,132.2961181640625,0.0,2]],0],[[[127.38333333333333,0.0,126.00388183593749,0.0,128.76278483072917,0.0,2],[130.91666666666666,0.0,129.53721516927084,0.0,132.2961181640625,0.0,2]],0]],\"location\":[[[[127.38333333333333,1.2634344100952148,126.00388183593749,1.2634344100952148,128.76278483072917,1.2634344100952148,2],[130.91666666666666,0.0,129.53721516927084,0.0,132.2961181640625,0.0,2]],0],[[[127.38333333333333,9.265159606933594,126.00388183593749,9.265159606933594,128.76278483072917,9.265159606933594,2],[130.91666666666666,0.0,129.53721516927084,0.0,132.2961181640625,0.0,2]],0],[[[127.38333333333333,875.6574096679688,126.00388183593749,875.6574096679688,128.76278483072917,875.6574096679688,2],[130.91666666666666,1423.618408203125,129.53721516927084,1423.618408203125,132.2961181640625,1423.618408203125,2]],0]]}]}");
 
       _export("__useDefault", __useDefault);
 
@@ -7327,7 +5913,7 @@ $__System.register("29", [], function (_export, _context) {
     }
   };
 });
-$__System.register("2a", [], function (_export, _context) {
+$__System.register("17", [], function (_export, _context) {
   "use strict";
 
   var __useDefault;
@@ -7335,7 +5921,7 @@ $__System.register("2a", [], function (_export, _context) {
   return {
     setters: [],
     execute: function () {
-      _export("__useDefault", __useDefault = "ply\nformat ascii 1.0\ncomment Created by Blender 2.79 (sub 0) - www.blender.org, source file: 'cookie.blend'\nelement vertex 3180\nproperty float x\nproperty float y\nproperty float z\nproperty float nx\nproperty float ny\nproperty float nz\nproperty float s\nproperty float t\nproperty uchar red\nproperty uchar green\nproperty uchar blue\nelement face 3110\nproperty list uchar uint vertex_indices\nend_header\n-0.177485 0.162746 0.015461 0.396649 -0.846858 -0.354198 0.242700 0.266600 63 45 22\n-0.163795 0.207742 -0.081012 0.122135 -0.973205 0.194769 0.254550 0.265262 63 47 36\n-0.108431 0.193634 -0.024698 -0.256325 -0.960509 -0.108066 0.246437 0.276848 68 48 31\n-0.060253 0.168754 -0.006405 -0.636982 -0.768487 -0.060457 0.245723 0.285923 88 59 42\n-0.108431 0.193634 -0.024698 -0.256325 -0.960509 -0.108066 0.000893 0.845088 68 48 31\n-0.131017 0.158547 0.051497 0.082522 -0.922575 -0.376873 0.009096 0.852013 73 54 34\n-0.177485 0.162746 0.015461 0.396649 -0.846858 -0.354198 0.004194 0.859566 63 45 22\n-0.060253 0.168754 -0.006405 -0.636982 -0.768487 -0.060457 0.009462 0.839067 88 59 42\n-0.163795 0.207742 -0.081012 0.122135 -0.973205 0.194769 0.136100 0.893700 63 47 36\n-0.177485 0.162746 0.015461 0.396649 -0.846858 -0.354198 0.136100 0.901900 63 45 22\n-0.227314 0.162658 -0.049968 0.335795 -0.914029 -0.227454 0.130800 0.897000 60 38 24\n-0.074114 0.145231 -0.113789 -0.498795 -0.826716 0.260140 0.266424 0.284432 81 62 40\n-0.132510 0.141202 -0.162567 -0.036103 -0.900235 0.433882 0.276854 0.268636 45 26 17\n-0.060253 0.168754 -0.006405 -0.636982 -0.768487 -0.060457 0.220199 0.883973 88 59 42\n-0.072479 0.159381 0.052561 -0.455123 -0.812922 -0.363292 0.225700 0.884700 38 20 12\n-0.131017 0.158547 0.051497 0.082522 -0.922575 -0.376873 0.225700 0.894900 73 54 34\n-0.060253 0.168754 -0.006405 -0.636982 -0.768487 -0.060457 0.335600 0.610500 88 59 42\n-0.046284 0.117121 0.040210 -0.808313 -0.447584 -0.382427 0.348004 0.611169 59 37 20\n-0.072479 0.159381 0.052561 -0.455123 -0.812922 -0.363292 0.339684 0.616361 38 20 12\n-0.212469 0.153739 -0.115923 0.254341 -0.845729 0.469069 0.264930 0.253659 48 30 16\n-0.194593 0.141406 0.060363 0.529283 -0.735679 -0.422559 0.083668 0.851332 58 32 14\n-0.177485 0.162746 0.015461 0.396649 -0.846858 -0.354198 0.090249 0.852342 63 45 22\n-0.131017 0.158547 0.051497 0.082522 -0.922575 -0.376873 0.087362 0.863074 73 54 34\n-0.131017 0.158547 0.051497 0.082522 -0.922575 -0.376873 0.204833 0.874247 73 54 34\n-0.189423 0.118019 0.086933 0.502914 -0.840114 -0.203101 0.210200 0.884800 71 49 25\n-0.194593 0.141406 0.060363 0.529283 -0.735679 -0.422559 0.205300 0.881400 58 32 14\n-0.131017 0.158547 0.051497 0.082522 -0.922575 -0.376873 0.338896 0.626962 73 54 34\n-0.095660 0.118824 0.128438 -0.496475 -0.687094 -0.530442 0.351795 0.626616 42 19 9\n-0.265899 0.151935 -0.035165 0.194586 -0.852657 -0.484848 0.010200 0.872500 51 27 13\n-0.279904 0.160417 -0.083634 0.326975 -0.918882 0.220618 0.010200 0.878600 64 39 22\n-0.227314 0.162658 -0.049968 0.335795 -0.914029 -0.227454 0.007600 0.875200 60 38 24\n-0.227314 0.162658 -0.049968 0.335795 -0.914029 -0.227454 0.026614 0.880516 60 38 24\n-0.212469 0.153739 -0.115923 0.254341 -0.845729 0.469069 0.027000 0.894400 48 30 16\n-0.163795 0.207742 -0.081012 0.122135 -0.973205 0.194769 0.021900 0.883100 63 47 36\n-0.190665 0.114052 0.182037 -0.015198 -0.977111 -0.212043 0.075808 0.783830 37 16 7\n-0.189423 0.118019 0.086933 0.502914 -0.840114 -0.203101 0.089056 0.777595 71 49 25\n-0.131017 0.158547 0.051497 0.082522 -0.922575 -0.376873 0.096406 0.788253 73 54 34\n-0.131017 0.158547 0.051497 0.082522 -0.922575 -0.376873 0.345900 0.633000 73 54 34\n-0.190665 0.114052 0.182037 -0.015198 -0.977111 -0.212043 0.351956 0.648520 37 16 7\n-0.227314 0.162658 -0.049968 0.335795 -0.914029 -0.227454 0.252211 0.252595 60 38 24\n-0.279904 0.160417 -0.083634 0.326975 -0.918882 0.220618 0.257809 0.239934 64 39 22\n-0.265899 0.151935 -0.035165 0.194586 -0.852657 -0.484848 0.250101 0.243639 51 27 13\n-0.338593 0.123228 -0.068117 0.818232 -0.571459 0.062136 0.257966 0.227634 44 19 9\n-0.212006 0.101094 0.263120 0.132328 -0.458968 -0.878506 0.061700 0.783600 25 9 4\n-0.245847 0.099999 0.212493 0.380261 -0.907987 -0.175878 0.065220 0.777057 32 12 6\n-0.167054 0.115649 0.245350 -0.692496 -0.598865 -0.402173 0.066911 0.790039 23 5 2\n-0.064007 0.081957 0.114923 -0.758171 -0.440748 -0.480483 0.357730 0.621448 41 12 5\n-0.342770 0.105098 -0.013989 0.525742 -0.824519 -0.209113 0.492127 0.626654 36 14 6\n-0.338593 0.123228 -0.068117 0.818232 -0.571459 0.062136 0.483053 0.628722 44 19 9\n-0.265899 0.151935 -0.035165 0.194586 -0.852657 -0.484848 0.485500 0.615000 51 27 13\n-0.086744 0.110580 -0.193119 -0.375805 -0.738639 0.559587 0.284727 0.278908 66 41 25\n-0.276217 0.130256 -0.112755 0.447493 -0.838771 0.310099 0.266428 0.240263 40 22 12\n-0.265899 0.151935 -0.035165 0.194586 -0.852657 -0.484848 0.096048 0.816451 51 27 13\n-0.227314 0.162658 -0.049968 0.335795 -0.914029 -0.227454 0.095657 0.825520 60 38 24\n-0.269155 0.097865 0.021913 0.192053 -0.856594 -0.478866 0.085009 0.810466 102 68 36\n-0.072479 0.159381 0.052561 -0.455123 -0.812922 -0.363292 0.372800 0.881500 38 20 12\n-0.046284 0.117121 0.040210 -0.808313 -0.447584 -0.382427 0.378300 0.883191 59 37 20\n-0.064007 0.081957 0.114923 -0.758171 -0.440748 -0.480483 0.377009 0.893341 41 12 5\n-0.177485 0.162746 0.015461 0.396649 -0.846858 -0.354198 0.488703 0.799444 63 45 22\n-0.194593 0.141406 0.060363 0.529283 -0.735679 -0.422559 0.489132 0.811382 58 32 14\n-0.233614 0.095406 0.040328 0.410291 -0.863552 -0.293008 0.478216 0.811077 99 67 30\n-0.227314 0.162658 -0.049968 0.335795 -0.914029 -0.227454 0.482146 0.789552 60 38 24\n1.202939 0.146778 -0.078682 0.966918 -0.252846 0.032868 0.722178 0.720808 84 40 14\n1.209832 0.137108 0.021979 0.983947 0.176977 0.021424 0.723823 0.699680 70 36 16\n1.201294 0.086735 -0.035184 0.960479 -0.250496 -0.121342 0.733643 0.711105 90 45 18\n-0.189423 0.118019 0.086933 0.502914 -0.840114 -0.203101 0.090608 0.772624 71 49 25\n-0.269886 0.090908 0.160461 0.222663 -0.974822 -0.009186 0.073645 0.773881 64 37 20\n-0.269155 0.097865 0.021913 0.192053 -0.856594 -0.478866 0.475700 0.801800 102 68 36\n-0.210902 -0.001703 1.374397 -0.121860 -0.143620 0.982086 0.001094 0.272195 51 25 12\n-0.123258 -0.053739 1.332700 -0.039064 -0.916196 0.398785 0.013293 0.290237 78 29 11\n-0.027006 -0.002569 1.388605 0.006256 -0.149266 0.988769 0.000758 0.311556 50 28 16\n-0.167054 0.115649 0.245350 -0.692496 -0.598865 -0.402173 0.870200 0.671000 23 5 2\n-0.173324 0.055538 0.232598 -0.463607 -0.551958 -0.693075 0.873300 0.669400 45 14 7\n-0.212006 0.101094 0.263120 0.132328 -0.458968 -0.878506 0.873300 0.673300 25 9 4\n-0.045565 0.100357 -0.060977 -0.724479 -0.689169 0.011902 0.290306 0.863242 87 69 47\n-0.060253 0.168754 -0.006405 -0.636982 -0.768487 -0.060457 0.297211 0.851364 88 59 42\n-0.074114 0.145231 -0.113789 -0.498795 -0.826716 0.260140 0.296716 0.862635 81 62 40\n-0.319837 0.110076 -0.117984 0.660543 -0.543535 0.517869 0.268739 0.232056 35 14 8\n-0.189423 0.118019 0.086933 0.502914 -0.840114 -0.203101 0.487307 0.819647 71 49 25\n-0.229656 0.077091 0.259418 0.045717 -0.587268 -0.808069 0.234700 0.873900 23 6 2\n-0.245847 0.099999 0.212493 0.380261 -0.907987 -0.175878 0.229441 0.880388 32 12 6\n-0.212006 0.101094 0.263120 0.132328 -0.458968 -0.878506 0.233421 0.869393 25 9 4\n-0.167105 0.087622 0.196240 -0.248115 -0.595935 -0.763726 0.358901 0.647335 17 4 2\n-0.135442 0.100921 0.185423 -0.377819 -0.617267 -0.690054 0.356827 0.636287 49 18 9\n0.343930 -0.005998 1.317758 0.267678 -0.102512 0.958007 0.017470 0.389834 42 19 9\n0.373072 -0.048502 1.279571 0.189886 -0.753899 0.628925 0.027559 0.395646 60 28 14\n0.433660 -0.001013 1.294470 0.387799 -0.038331 0.920927 0.022740 0.406009 35 17 9\n-0.288196 0.137904 -0.139141 0.686605 -0.711997 0.147038 0.269953 0.238828 38 21 11\n-0.199475 0.108390 -0.181017 0.113437 -0.958556 0.261208 0.281107 0.255863 25 11 6\n-0.442005 -0.029214 1.306769 -0.229804 -0.656301 0.718619 0.012808 0.221954 60 32 19\n-0.349054 -0.045716 1.289764 -0.123417 -0.909330 0.397290 0.019661 0.241508 76 37 16\n-0.013360 -0.058860 1.329930 0.019227 -0.930906 0.364666 0.016403 0.313813 81 31 14\n0.194801 0.007679 1.364660 0.184057 -0.017640 0.982727 0.006997 0.358218 48 23 12\n0.174758 -0.047735 1.327335 0.074221 -0.814570 0.575274 0.018037 0.353147 66 32 15\n-0.060253 0.168754 -0.006405 -0.636982 -0.768487 -0.060457 0.342825 0.604325 88 59 42\n0.004757 0.077105 -0.012738 -0.575457 -0.803156 -0.154118 0.354445 0.597700 70 52 39\n0.650851 -0.043134 1.145164 0.527268 -0.403119 0.747948 0.504200 0.704552 41 21 9\n0.758621 0.006374 1.107076 0.566820 -0.009552 0.823756 0.508032 0.680490 20 10 6\n0.658129 0.051586 1.148238 0.490341 0.310221 0.814417 0.515638 0.703279 35 16 9\n-0.256555 0.085316 0.081743 0.258583 -0.965850 0.015503 0.089649 0.760292 102 68 39\n-0.167054 0.115649 0.245350 -0.692496 -0.598865 -0.402173 0.193031 0.874864 23 5 2\n-0.190665 0.114052 0.182037 -0.015198 -0.977111 -0.212043 0.199995 0.871069 37 16 7\n-0.173324 0.055538 0.232598 -0.463607 -0.551958 -0.693075 0.198262 0.878264 45 14 7\n1.197107 0.074811 0.020736 0.940489 -0.339763 -0.002838 0.735827 0.699203 88 45 18\n1.205250 0.086238 0.115052 0.983673 -0.153172 0.094333 0.733656 0.679775 76 39 12\n0.650851 -0.043134 1.145164 0.527268 -0.403119 0.747948 0.420000 0.857000 41 21 9\n0.730665 -0.042291 1.087628 0.391064 -0.548692 0.738884 0.423034 0.872187 57 24 11\n0.758621 0.006374 1.107076 0.566820 -0.009552 0.823756 0.415169 0.873523 20 10 6\n-0.024520 0.121065 -0.108279 -0.702353 -0.709464 -0.057588 0.271368 0.293539 37 24 10\n-0.029037 0.102178 -0.166825 -0.749687 -0.608661 0.259713 0.279920 0.291790 61 41 22\n-0.342770 0.105098 -0.013989 0.525742 -0.824519 -0.209113 0.091155 0.799056 36 14 6\n-0.269155 0.097865 0.021913 0.192053 -0.856594 -0.478866 0.084600 0.803900 102 68 36\n-0.315939 0.088613 0.192181 0.389203 -0.918516 -0.069338 0.312788 0.860883 51 20 7\n-0.303798 0.086554 0.148838 0.536973 -0.830714 0.146733 0.306432 0.859040 49 17 6\n-0.269886 0.090908 0.160461 0.222663 -0.974822 -0.009186 0.308830 0.851721 64 37 20\n-0.288196 0.137904 -0.139141 0.686605 -0.711997 0.147038 0.238305 0.853226 38 21 11\n-0.276217 0.130256 -0.112755 0.447493 -0.838771 0.310099 0.244203 0.852047 40 22 12\n-0.300439 0.095245 -0.156881 0.631794 -0.272805 0.725516 0.236558 0.858775 28 9 5\n-0.173324 0.055538 0.232598 -0.463607 -0.551958 -0.693075 0.365583 0.651794 45 14 7\n-0.118360 0.139867 -0.227175 -0.204199 -0.613025 0.763176 0.286900 0.274600 48 29 16\n0.578436 -0.005196 1.212256 0.482803 -0.041688 0.874722 0.859500 0.624800 103 46 17\n0.650851 -0.043134 1.145164 0.527268 -0.403119 0.747948 0.855300 0.618000 41 21 9\n0.658129 0.051586 1.148238 0.490341 0.310221 0.814417 0.859500 0.612500 35 16 9\n-0.118360 0.139867 -0.227175 -0.204199 -0.613025 0.763176 0.287914 0.270930 48 29 16\n-0.149273 0.111284 -0.225884 -0.108280 -0.720725 0.684683 0.288169 0.265491 40 20 10\n1.176209 0.053682 -0.087770 0.854854 -0.504898 -0.119388 0.740604 0.721115 101 48 17\n1.171088 0.047130 -0.128048 0.764672 -0.641224 -0.063662 0.742856 0.732165 103 53 23\n-0.252910 -0.056116 1.312651 -0.105808 -0.905606 0.410627 0.016463 0.261534 81 40 20\n-0.258846 0.041331 0.309852 0.199316 -0.162847 -0.966277 0.294000 0.898000 10 2 1\n-0.303703 0.060038 0.247298 0.284982 -0.620472 -0.730583 0.289200 0.893700 39 13 5\n-0.229656 0.077091 0.259418 0.045717 -0.587268 -0.808069 0.294000 0.886600 23 6 2\n-0.319837 0.110076 -0.117984 0.660543 -0.543535 0.517869 0.319500 0.903000 35 14 8\n-0.338593 0.123228 -0.068117 0.818232 -0.571459 0.062136 0.318388 0.894832 44 19 9\n-0.342891 0.082690 -0.091408 0.962066 -0.225898 0.152776 0.320600 0.898700 31 9 4\n1.208581 0.139031 -0.315903 0.995025 0.099307 -0.003052 0.724588 0.769796 61 39 20\n1.201873 0.152065 -0.212727 0.989776 0.131870 -0.054109 0.722200 0.745500 80 41 17\n1.193191 0.103946 -0.209769 0.965911 -0.256142 0.037019 0.731538 0.748344 96 49 15\n-0.045565 0.100357 -0.060977 -0.724479 -0.689169 0.011902 0.167100 0.898400 87 69 47\n0.004757 0.077105 -0.012738 -0.575457 -0.803156 -0.154118 0.167100 0.905700 70 52 39\n-0.060253 0.168754 -0.006405 -0.636982 -0.768487 -0.060457 0.162600 0.904800 88 59 42\n-0.245847 0.099999 0.212493 0.380261 -0.907987 -0.175878 0.372434 0.884268 32 12 6\n-0.229656 0.077091 0.259418 0.045717 -0.587268 -0.808069 0.368500 0.894700 23 6 2\n-0.303703 0.060038 0.247298 0.284982 -0.620472 -0.730583 0.368526 0.883233 39 13 5\n-0.024520 0.121065 -0.108279 -0.702353 -0.709464 -0.057588 0.108400 0.857109 37 24 10\n-0.045565 0.100357 -0.060977 -0.724479 -0.689169 0.011902 0.100922 0.851621 87 69 47\n-0.074114 0.145231 -0.113789 -0.498795 -0.826716 0.260140 0.109786 0.849604 81 62 40\n-0.303703 0.060038 0.247298 0.284982 -0.620472 -0.730583 0.306800 0.903000 39 13 5\n-0.269886 0.090908 0.160461 0.222663 -0.974822 -0.009186 0.306800 0.908500 64 37 20\n-0.245847 0.099999 0.212493 0.380261 -0.907987 -0.175878 0.302100 0.903100 32 12 6\n-0.303703 0.060038 0.247298 0.284982 -0.620472 -0.730583 0.314600 0.854800 39 13 5\n-0.247692 0.093185 -0.181542 0.634938 -0.266488 0.725120 0.280044 0.246465 39 11 5\n-0.300439 0.095245 -0.156881 0.631794 -0.272805 0.725516 0.277200 0.236900 28 9 5\n-0.269886 0.090908 0.160461 0.222663 -0.974822 -0.009186 0.076785 0.763491 64 37 20\n-0.303798 0.086554 0.148838 0.536973 -0.830714 0.146733 0.075689 0.755504 49 17 6\n-0.296936 0.087429 0.101543 0.415082 -0.909116 0.034211 0.082448 0.754101 81 43 17\n0.151333 -0.057348 1.286788 0.001007 -0.995453 0.094913 0.029356 0.347679 100 44 18\n-0.233614 0.095406 0.040328 0.410291 -0.863552 -0.293008 0.096200 0.763600 99 67 30\n-0.040275 0.049591 0.073619 -0.702231 -0.609272 -0.368206 0.363186 0.613546 73 36 21\n0.002840 0.033423 0.052875 -0.636891 -0.587054 -0.499649 0.366070 0.603392 70 40 19\n0.578436 -0.005196 1.212256 0.482803 -0.041688 0.874722 0.033900 0.425800 103 46 17\n0.442070 -0.056252 1.243446 0.235572 -0.802576 0.548021 0.036132 0.409365 64 36 18\n-0.445678 0.210605 -1.102647 -0.332194 0.341716 -0.879116 0.789500 0.681685 59 33 15\n-0.304543 0.279506 -1.135046 -0.457625 0.498886 -0.735954 0.788012 0.660854 74 42 19\n-0.370515 0.147370 -1.127284 -0.447645 -0.032624 -0.893582 0.803322 0.667919 26 9 4\n-0.256555 0.085316 0.081743 0.258583 -0.965850 0.015503 0.011100 0.903100 102 68 39\n-0.269155 0.097865 0.021913 0.192053 -0.856594 -0.478866 0.006400 0.898900 102 68 36\n-0.233614 0.095406 0.040328 0.410291 -0.863552 -0.293008 0.008434 0.895186 99 67 30\n-0.313396 0.074315 0.054924 0.535386 -0.787378 -0.305521 0.084500 0.796900 71 37 13\n-0.338604 0.065108 -0.058136 0.921903 -0.286294 0.260903 0.491131 0.637549 64 29 12\n-0.303703 0.060038 0.247298 0.284982 -0.620472 -0.730583 0.362377 0.678904 39 13 5\n-0.340732 0.063404 0.244691 0.574145 -0.510788 -0.639821 0.358864 0.684644 51 20 7\n-0.315939 0.088613 0.192181 0.389203 -0.918516 -0.069338 0.353500 0.679800 51 20 7\n-0.300439 0.095245 -0.156881 0.631794 -0.272805 0.725516 0.837400 0.913600 28 9 5\n-0.276217 0.130256 -0.112755 0.447493 -0.838771 0.310099 0.840600 0.909300 40 22 12\n-0.319837 0.110076 -0.117984 0.660543 -0.543535 0.517869 0.840600 0.913800 35 14 8\n-0.229656 0.077091 0.259418 0.045717 -0.587268 -0.808069 0.362974 0.665293 23 6 2\n-0.212006 0.101094 0.263120 0.132328 -0.458968 -0.878506 0.358983 0.660975 25 9 4\n-0.135442 0.100921 0.185423 -0.377819 -0.617267 -0.690054 0.358712 0.641105 49 18 9\n-0.121225 0.059916 0.200465 -0.630390 -0.627644 -0.456771 0.365468 0.639876 53 24 9\n-0.093256 0.034746 0.166177 -0.579241 -0.637989 -0.507340 0.369169 0.630976 45 22 16\n-0.313396 0.074315 0.054924 0.535386 -0.787378 -0.305521 0.091621 0.743967 71 37 13\n-0.269155 0.097865 0.021913 0.192053 -0.856594 -0.478866 0.097387 0.751879 102 68 36\n-0.247692 0.093185 -0.181542 0.634938 -0.266488 0.725120 0.447500 0.910400 39 11 5\n-0.251987 0.122167 -0.205276 0.750206 -0.660329 0.033601 0.443258 0.909239 11 3 2\n-0.199475 0.108390 -0.181017 0.113437 -0.958556 0.261208 0.446800 0.905800 25 11 6\n0.576774 -0.059697 1.189529 0.326212 -0.695761 0.639882 0.048516 0.437709 75 39 17\n-0.251987 0.122167 -0.205276 0.750206 -0.660329 0.033601 0.286566 0.247817 11 3 2\n-0.202276 0.113024 -0.228069 0.033296 -0.941343 0.335734 0.289782 0.254393 39 18 10\n0.949522 0.019705 0.895949 0.802484 0.092532 0.589404 0.524529 0.627922 35 15 7\n0.868415 0.027009 0.993027 0.765221 0.196265 0.613086 0.519739 0.649157 36 15 6\n0.917957 -0.028502 0.923951 0.742943 -0.243843 0.623341 0.517243 0.632562 31 14 7\n-0.313396 0.074315 0.054924 0.535386 -0.787378 -0.305521 0.286136 0.864074 71 37 13\n-0.396765 0.081090 -0.015870 0.921781 -0.386578 0.029145 0.278094 0.850913 21 6 2\n-0.342770 0.105098 -0.013989 0.525742 -0.824519 -0.209113 0.285825 0.855991 36 14 6\n0.820858 -0.015253 1.046373 0.672994 -0.255776 0.693960 0.437000 0.895500 35 17 8\n0.758621 0.006374 1.107076 0.566820 -0.009552 0.823756 0.442300 0.886000 20 10 6\n0.748796 -0.078304 1.057290 0.355571 -0.733970 0.578600 0.443000 0.895500 65 29 14\n0.868415 0.027009 0.993027 0.765221 0.196265 0.613086 0.406510 0.840706 36 15 6\n0.820858 -0.015253 1.046373 0.672994 -0.255776 0.693960 0.396299 0.839555 35 17 8\n0.833677 -0.074072 0.987675 0.548357 -0.623981 0.556688 0.395767 0.824663 58 27 12\n-0.296936 0.087429 0.101543 0.415082 -0.909116 0.034211 0.226521 0.754916 81 43 17\n-0.303798 0.086554 0.148838 0.536973 -0.830714 0.146733 0.227549 0.746151 49 17 6\n-0.333901 0.019945 0.129159 0.911954 -0.403424 0.074343 0.241894 0.753033 66 22 9\n1.199743 0.165610 -0.451474 0.921964 0.384777 -0.043458 0.718853 0.798630 70 43 22\n1.190127 0.087971 -0.375901 0.971496 -0.230659 -0.054079 0.734914 0.781959 91 43 16\n-0.023256 0.032436 0.123680 -0.693411 -0.596545 -0.404096 0.155800 0.907500 45 19 8\n-0.064007 0.081957 0.114923 -0.758171 -0.440748 -0.480483 0.159400 0.904200 41 12 5\n-0.040275 0.049591 0.073619 -0.702231 -0.609272 -0.368206 0.159400 0.910500 73 36 21\n-0.664545 -0.029934 1.237198 -0.355907 -0.529283 0.770135 0.024847 0.174273 65 38 21\n-0.768511 -0.019966 1.186536 -0.423658 -0.399609 0.812860 0.030981 0.154392 64 36 21\n-0.686456 -0.053244 1.164277 -0.139592 -0.970183 0.198096 0.039012 0.168427 95 47 21\n0.004757 0.077105 -0.012738 -0.575457 -0.803156 -0.154118 0.159057 0.810913 70 52 39\n-0.045565 0.100357 -0.060977 -0.724479 -0.689169 0.011902 0.148561 0.819560 87 69 47\n0.003631 0.072991 -0.080317 -0.813227 -0.527512 0.245674 0.147087 0.808324 74 61 47\n-0.571934 -0.054150 1.217049 -0.055025 -0.972289 0.227119 0.031279 0.193565 95 50 22\n-0.044205 -0.054292 1.235550 0.013184 -0.998962 -0.043245 0.033168 0.305922 79 32 11\n-0.290355 0.214963 -1.163581 -0.698752 0.268166 -0.663167 0.794800 0.646300 74 29 9\n-0.304543 0.279506 -1.135046 -0.457625 0.498886 -0.735954 0.785003 0.647938 74 42 19\n0.031912 -0.053913 1.258264 -0.013916 -0.997436 -0.070101 0.028591 0.322102 59 17 5\n-0.340732 0.063404 0.244691 0.574145 -0.510788 -0.639821 0.235401 0.728837 51 20 7\n-0.355115 0.038504 0.211461 0.998321 -0.057375 -0.005585 0.239452 0.736885 55 15 3\n-0.315939 0.088613 0.192181 0.389203 -0.918516 -0.069338 0.230330 0.736261 51 20 7\n-0.024520 0.121065 -0.108279 -0.702353 -0.709464 -0.057588 0.391056 0.782587 37 24 10\n-0.029037 0.102178 -0.166825 -0.749687 -0.608661 0.259713 0.386075 0.790011 61 41 22\n-0.021581 0.047735 -0.146237 -0.917386 -0.397961 -0.004181 0.378345 0.781388 68 42 21\n-0.396765 0.081090 -0.015870 0.921781 -0.386578 0.029145 0.228478 0.784947 21 6 2\n-0.313396 0.074315 0.054924 0.535386 -0.787378 -0.305521 0.229514 0.769254 71 37 13\n-0.339231 0.043018 0.036186 0.845698 -0.199683 -0.494888 0.237133 0.771134 96 63 35\n-0.338604 0.065108 -0.058136 0.921903 -0.286294 0.260903 0.288024 0.849563 64 29 12\n-0.247692 0.093185 -0.181542 0.634938 -0.266488 0.725120 0.202368 0.907668 39 11 5\n-0.228935 0.096225 -0.237752 0.574755 0.239723 0.782403 0.198000 0.908700 26 8 5\n-0.251987 0.122167 -0.205276 0.750206 -0.660329 0.033601 0.199100 0.903500 11 3 2\n-0.118360 0.139867 -0.227175 -0.204199 -0.613025 0.763176 0.452300 0.908000 48 29 16\n-0.149273 0.111284 -0.225884 -0.108280 -0.720725 0.684683 0.447700 0.908000 40 20 10\n-0.086744 0.110580 -0.193119 -0.375805 -0.738639 0.559587 0.448400 0.902000 66 41 25\n-0.228935 0.096225 -0.237752 0.574755 0.239723 0.782403 0.293545 0.249079 26 8 5\n-0.142611 -0.052368 1.237864 0.018708 -0.999390 0.028504 0.030877 0.286178 100 45 16\n-0.369828 -0.060320 1.222751 -0.057375 -0.995361 0.076998 0.031495 0.236150 103 51 22\n-0.313396 0.074315 0.054924 0.535386 -0.787378 -0.305521 0.090637 0.744548 71 37 13\n-0.623745 -0.056049 1.180562 -0.022919 -0.995727 0.089358 0.036738 0.179921 95 50 23\n1.180986 0.037010 0.112749 0.776269 -0.627186 0.063570 0.744269 0.681168 76 43 15\n0.650851 -0.043134 1.145164 0.527268 -0.403119 0.747948 0.056317 0.455123 41 21 9\n0.578436 -0.005196 1.212256 0.482803 -0.041688 0.874722 0.043216 0.441573 103 46 17\n-0.184141 0.093042 -0.259896 0.086673 0.096194 0.991577 0.297147 0.258593 70 34 19\n1.181417 0.063797 -0.233436 0.812464 -0.581683 0.038850 0.739282 0.753002 104 54 20\n-0.196078 -0.053697 1.231370 0.020234 -0.998627 0.047914 0.031725 0.272854 69 22 7\n-0.510236 -0.054600 1.173615 -0.009735 -0.998138 0.059999 0.039311 0.206013 107 57 25\n-0.149506 -0.059512 1.179187 0.049348 -0.998718 -0.008698 0.043242 0.282325 113 56 20\n-0.023256 0.032436 0.123680 -0.693411 -0.596545 -0.404096 0.369698 0.614258 45 19 8\n0.151215 -0.056708 1.178916 -0.010254 -0.998840 -0.046602 0.045364 0.348075 109 59 25\n1.189866 0.102260 -0.294608 0.923643 -0.377026 -0.068361 0.732968 0.765598 86 47 17\n-0.362222 -0.051397 1.157240 0.014191 -0.995148 -0.097354 0.043900 0.239277 82 31 11\n-0.301349 -0.054448 1.092432 0.243538 -0.930204 0.274545 0.056426 0.249387 82 32 9\n-0.299422 -0.034981 1.131027 0.150945 -0.985412 -0.078310 0.048386 0.250720 65 23 8\n0.042723 -0.040942 1.149153 -0.076571 -0.985870 0.148930 0.048023 0.322614 69 28 9\n-0.362222 -0.051397 1.157240 0.014191 -0.995148 -0.097354 0.865300 0.843200 82 31 11\n-0.299422 -0.034981 1.131027 0.150945 -0.985412 -0.078310 0.861900 0.840600 65 23 8\n-0.238027 -0.060647 1.162784 -0.037721 -0.979278 -0.198950 0.865300 0.832200 103 46 13\n0.003631 0.072991 -0.080317 -0.813227 -0.527512 0.245674 0.098100 0.862400 74 61 47\n0.099809 -0.054397 1.127515 -0.036073 -0.997314 0.063387 0.053584 0.334396 84 36 13\n-1.081946 -0.023481 0.930568 -0.707724 -0.295602 0.641652 0.075673 0.081555 36 19 10\n-1.005061 -0.048813 0.969871 -0.231483 -0.912076 0.338328 0.072100 0.097056 88 48 25\n-1.012141 -0.022217 1.004401 -0.602985 -0.396924 0.691946 0.064699 0.097528 62 32 18\n-0.021581 0.047735 -0.146237 -0.917386 -0.397961 -0.004181 0.859300 0.801900 68 42 21\n0.003631 0.072991 -0.080317 -0.813227 -0.527512 0.245674 0.855300 0.793600 74 61 47\n-0.024520 0.121065 -0.108279 -0.702353 -0.709464 -0.057588 0.859500 0.793435 37 24 10\n-0.342891 0.082690 -0.091408 0.962066 -0.225898 0.152776 0.482785 0.638125 31 9 4\n0.917957 -0.028502 0.923951 0.742943 -0.243843 0.623341 0.406106 0.826697 31 14 7\n-0.830466 -0.045864 1.125209 -0.253853 -0.871944 0.418622 0.045157 0.137454 63 34 17\n-0.732480 -0.055301 1.119415 -0.065981 -0.989349 0.129521 0.047296 0.154399 98 49 21\n-0.023022 0.083707 -0.199455 -0.630879 -0.724052 0.278695 0.288705 0.293282 67 36 18\n0.198761 -0.051584 1.125219 0.142186 -0.979278 0.144169 0.056852 0.355962 69 28 8\n0.271763 -0.033755 1.110834 0.024720 -0.999634 -0.008515 0.058008 0.372287 69 34 13\n0.267881 -0.059361 1.148583 -0.119694 -0.944029 -0.307321 0.169639 0.825926 97 52 25\n0.151215 -0.056708 1.178916 -0.010254 -0.998840 -0.046602 0.170900 0.843300 109 59 25\n0.271763 -0.033755 1.110834 0.024720 -0.999634 -0.008515 0.163668 0.820372 69 34 13\n-0.238027 -0.060647 1.162784 -0.037721 -0.979278 -0.198950 0.044651 0.263177 103 46 13\n-0.064832 -0.052570 1.126559 0.013001 -0.997650 0.066958 0.053170 0.301290 97 43 16\n0.323986 -0.064630 1.257742 0.025575 -0.974303 0.223701 0.035871 0.384692 90 45 23\n-0.238027 -0.060647 1.162784 -0.037721 -0.979278 -0.198950 0.235100 0.863878 103 46 13\n-0.225242 -0.030088 1.100398 -0.047884 -0.998718 0.015656 0.228895 0.855711 71 29 12\n-0.166560 -0.046177 1.111421 -0.123661 -0.989715 -0.071535 0.233864 0.847116 90 46 20\n-0.166560 -0.046177 1.111421 -0.123661 -0.989715 -0.071535 0.054837 0.277772 90 46 20\n-0.682787 -0.051878 1.086365 0.002747 -0.999573 -0.028443 0.054545 0.169015 107 48 18\n1.161231 0.029405 0.208555 0.808588 -0.565508 -0.162236 0.748639 0.662476 81 47 20\n1.186190 0.049407 0.303333 0.994690 -0.001099 0.102817 0.740932 0.641200 61 26 9\n1.162788 -0.028999 0.263935 0.960082 -0.234077 -0.152898 0.758233 0.649454 83 39 16\n-0.931281 -0.053692 0.986630 -0.101901 -0.989319 0.104099 0.069617 0.112371 103 49 20\n-0.943916 -0.034643 1.060016 -0.525285 -0.594501 0.608753 0.056293 0.110099 68 40 22\n-0.339231 0.043018 0.036186 0.845698 -0.199683 -0.494888 0.088200 0.743800 96 63 35\n0.488088 -0.076389 1.166621 -0.006592 -0.991577 0.129215 0.053858 0.419432 69 22 7\n-0.183047 0.007589 0.274459 -0.089816 -0.293802 -0.951598 0.377791 0.658520 50 12 4\n-0.483704 -0.055058 1.111674 0.057649 -0.995117 -0.079867 0.051336 0.211232 122 66 24\n-0.434332 -0.040023 1.076170 -0.003632 -0.999298 0.036653 0.057132 0.222734 91 46 19\n1.199099 0.144624 -0.543118 0.977050 0.172246 -0.125095 0.723559 0.818203 52 35 24\n1.174535 0.031487 -0.412703 0.935148 -0.354045 0.010895 0.745142 0.788929 102 47 15\n-0.299422 -0.034981 1.131027 0.150945 -0.985412 -0.078310 0.229598 0.867850 65 23 8\n-0.225242 -0.030088 1.100398 -0.047884 -0.998718 0.015656 0.054902 0.266323 71 29 12\n0.730665 -0.042291 1.087628 0.391064 -0.548692 0.738884 0.068754 0.469304 57 24 11\n0.748796 -0.078304 1.057290 0.355571 -0.733970 0.578600 0.075362 0.473766 65 29 14\n0.758621 0.006374 1.107076 0.566820 -0.009552 0.823756 0.061500 0.475800 20 10 6\n-0.023022 0.083707 -0.199455 -0.630879 -0.724052 0.278695 0.381164 0.795227 67 36 18\n-0.300439 0.095245 -0.156881 0.631794 -0.272805 0.725516 0.375695 0.707880 28 9 5\n-0.319837 0.110076 -0.117984 0.660543 -0.543535 0.517869 0.374800 0.699100 35 14 8\n-0.342891 0.082690 -0.091408 0.962066 -0.225898 0.152776 0.377300 0.693200 31 9 4\n-0.205890 0.085350 -0.217033 0.476669 0.671957 0.566759 0.381384 0.730091 23 7 4\n-0.228935 0.096225 -0.237752 0.574755 0.239723 0.782403 0.374300 0.723200 26 8 5\n-0.247692 0.093185 -0.181542 0.634938 -0.266488 0.725120 0.378212 0.718690 39 11 5\n-0.340529 0.019556 0.156689 0.963073 -0.251076 0.097018 0.241449 0.747558 76 31 12\n-0.315939 0.088613 0.192181 0.389203 -0.918516 -0.069338 0.228516 0.739126 51 20 7\n-0.109492 0.025750 0.277715 -0.525254 -0.445875 -0.724754 0.372700 0.648300 34 9 4\n-0.109492 0.025750 0.277715 -0.525254 -0.445875 -0.724754 0.088405 0.868410 34 9 4\n-0.173324 0.055538 0.232598 -0.463607 -0.551958 -0.693075 0.089105 0.879956 45 14 7\n-0.121225 0.059916 0.200465 -0.630390 -0.627644 -0.456771 0.083173 0.872862 53 24 9\n-0.118923 0.068198 -0.227524 -0.099734 -0.643544 0.758843 0.295116 0.271221 29 11 7\n1.093218 0.012471 0.647811 0.913053 0.096072 0.396313 0.753916 0.565968 35 13 5\n1.035486 0.008994 0.773399 0.875149 -0.004975 0.483810 0.757780 0.551320 39 20 10\n1.056998 -0.065435 0.678531 0.806513 -0.458327 0.373363 0.770181 0.567211 57 29 10\n0.391207 -0.058790 1.098529 -0.129398 -0.991394 -0.018281 0.169054 0.803421 102 51 20\n-0.813030 -0.049712 0.970779 0.009766 -0.999908 0.007721 0.072592 0.141747 98 48 18\n0.267881 -0.059361 1.148583 -0.119694 -0.944029 -0.307321 0.051051 0.373025 97 52 25\n1.182984 0.039921 -0.024975 0.792840 -0.599506 -0.109378 0.743824 0.708814 86 34 10\n1.164137 0.015629 0.037474 0.659169 -0.751976 -0.002655 0.747896 0.696764 94 53 18\n0.168983 -0.063758 1.045096 0.010132 -0.997467 0.070193 0.070001 0.348889 105 52 21\n0.272298 -0.056170 1.077272 0.148045 -0.929380 0.338084 0.064695 0.372125 88 41 15\n0.046601 0.063616 -0.016828 -0.806360 -0.591174 0.015381 0.158675 0.803476 27 11 6\n-0.269527 -0.007330 0.270130 0.333872 0.086489 -0.938627 0.248700 0.850500 39 14 7\n-0.303703 0.060038 0.247298 0.284982 -0.620472 -0.730583 0.253707 0.841467 39 13 5\n-0.258846 0.041331 0.309852 0.199316 -0.162847 -0.966277 0.257722 0.855286 10 2 1\n-0.258846 0.041331 0.309852 0.199316 -0.162847 -0.966277 0.370728 0.675093 10 2 1\n-0.338604 0.065108 -0.058136 0.921903 -0.286294 0.260903 0.429704 0.868547 64 29 12\n-0.396765 0.081090 -0.015870 0.921781 -0.386578 0.029145 0.423300 0.857500 21 6 2\n-0.380291 0.026399 -0.029846 0.919431 -0.377819 0.108829 0.431754 0.855137 45 15 9\n-0.326202 -0.005076 0.249564 0.675436 -0.085788 -0.732383 0.247541 0.729949 67 19 4\n-0.348749 0.056755 -0.104354 0.916440 -0.148778 0.371471 0.381354 0.695079 25 6 3\n-0.228935 0.096225 -0.237752 0.574755 0.239723 0.782403 0.241500 0.884900 26 8 5\n-0.205890 0.085350 -0.217033 0.476669 0.671957 0.566759 0.241323 0.875445 23 7 4\n-0.184141 0.093042 -0.259896 0.086673 0.096194 0.991577 0.247598 0.877482 70 34 19\n1.035486 0.008994 0.773399 0.875149 -0.004975 0.483810 0.530300 0.606800 39 20 10\n0.949522 0.019705 0.895949 0.802484 0.092532 0.589404 0.529372 0.621185 35 15 7\n0.947998 -0.067868 0.863837 0.720176 -0.464583 0.515244 0.522100 0.615400 41 20 9\n-0.302023 -0.065765 1.037596 0.023591 -0.994385 0.103061 0.067743 0.248994 87 34 10\n0.417279 -0.072545 1.202765 0.010529 -0.993316 0.114841 0.045976 0.403912 90 44 21\n0.680249 -0.085776 1.078542 0.192328 -0.909116 0.369427 0.072705 0.456733 84 41 21\n-0.123958 -0.067270 1.027290 -0.033143 -0.996673 0.074160 0.070314 0.286593 112 54 21\n-0.769254 -0.045104 0.990699 0.084597 -0.995331 -0.046327 0.070213 0.148507 94 45 19\n0.391207 -0.058790 1.098529 -0.129398 -0.991394 -0.018281 0.062443 0.398713 102 51 20\n-0.624124 -0.053067 1.008917 -0.001160 -0.999695 0.024293 0.069548 0.180649 93 39 12\n-0.093256 0.034746 0.166177 -0.579241 -0.637989 -0.507340 0.347500 0.900900 45 22 16\n-0.091642 0.003795 0.230047 -0.680258 -0.562273 -0.470138 0.347500 0.907400 58 16 4\n-0.121225 0.059916 0.200465 -0.630390 -0.627644 -0.456771 0.343044 0.903491 53 24 9\n-0.525490 -0.047731 0.983539 -0.078097 -0.988952 0.125828 0.073416 0.199991 97 54 23\n-0.789524 -0.048126 0.908691 -0.102176 -0.990997 0.086184 0.084297 0.141852 63 21 6\n0.371741 -0.066549 1.013993 -0.037294 -0.996551 0.073824 0.081838 0.395100 100 36 10\n0.442008 -0.066871 1.073872 -0.046876 -0.995117 -0.086734 0.068839 0.408519 88 37 14\n-0.454128 -0.065651 1.004822 -0.159337 -0.961150 0.225349 0.072843 0.215226 113 55 19\n-0.121225 0.059916 0.200465 -0.630390 -0.627644 -0.456771 0.470700 0.846700 53 24 9\n-0.091642 0.003795 0.230047 -0.680258 -0.562273 -0.470138 0.473445 0.854213 58 16 4\n-0.109492 0.025750 0.277715 -0.525254 -0.445875 -0.724754 0.467397 0.857645 34 9 4\n1.160336 0.015857 0.435051 0.969817 0.038209 0.240761 0.749400 0.614721 42 18 8\n1.155158 -0.021088 0.390983 0.987579 -0.088839 0.129398 0.755581 0.625094 51 20 8\n-0.467392 0.151844 -1.107468 -0.207709 -0.093753 -0.973662 0.798899 0.686734 68 35 15\n-0.506843 0.152840 -1.099147 -0.228126 0.039155 -0.972839 0.796327 0.696332 46 24 10\n-0.051094 0.071315 -0.230523 -0.184606 -0.850154 0.493057 0.296175 0.285605 57 31 20\n1.168490 0.008659 0.314720 0.970244 -0.234535 0.059847 0.750611 0.639350 59 23 8\n0.917957 -0.028502 0.923951 0.742943 -0.243843 0.623341 0.769829 0.528396 31 14 7\n0.947998 -0.067868 0.863837 0.720176 -0.464583 0.515244 0.776314 0.535326 41 20 9\n0.949522 0.019705 0.895949 0.802484 0.092532 0.589404 0.758957 0.529827 35 15 7\n1.006358 -0.093549 0.744067 0.689901 -0.612842 0.385266 0.776821 0.555795 41 10 3\n0.833677 -0.074072 0.987675 0.548357 -0.623981 0.556688 0.087876 0.489655 58 27 12\n0.820858 -0.015253 1.046373 0.672994 -0.255776 0.693960 0.073636 0.487841 35 17 8\n0.917957 -0.028502 0.923951 0.742943 -0.243843 0.623341 0.695700 0.904900 31 14 7\n0.833677 -0.074072 0.987675 0.548357 -0.623981 0.556688 0.695700 0.911800 58 27 12\n0.876907 -0.082570 0.940812 0.516526 -0.690512 0.506302 0.692600 0.908600 63 30 13\n1.180986 0.037010 0.112749 0.776269 -0.627186 0.063570 0.747800 0.677600 76 43 15\n0.272235 -0.069418 0.950371 -0.008209 -0.999817 -0.015748 0.089624 0.367809 118 59 25\n-0.348749 0.056755 -0.104354 0.916440 -0.148778 0.371471 0.483476 0.644990 25 6 3\n-0.716125 -0.059309 0.908691 -0.000916 -0.999481 0.031434 0.086606 0.158785 113 54 17\n-0.148054 -0.064100 0.986718 -0.016633 -0.999420 0.028718 0.078789 0.281920 104 50 21\n-1.124293 -0.046547 0.856799 -0.572131 -0.725913 0.381634 0.090183 0.071514 30 16 10\n0.442008 -0.066871 1.073872 -0.046876 -0.995117 -0.086734 0.077931 0.821175 88 37 14\n0.496370 -0.056647 1.051787 -0.079409 -0.979858 -0.183081 0.080109 0.835191 77 37 17\n0.536418 -0.077894 1.076932 -0.165532 -0.973754 -0.156072 0.075358 0.840315 71 21 6\n0.039457 -0.066398 1.013659 0.018952 -0.997314 0.070376 0.075707 0.321510 108 54 21\n0.003631 0.072991 -0.080317 -0.813227 -0.527512 0.245674 0.388499 0.771529 74 61 47\n0.013044 0.028098 -0.079020 -0.772057 -0.450179 0.448592 0.381351 0.767704 52 30 17\n0.046601 0.063616 -0.016828 -0.806360 -0.591174 0.015381 0.393162 0.757047 27 11 6\n-0.118923 0.068198 -0.227524 -0.099734 -0.643544 0.758843 0.389196 0.745337 29 11 7\n-0.184141 0.093042 -0.259896 0.086673 0.096194 0.991577 0.385700 0.744900 70 34 19\n-0.370515 0.147370 -1.127284 -0.447645 -0.032624 -0.893582 0.198718 0.848179 26 9 4\n-0.290355 0.214963 -1.163581 -0.698752 0.268166 -0.663167 0.192100 0.834000 74 29 9\n-0.284985 0.164946 -1.216263 -0.539293 0.474410 -0.695730 0.203700 0.832900 23 11 6\n-0.326280 -0.013222 0.193273 0.980560 -0.163060 -0.108982 0.249072 0.739521 77 27 9\n0.008994 -0.071957 0.954367 0.029054 -0.997864 0.058260 0.087149 0.316261 81 34 12\n-0.953734 -0.049626 0.855720 0.049867 -0.998169 0.034150 0.092387 0.105633 55 19 6\n-0.791400 -0.058928 0.871058 -0.098025 -0.976379 0.192450 0.093370 0.142344 101 45 19\n0.046601 0.063616 -0.016828 -0.806360 -0.591174 0.015381 0.361062 0.592782 27 11 6\n-0.445678 0.210605 -1.102647 -0.332194 0.341716 -0.879116 0.499400 0.624900 59 33 15\n-0.370515 0.147370 -1.127284 -0.447645 -0.032624 -0.893582 0.499400 0.641500 26 9 4\n-0.467392 0.151844 -1.107468 -0.207709 -0.093753 -0.973662 0.495600 0.632600 68 35 15\n-0.874275 -0.053315 0.842398 -0.050844 -0.993378 0.102817 0.097232 0.122744 85 34 10\n-0.093256 0.034746 0.166177 -0.579241 -0.637989 -0.507340 0.311300 0.871000 45 22 16\n-0.044561 0.017896 0.181407 -0.624348 -0.635090 -0.454787 0.308832 0.878448 51 15 6\n-0.091642 0.003795 0.230047 -0.680258 -0.562273 -0.470138 0.305517 0.867748 58 16 4\n-0.044561 0.017896 0.181407 -0.624348 -0.635090 -0.454787 0.375759 0.623197 51 15 6\n0.536418 -0.077894 1.076932 -0.165532 -0.973754 -0.156072 0.071346 0.427445 71 21 6\n0.164360 -0.059422 0.895791 0.051424 -0.998016 0.036195 0.098411 0.345516 108 67 36\n1.182510 0.045994 -0.321840 0.860317 -0.497787 0.109714 0.742459 0.771583 100 52 19\n-0.295271 -0.062448 0.993724 -0.000824 -0.999969 -0.003113 0.076901 0.249608 85 30 10\n-0.630247 -0.060202 0.911070 -0.024751 -0.987365 -0.156407 0.087874 0.177668 121 61 24\n-0.995989 -0.058209 0.885704 0.092685 -0.993378 0.067843 0.088741 0.098193 111 54 19\n0.574759 -0.071124 1.002839 -0.143803 -0.989074 0.031709 0.081725 0.845889 68 27 9\n-0.380291 0.026399 -0.029846 0.919431 -0.377819 0.108829 0.239281 0.784793 45 15 9\n-0.285449 0.043457 -0.161739 0.574480 -0.253059 0.778375 0.384652 0.707011 49 20 9\n-0.326202 -0.005076 0.249564 0.675436 -0.085788 -0.732383 0.367937 0.685149 67 19 4\n-0.170429 0.026562 -0.228867 0.643849 -0.361400 0.674398 0.389396 0.728946 76 39 20\n-0.205890 0.085350 -0.217033 0.476669 0.671957 0.566759 0.291639 0.255175 23 7 4\n-0.137645 0.041360 -0.261740 0.395276 -0.742119 0.541246 0.302451 0.266583 70 31 13\n0.015529 0.037145 -0.225339 -0.714560 -0.633381 0.296976 0.297152 0.299862 74 38 20\n-0.258846 0.041331 0.309852 0.199316 -0.162847 -0.966277 0.264300 0.869900 10 2 1\n-0.183047 0.007589 0.274459 -0.089816 -0.293802 -0.951598 0.266988 0.860305 50 12 4\n-0.269527 -0.007330 0.270130 0.333872 0.086489 -0.938627 0.272991 0.865840 39 14 7\n-0.609773 -0.037557 0.862413 -0.100101 -0.994812 -0.017518 0.095869 0.180716 78 35 16\n-0.599527 -0.063882 0.799899 -0.061983 -0.983276 0.171117 0.108797 0.182681 110 56 22\n-0.549979 -0.055640 0.872437 -0.119114 -0.992401 -0.030641 0.096066 0.194511 82 31 12\n0.059574 0.019110 0.019974 -0.700705 -0.627338 -0.339671 0.369305 0.591051 16 5 2\n0.625246 -0.085477 1.030406 -0.116031 -0.992462 -0.038636 0.080186 0.444135 92 39 13\n-0.362117 0.008403 -0.084531 0.765313 -0.413923 0.492843 0.490928 0.651176 50 17 8\n0.947998 -0.067868 0.863837 0.720176 -0.464583 0.515244 0.360341 0.859448 41 20 9\n0.917957 -0.028502 0.923951 0.742943 -0.243843 0.623341 0.355185 0.863208 31 14 7\n0.876907 -0.082570 0.940812 0.516526 -0.690512 0.506302 0.351267 0.853350 63 30 13\n-0.495881 -0.066736 0.930244 -0.093509 -0.993683 0.061556 0.086471 0.205007 115 60 22\n-0.088530 -0.072934 0.927122 -0.008911 -0.994964 0.099582 0.092324 0.294037 84 33 11\n1.123388 0.010793 0.560847 0.954222 0.016633 0.298532 0.752400 0.590500 46 20 8\n1.093218 0.012471 0.647811 0.913053 0.096072 0.396313 0.753680 0.575817 35 13 5\n1.085854 -0.060125 0.613868 0.876034 -0.350658 0.331034 0.768395 0.579682 57 28 11\n-0.406371 -0.066589 0.941015 -0.007752 -0.998810 0.047945 0.084491 0.224864 93 35 12\n0.496370 -0.056647 1.051787 -0.079409 -0.979858 -0.183081 0.074134 0.420035 77 37 17\n0.332410 -0.058628 0.826283 -0.056734 -0.998291 0.013031 0.112910 0.381900 97 40 12\n-0.726823 -0.060643 0.833364 0.076724 -0.991394 0.105808 0.101538 0.155222 108 51 18\n-0.630247 -0.060202 0.911070 -0.024751 -0.987365 -0.156407 0.357600 0.893500 121 61 24\n-0.609773 -0.037557 0.862413 -0.100101 -0.994812 -0.017518 0.352300 0.885944 78 35 16\n-0.549979 -0.055640 0.872437 -0.119114 -0.992401 -0.030641 0.354678 0.881259 82 31 12\n0.625246 -0.085477 1.030406 -0.116031 -0.992462 -0.038636 0.475200 0.740900 92 39 13\n0.536418 -0.077894 1.076932 -0.165532 -0.973754 -0.156072 0.475100 0.747500 71 21 6\n0.574759 -0.071124 1.002839 -0.143803 -0.989074 0.031709 0.473545 0.737170 68 27 9\n-1.030364 -0.057109 0.783032 -0.003906 -0.999878 0.013550 0.107819 0.090713 96 40 15\n-0.470038 -0.066676 0.848345 -0.095553 -0.994232 0.048311 0.099845 0.211005 108 47 19\n-1.203775 -0.038756 0.733989 -0.543687 -0.749474 0.377636 0.113408 0.056285 87 51 27\n-1.143631 -0.056757 0.728281 -0.182836 -0.982849 0.023316 0.117090 0.067822 107 53 20\n-0.269527 -0.007330 0.270130 0.333872 0.086489 -0.938627 0.376770 0.673990 39 14 7\n-0.609241 0.114088 -1.073366 -0.294504 -0.119572 -0.948119 0.799564 0.720922 66 34 14\n-0.618505 0.168998 -1.065691 -0.407453 0.172491 -0.896756 0.789189 0.719318 73 35 13\n0.479019 -0.075150 0.872631 -0.037477 -0.986663 0.158300 0.107005 0.414069 90 40 13\n0.513148 -0.060165 0.904314 -0.132145 -0.990204 0.044465 0.101525 0.420579 60 24 8\n-0.343853 -0.014679 0.075061 0.848140 -0.529435 -0.017701 0.247271 0.762635 98 59 33\n-0.300776 -0.068572 0.912663 -0.010834 -0.993744 0.110874 0.091021 0.247892 74 29 9\n1.161231 0.029405 0.208555 0.808588 -0.565508 -0.162236 0.308288 0.823234 81 47 20\n1.124681 -0.002039 0.183121 0.940886 -0.293527 -0.168950 0.305300 0.821100 21 5 3\n1.133414 0.004650 0.115818 0.901547 -0.428510 0.059755 0.308505 0.811021 27 7 4\n-0.939401 -0.055178 0.802135 -0.019990 -0.997894 0.061434 0.103985 0.109482 75 25 9\n-0.387794 0.101694 -1.107244 -0.420545 0.386334 -0.820887 0.813283 0.673219 24 7 4\n0.978230 -0.087426 0.799265 0.734642 -0.506119 0.451766 0.778478 0.548447 72 34 14\n-0.636785 -0.061964 0.809654 0.040437 -0.970763 0.236549 0.106045 0.172715 95 43 16\n1.113186 -0.063523 0.528075 0.882992 -0.380718 0.274453 0.767582 0.597805 64 32 13\n0.544692 -0.083757 0.935188 -0.191076 -0.980621 -0.042756 0.097812 0.427474 113 61 25\n-0.023256 0.032436 0.123680 -0.693411 -0.596545 -0.404096 0.082278 0.882361 45 19 8\n-0.040275 0.049591 0.073619 -0.702231 -0.609272 -0.368206 0.089000 0.880607 73 36 21\n0.002840 0.033423 0.052875 -0.636891 -0.587054 -0.499649 0.089000 0.890800 70 40 19\n-0.021581 0.047735 -0.146237 -0.917386 -0.397961 -0.004181 0.265661 0.822396 68 42 21\n-0.023022 0.083707 -0.199455 -0.630879 -0.724052 0.278695 0.273925 0.814561 67 36 18\n0.039672 0.008507 -0.198845 -0.710166 -0.698355 0.088931 0.275273 0.833103 62 26 8\n-0.388581 0.001228 -0.006307 0.821375 -0.284799 -0.494186 0.243994 0.784638 63 27 10\n0.127096 -0.072978 0.838728 0.081576 -0.994079 0.071657 0.108110 0.337744 113 56 25\n-0.380291 0.026399 -0.029846 0.919431 -0.377819 0.108829 0.494700 0.645300 45 15 9\n0.224953 -0.063839 0.771250 0.055055 -0.998474 -0.002197 0.123908 0.357552 103 40 14\n-0.795962 -0.070843 0.808158 -0.114170 -0.988495 0.098972 0.105657 0.140490 88 41 19\n-0.207712 0.023492 -0.214864 0.392285 -0.425764 0.815332 0.389682 0.725558 87 50 23\n-0.106889 0.041359 -0.284624 0.182867 -0.699393 0.690909 0.308263 0.274645 67 29 14\n-0.046858 0.056005 -0.288894 -0.230567 -0.754326 0.614643 0.307461 0.286273 40 14 7\n0.015529 0.037145 -0.225339 -0.714560 -0.633381 0.296976 0.296637 0.302179 74 38 20\n-0.199354 -0.081780 0.842802 -0.017548 -0.994934 0.098819 0.104281 0.268741 86 37 14\n1.171675 -0.047360 0.332553 0.990478 -0.128483 0.048799 0.761369 0.635642 70 24 7\n1.143625 -0.025010 0.225195 0.914548 -0.078799 -0.396680 0.758392 0.658764 81 39 17\n1.124681 -0.002039 0.183121 0.940886 -0.293527 -0.168950 0.755112 0.668928 21 5 3\n1.180986 0.037010 0.112749 0.776269 -0.627186 0.063570 0.318098 0.811622 76 43 15\n1.164137 0.015629 0.037474 0.659169 -0.751976 -0.002655 0.318024 0.794946 94 53 18\n-0.348250 -0.080831 0.817938 -0.044160 -0.996368 0.072481 0.108959 0.235990 93 42 14\n0.039672 0.008507 -0.198845 -0.710166 -0.698355 0.088931 0.653500 0.912000 62 26 8\n-0.023022 0.083707 -0.199455 -0.630879 -0.724052 0.278695 0.650300 0.908700 67 36 18\n0.015529 0.037145 -0.225339 -0.714560 -0.633381 0.296976 0.653500 0.905700 74 38 20\n-0.851216 -0.060924 0.760802 -0.075961 -0.996399 0.037324 0.113749 0.129918 103 45 14\n1.170090 0.038202 -0.491851 0.939207 -0.327952 -0.101291 0.745220 0.806868 99 42 14\n-0.052597 -0.078036 0.846922 0.073885 -0.993988 0.080599 0.106787 0.299083 112 52 23\n-0.025412 -0.025531 0.150977 -0.721885 -0.537126 -0.436293 0.382802 0.617010 83 32 12\n0.574759 -0.071124 1.002839 -0.143803 -0.989074 0.031709 0.085050 0.434779 68 27 9\n1.115141 -0.007848 -0.036727 0.917142 -0.339824 -0.208106 0.755956 0.715504 51 23 10\n-0.992188 -0.054979 0.680371 -0.024049 -0.999664 -0.007172 0.125607 0.096837 122 56 20\n-0.348749 0.056755 -0.104354 0.916440 -0.148778 0.371471 0.382100 0.689900 25 6 3\n-0.362117 0.008403 -0.084531 0.765313 -0.413923 0.492843 0.388800 0.688700 50 17 8\n-0.170429 0.026562 -0.228867 0.643849 -0.361400 0.674398 0.298043 0.259365 76 39 20\n-0.247692 0.093185 -0.181542 0.634938 -0.266488 0.725120 0.285200 0.242000 39 11 5\n-0.207712 0.023492 -0.214864 0.392285 -0.425764 0.815332 0.295500 0.252106 87 50 23\n-0.137645 0.041360 -0.261740 0.395276 -0.742119 0.541246 0.389705 0.742938 70 31 13\n-0.355115 0.038504 0.211461 0.998321 -0.057375 -0.005585 0.241100 0.907000 55 15 3\n-0.326202 -0.005076 0.249564 0.675436 -0.085788 -0.732383 0.245300 0.903500 67 19 4\n-0.326280 -0.013222 0.193273 0.980560 -0.163060 -0.108982 0.245300 0.909200 77 27 9\n-0.325323 -0.034195 0.253217 0.528001 -0.430006 -0.732292 0.379473 0.684442 88 36 12\n0.809674 -0.097851 0.957679 0.141453 -0.967956 0.207343 0.097308 0.484786 87 43 22\n-0.125754 -0.045399 0.284370 -0.124332 -0.768578 -0.627522 0.390815 0.648702 128 66 21\n-0.109492 0.025750 0.277715 -0.525254 -0.445875 -0.724754 0.377546 0.643919 34 9 4\n-0.125754 -0.045399 0.284370 -0.124332 -0.768578 -0.627522 0.475000 0.867500 128 66 21\n-1.102968 -0.060987 0.640195 -0.041108 -0.995697 0.082675 0.132009 0.072966 105 53 16\n-1.018787 -0.050266 0.710810 -0.076144 -0.996216 -0.041139 0.119972 0.090836 106 49 18\n-0.462146 -0.075802 0.750422 -0.069918 -0.996063 0.054170 0.120773 0.208669 72 24 8\n0.296095 -0.061375 0.712866 -0.061281 -0.996979 0.047609 0.134650 0.372706 114 60 30\n1.104421 0.013020 -0.131010 0.806269 -0.505417 -0.307260 0.297499 0.532285 61 26 11\n1.139780 0.035437 -0.257501 0.271065 -0.955168 0.118900 0.316086 0.540754 94 55 26\n1.181417 0.063797 -0.233436 0.812464 -0.581683 0.038850 0.309098 0.549424 104 54 20\n0.015727 -0.067252 0.861226 0.053438 -0.998352 0.020508 0.105094 0.314460 97 49 21\n-0.724296 -0.068090 0.767273 0.003815 -0.999237 0.038179 0.115015 0.154286 115 61 29\n1.139780 0.035437 -0.257501 0.271065 -0.955168 0.118900 0.745079 0.763320 94 55 26\n0.685247 -0.091564 0.958057 -0.058931 -0.997589 0.036531 0.095970 0.456788 91 34 11\n1.150805 -0.058520 0.422171 0.932157 -0.283853 0.224616 0.765204 0.617149 60 26 10\n-1.253533 -0.053577 0.643783 -0.572649 -0.752922 0.324259 0.129061 0.041112 77 51 34\n1.133414 0.004650 0.115818 0.901547 -0.428510 0.059755 0.754193 0.682046 27 7 4\n1.121286 -0.003600 0.044945 0.935362 -0.341502 -0.091678 0.756186 0.696372 29 9 4\n-0.270828 -0.084180 0.771260 -0.026337 -0.998566 0.046419 0.118309 0.250856 102 52 23\n0.876907 -0.082570 0.940812 0.516526 -0.690512 0.506302 0.099844 0.499149 63 30 13\n-0.795989 -0.062590 0.711002 -0.016236 -0.998871 -0.044282 0.122811 0.138513 132 70 36\n-0.854736 -0.055830 0.619680 0.101413 -0.994293 -0.032441 0.139163 0.126018 96 47 16\n-0.749938 -0.063554 0.691478 -0.097812 -0.994934 0.022980 0.126946 0.148252 105 51 17\n-0.343853 -0.014679 0.075061 0.848140 -0.529435 -0.017701 0.365802 0.896757 98 59 33\n-0.348460 -0.005896 0.038567 0.894925 -0.194250 -0.401685 0.367100 0.902900 74 28 14\n-0.339231 0.043018 0.036186 0.845698 -0.199683 -0.494888 0.365200 0.906100 96 63 35\n0.513148 -0.060165 0.904314 -0.132145 -0.990204 0.044465 0.495095 0.696936 60 24 8\n0.614816 -0.093421 0.857552 -0.083468 -0.992492 0.089145 0.497400 0.683000 90 47 17\n0.544692 -0.083757 0.935188 -0.191076 -0.980621 -0.042756 0.498865 0.694686 113 61 25\n-0.975562 -0.046308 0.632005 -0.076662 -0.996796 0.022492 0.134304 0.100432 76 30 11\n-0.888008 -0.068524 0.637298 0.051454 -0.998596 -0.011139 0.136217 0.116163 109 45 15\n1.104421 0.013020 -0.131010 0.806269 -0.505417 -0.307260 0.751027 0.737970 61 26 11\n0.037920 -0.031608 0.059573 -0.389874 -0.758080 -0.522721 0.380508 0.597923 114 79 36\n-0.459451 0.055269 -1.073410 -0.685873 0.034211 -0.726890 0.819294 0.691937 22 4 2\n0.059574 0.019110 0.019974 -0.700705 -0.627338 -0.339671 0.389682 0.747068 16 5 2\n-1.218189 -0.007180 0.739221 -0.821314 -0.081851 0.564531 0.117000 0.045700 52 29 18\n-0.348460 -0.005896 0.038567 0.894925 -0.194250 -0.401685 0.245076 0.772336 74 28 14\n-0.318052 0.125603 -1.162919 -0.783502 0.336528 -0.522324 0.807700 0.651700 24 8 4\n-0.370515 0.147370 -1.127284 -0.447645 -0.032624 -0.893582 0.803774 0.658189 26 9 4\n-0.284985 0.164946 -1.216263 -0.539293 0.474410 -0.695730 0.801452 0.642009 23 11 6\n1.155158 -0.021088 0.390983 0.987579 -0.088839 0.129398 0.757888 0.622944 51 20 8\n-1.078291 -0.068002 0.597984 0.001465 -0.998749 0.049623 0.141713 0.077251 108 54 16\n-0.592558 -0.071426 0.669746 -0.005676 -0.999359 0.034883 0.131931 0.182984 112 53 18\n-0.074963 -0.089086 0.771954 0.051485 -0.996155 0.070833 0.122885 0.294615 89 44 18\n-0.948329 -0.066175 0.596955 -0.171789 -0.964171 0.202063 0.142357 0.104229 87 33 10\n0.149002 -0.058665 0.657334 0.041414 -0.998596 -0.032533 0.142628 0.340223 116 60 28\n-0.025412 -0.025531 0.150977 -0.721885 -0.537126 -0.436293 0.263801 0.871904 83 32 12\n-0.049546 -0.023634 0.219726 -0.639241 -0.699942 -0.318430 0.261884 0.882502 65 25 9\n-0.044561 0.017896 0.181407 -0.624348 -0.635090 -0.454787 0.257713 0.870375 51 15 6\n0.076509 -0.077859 0.739757 0.083071 -0.996033 -0.031831 0.128403 0.324639 115 56 23\n-0.454252 0.096763 -1.090296 -0.436598 -0.117344 -0.891934 0.811882 0.689744 72 37 14\n0.931631 -0.113692 0.813402 0.245674 -0.933622 0.260720 0.360638 0.848461 91 48 26\n1.161497 0.047063 -0.577559 0.947539 -0.301126 -0.107120 0.743455 0.824079 105 50 15\n0.472048 -0.087510 0.714494 -0.136052 -0.990356 0.026063 0.137396 0.410194 83 46 21\n-1.207112 -0.064888 0.589425 -0.030732 -0.996979 0.070956 0.140918 0.051554 110 57 26\n-0.356594 -0.027200 0.147228 0.862850 -0.431959 -0.262398 0.251469 0.751186 104 47 12\n-0.049546 -0.023634 0.219726 -0.639241 -0.699942 -0.318430 0.385516 0.628233 65 25 9\n-0.091642 0.003795 0.230047 -0.680258 -0.562273 -0.470138 0.380957 0.637702 58 16 4\n0.614816 -0.093421 0.857552 -0.083468 -0.992492 0.089145 0.112256 0.438961 90 47 17\n-0.673619 -0.075422 0.644513 -0.008881 -0.999237 0.037538 0.136982 0.164490 102 47 17\n-0.759577 -0.074879 0.601282 -0.113437 -0.991974 0.055391 0.145018 0.146268 127 63 23\n0.114160 -0.060286 0.581082 -0.039796 -0.998474 -0.037507 0.157354 0.331994 113 57 25\n-0.006851 -0.044428 0.587176 0.224219 -0.949370 -0.219977 0.154014 0.306175 37 19 14\n0.028733 -0.049424 0.511725 0.019654 -0.999023 0.038972 0.167361 0.313313 44 22 16\n1.052805 0.029367 -0.196493 0.818964 -0.453688 -0.351299 0.303642 0.523943 18 5 4\n1.084340 0.043317 -0.253379 0.234321 -0.968932 0.078982 0.313784 0.528837 100 69 50\n-0.318052 0.125603 -1.162919 -0.783502 0.336528 -0.522324 0.808807 0.657241 24 8 4\n1.082677 -0.095396 0.572587 0.756127 -0.589312 0.284433 0.775150 0.588333 67 25 9\n-0.003255 -0.081427 0.695934 0.110080 -0.992828 -0.045930 0.136424 0.307922 97 44 15\n1.138956 -0.042912 0.128069 0.992309 -0.070070 0.101901 0.762346 0.680180 41 15 8\n0.010175 -0.075657 0.644431 0.152440 -0.965331 -0.211798 0.035665 0.885707 110 56 19\n-0.006851 -0.044428 0.587176 0.224219 -0.949370 -0.219977 0.030400 0.888800 37 19 14\n0.114160 -0.060286 0.581082 -0.039796 -0.998474 -0.037507 0.029000 0.877800 113 57 25\n1.121286 -0.003600 0.044945 0.935362 -0.341502 -0.091678 0.311359 0.794696 29 9 4\n1.115141 -0.007848 -0.036727 0.917142 -0.339824 -0.208106 0.313706 0.784438 51 23 10\n1.104421 0.013020 -0.131010 0.806269 -0.505417 -0.307260 0.070709 0.865586 61 26 11\n1.171088 0.047130 -0.128048 0.764672 -0.641224 -0.063662 0.064005 0.855361 103 53 23\n1.115141 -0.007848 -0.036727 0.917142 -0.339824 -0.208106 0.072170 0.852566 51 23 10\n-1.038491 -0.066475 0.520404 -0.044649 -0.995331 0.085421 0.155054 0.088318 116 59 25\n0.762878 -0.093282 0.845300 -0.049409 -0.997620 0.047700 0.118272 0.473393 78 32 10\n0.099947 -0.027344 0.055212 -0.417035 -0.800287 -0.430799 0.383287 0.586635 25 9 7\n0.059574 0.019110 0.019974 -0.700705 -0.627338 -0.339671 0.254245 0.312766 16 5 2\n0.013044 0.028098 -0.079020 -0.772057 -0.450179 0.448592 0.271501 0.302435 52 30 17\n0.055723 0.005559 -0.075485 -0.374920 -0.920316 0.111301 0.274253 0.311257 45 17 13\n-0.228127 -0.057430 0.286447 0.087985 -0.756340 -0.648183 0.389241 0.669855 137 87 52\n-0.341262 -0.083593 0.715427 -0.048738 -0.998047 0.038850 0.128591 0.237278 109 55 23\n-1.153041 -0.059771 0.556860 0.031312 -0.999359 0.015809 0.147544 0.061653 101 42 13\n-0.815003 -0.061903 0.568508 -0.098300 -0.992431 0.073366 0.148203 0.133058 93 39 13\n-0.285449 0.043457 -0.161739 0.574480 -0.253059 0.778375 0.282576 0.237025 49 20 9\n-0.297594 -0.013870 -0.195421 0.376720 -0.654683 0.655293 0.294438 0.234594 82 43 18\n0.978230 -0.087426 0.799265 0.734642 -0.506119 0.451766 0.125564 0.515593 72 34 14\n0.947998 -0.067868 0.863837 0.720176 -0.464583 0.515244 0.112275 0.512630 41 20 9\n0.931631 -0.113692 0.813402 0.245674 -0.933622 0.260720 0.126678 0.508522 91 48 26\n1.081622 0.010730 -0.340064 0.549883 -0.787286 0.278817 0.332939 0.527189 28 10 5\n1.182510 0.045994 -0.321840 0.860317 -0.497787 0.109714 0.325600 0.548600 100 52 19\n1.147375 0.006221 -0.353202 0.442000 -0.844447 0.302499 0.336804 0.540601 114 68 31\n-0.050106 -0.070377 0.539725 0.396161 -0.917692 -0.029328 0.162709 0.296853 77 43 24\n-1.293162 -0.060060 0.520686 -0.539201 -0.813257 0.218726 0.153259 0.031906 60 37 21\n-0.362117 0.008403 -0.084531 0.765313 -0.413923 0.492843 0.862500 0.857200 50 17 8\n-0.350449 -0.015120 -0.115056 0.780358 -0.560961 0.276223 0.864100 0.859600 99 57 21\n-0.285449 0.043457 -0.161739 0.574480 -0.253059 0.778375 0.860100 0.862900 49 20 9\n-0.046858 0.056005 -0.288894 -0.230567 -0.754326 0.614643 0.089100 0.899000 40 14 7\n-0.046484 0.016145 -0.310812 -0.087100 -0.013764 0.996094 0.092400 0.899685 102 47 26\n0.015529 0.037145 -0.225339 -0.714560 -0.633381 0.296976 0.090500 0.906500 74 38 20\n-0.331080 0.108576 -1.217490 -0.661580 0.344279 -0.666128 0.318192 0.841169 22 9 4\n-0.318052 0.125603 -1.162919 -0.783502 0.336528 -0.522324 0.307456 0.840207 24 8 4\n-0.284985 0.164946 -1.216263 -0.539293 0.474410 -0.695730 0.308600 0.825100 23 11 6\n0.025250 -0.045986 0.120976 -0.492599 -0.810938 -0.315714 0.385568 0.606539 44 14 11\n1.145691 -0.047228 0.283440 0.970550 -0.226203 -0.082736 0.762900 0.646147 67 24 6\n-0.355441 -0.005263 -0.162945 0.742058 -0.513535 0.430799 0.864100 0.866900 61 26 10\n1.052805 0.029367 -0.196493 0.818964 -0.453688 -0.351299 0.317600 0.525400 18 5 4\n-0.377578 -0.067305 0.209281 0.364727 -0.924863 -0.107486 0.260537 0.737784 130 59 24\n-0.325323 -0.034195 0.253217 0.528001 -0.430006 -0.732292 0.254027 0.726466 88 36 12\n-0.046484 0.016145 -0.310812 -0.087100 -0.013764 0.996094 0.314686 0.287055 102 47 26\n0.369026 -0.076753 0.612762 -0.095706 -0.995239 0.016877 0.154258 0.385730 112 57 26\n0.010175 -0.075657 0.644431 0.152440 -0.965331 -0.211798 0.146351 0.310575 110 56 19\n0.336838 -0.073634 0.552348 -0.061342 -0.997528 -0.033418 0.167304 0.376965 118 62 29\n-0.922338 -0.073348 0.525272 0.000488 -0.995544 0.094211 0.158202 0.110125 116 62 22\n0.844569 -0.108317 0.854701 -0.053987 -0.997345 0.048677 0.117604 0.492682 89 40 18\n0.840023 -0.096673 0.767678 -0.113987 -0.977691 0.176397 0.131535 0.487957 52 16 6\n0.099947 -0.027344 0.055212 -0.417035 -0.800287 -0.430799 0.254719 0.324478 25 9 7\n0.824906 -0.110162 0.721616 -0.023743 -0.996765 0.076479 0.141831 0.484583 93 39 13\n-0.089425 -0.076599 0.450781 0.163152 -0.977996 -0.129948 0.178956 0.286899 102 37 8\n0.000958 -0.051922 0.481137 0.123936 -0.992248 -0.007630 0.175597 0.306506 58 37 23\n-0.388581 0.001228 -0.006307 0.821375 -0.284799 -0.494186 0.044700 0.862100 63 27 10\n-0.415650 -0.023183 -0.049520 0.962279 -0.231697 0.142430 0.048150 0.856035 86 41 16\n-0.380291 0.026399 -0.029846 0.919431 -0.377819 0.108829 0.046351 0.865775 45 15 9\n-1.091430 -0.062496 0.514612 -0.054170 -0.997559 0.043886 0.155958 0.074335 103 50 19\n-0.516731 -0.073305 0.617667 -0.014283 -0.999847 -0.007538 0.143910 0.199247 118 58 20\n1.180091 0.120661 -0.641139 0.975616 0.065096 -0.209571 0.728600 0.838300 78 41 19\n0.012692 -0.009799 -0.126621 -0.386822 -0.921171 0.042177 0.283283 0.301780 122 90 53\n0.012692 -0.009799 -0.126621 -0.386822 -0.921171 0.042177 0.372800 0.775700 122 90 53\n-0.402948 -0.083980 0.635014 -0.096133 -0.995056 -0.024720 0.142933 0.222487 105 49 19\n-0.465370 -0.065954 0.578244 0.058168 -0.998016 0.022889 0.151583 0.208649 71 26 9\n-1.164810 -0.067734 0.450455 -0.004608 -0.995361 0.095798 0.168310 0.059873 120 69 25\n-0.637772 -0.074147 0.553612 0.008148 -0.999573 0.027833 0.153283 0.171181 101 49 17\n0.012692 -0.009799 -0.126621 -0.386822 -0.921171 0.042177 0.264377 0.833397 122 90 53\n-0.257729 -0.091417 0.641046 -0.008576 -0.999786 -0.018189 0.144616 0.253036 106 55 22\n-0.367018 -0.055969 0.153727 0.613971 -0.774010 -0.154668 0.257794 0.750919 141 92 52\n-0.186913 -0.000816 -0.280536 0.583911 -0.772576 0.249306 0.308547 0.256945 107 59 28\n-0.837187 -0.072277 0.510713 -0.002594 -0.992309 0.123569 0.160287 0.128008 115 54 22\n1.150948 -0.027560 -0.428848 0.686026 -0.704123 0.183172 0.757809 0.794613 110 55 18\n-0.027943 -0.045012 0.246417 -0.267800 -0.944975 -0.187719 0.389793 0.628500 86 30 7\n0.229009 -0.064440 0.511817 -0.045228 -0.998962 -0.002594 0.171364 0.355512 102 42 15\n0.119564 -0.059273 0.423666 -0.163884 -0.972503 -0.165380 0.187139 0.329097 106 59 33\n-0.043031 -0.058094 0.393291 0.081576 -0.992187 -0.094180 0.190093 0.295414 112 57 31\n0.541287 -0.090035 0.648691 -0.162694 -0.986175 -0.031098 0.151389 0.424730 51 25 19\n-0.377240 -0.030676 0.096652 0.776574 -0.625996 -0.070803 0.252880 0.762402 84 35 14\n0.177483 -0.067785 0.406718 -0.057894 -0.998291 0.000610 0.190948 0.344907 112 55 24\n-0.355441 -0.005263 -0.162945 0.742058 -0.513535 0.430799 0.284412 0.222786 61 26 10\n-0.220039 -0.023614 -0.249310 0.478805 -0.780633 0.401593 0.304504 0.250413 155 114 61\n-0.170803 -0.002840 -0.309938 0.350078 -0.861354 0.368053 0.315517 0.260634 73 23 13\n-0.751889 -0.078305 0.482827 -0.023927 -0.997772 0.061892 0.165622 0.145990 118 52 22\n0.029982 -0.021345 -0.273217 -0.358654 -0.917905 0.169713 0.310969 0.302984 115 53 24\n1.052805 0.029367 -0.196493 0.818964 -0.453688 -0.351299 0.753047 0.749575 18 5 4\n1.104421 0.013020 -0.131010 0.806269 -0.505417 -0.307260 0.754198 0.732875 61 26 11\n1.124542 -0.028090 -0.122381 0.896512 0.365795 0.249855 0.758782 0.733407 42 20 11\n-0.362117 0.008403 -0.084531 0.765313 -0.413923 0.492843 0.145600 0.876200 50 17 8\n-0.380291 0.026399 -0.029846 0.919431 -0.377819 0.108829 0.139673 0.883062 45 15 9\n-0.415650 -0.023183 -0.049520 0.962279 -0.231697 0.142430 0.140500 0.872400 86 41 16\n0.039672 0.008507 -0.198845 -0.710166 -0.698355 0.088931 0.294509 0.307491 62 26 8\n0.442843 -0.082127 0.537064 -0.106510 -0.992370 -0.061922 0.170075 0.399645 124 56 27\n0.519669 -0.091503 0.607682 -0.112217 -0.993439 0.022004 0.160434 0.418274 65 38 19\n0.682403 -0.108310 0.748461 0.012085 -0.993378 0.114017 0.135947 0.454008 90 49 21\n-0.444731 -0.076087 0.509455 -0.027284 -0.999542 0.012238 0.165260 0.211090 126 63 29\n1.081622 0.010730 -0.340064 0.549883 -0.787286 0.278817 0.756481 0.778654 28 10 5\n1.052805 0.029367 -0.196493 0.818964 -0.453688 -0.351299 0.753297 0.760157 18 5 4\n1.063237 -0.021623 -0.259675 0.958129 0.264290 -0.110050 0.762337 0.763974 26 8 5\n1.147375 0.006221 -0.353202 0.442000 -0.844447 0.302499 0.751951 0.779404 114 68 31\n0.602059 -0.113795 0.707045 -0.126835 -0.991729 0.018220 0.143034 0.437780 62 37 35\n0.010175 -0.075657 0.644431 0.152440 -0.965331 -0.211798 0.386083 0.827314 110 56 19\n-0.081092 -0.091290 0.583207 0.208136 -0.972777 -0.101840 0.392204 0.834913 117 61 28\n-0.006851 -0.044428 0.587176 0.224219 -0.949370 -0.219977 0.382695 0.839351 37 19 14\n-0.081092 -0.091290 0.583207 0.208136 -0.972777 -0.101840 0.156828 0.290733 117 61 28\n-0.362968 -0.038616 0.021783 0.809107 -0.465712 -0.358318 0.309000 0.893500 83 37 14\n-0.343853 -0.014679 0.075061 0.848140 -0.529435 -0.017701 0.309226 0.885865 98 59 33\n-0.377240 -0.030676 0.096652 0.776574 -0.625996 -0.070803 0.312600 0.891400 84 35 14\n-1.059935 -0.075010 0.430345 -0.068789 -0.988037 0.137852 0.173404 0.079589 93 45 16\n-0.089425 -0.076599 0.450781 0.163152 -0.977996 -0.129948 0.649100 0.898700 102 37 8\n-0.050106 -0.070377 0.539725 0.396161 -0.917692 -0.029328 0.653500 0.904241 77 43 24\n-0.081092 -0.091290 0.583207 0.208136 -0.972777 -0.101840 0.650500 0.905400 117 61 28\n-0.027943 -0.045012 0.246417 -0.267800 -0.944975 -0.187719 0.016400 0.891600 86 30 7\n-0.049546 -0.023634 0.219726 -0.639241 -0.699942 -0.318430 0.015672 0.900446 65 25 9\n-0.025412 -0.025531 0.150977 -0.721885 -0.537126 -0.436293 0.012804 0.897013 83 32 12\n-0.166736 -0.097350 0.649976 -0.033509 -0.998779 -0.035798 0.142081 0.272837 115 61 33\n1.150252 -0.074722 0.030528 0.988861 0.032563 0.145085 0.767778 0.696945 36 12 8\n0.091252 -0.007620 -0.117427 -0.388684 -0.915738 0.101444 0.282915 0.320293 25 8 7\n-0.955343 -0.080677 0.449981 0.046175 -0.996063 0.075533 0.172813 0.102798 120 67 30\n0.369592 -0.068380 0.503787 -0.023438 -0.998413 -0.050874 0.174655 0.385607 97 40 13\n0.030935 -0.054237 0.333398 -0.050142 -0.998199 -0.032624 0.201965 0.311459 108 51 30\n-0.697335 0.103141 -1.031649 -0.401410 0.061708 -0.913785 0.798004 0.739704 59 30 12\n-0.681790 0.029808 -1.029146 -0.280313 -0.392438 -0.876003 0.810856 0.740061 91 47 18\n-0.050218 -0.003063 -0.298467 0.025483 -0.539018 0.841884 0.313358 0.285689 76 30 14\n-0.046484 0.016145 -0.310812 -0.087100 -0.013764 0.996094 0.180686 0.891498 102 47 26\n-0.106889 0.041359 -0.284624 0.182867 -0.699393 0.690909 0.185200 0.884800 67 29 14\n-0.050218 -0.003063 -0.298467 0.025483 -0.539018 0.841884 0.184331 0.894219 76 30 14\n-0.387794 0.101694 -1.107244 -0.420545 0.386334 -0.820887 0.489200 0.859700 24 7 4\n-0.318052 0.125603 -1.162919 -0.783502 0.336528 -0.522324 0.485766 0.848228 24 8 4\n-0.331080 0.108576 -1.217490 -0.661580 0.344279 -0.666128 0.490300 0.841335 22 9 4\n1.105152 -0.043552 -0.095607 0.952513 0.285653 0.105380 0.859604 0.876754 39 14 8\n1.124542 -0.028090 -0.122381 0.896512 0.365795 0.249855 0.855784 0.872640 42 20 11\n1.104421 0.013020 -0.131010 0.806269 -0.505417 -0.307260 0.859800 0.867000 61 26 11\n-0.027943 -0.045012 0.246417 -0.267800 -0.944975 -0.187719 0.217529 0.296417 86 30 7\n-0.324859 -0.055938 0.295257 0.118168 -0.964782 -0.234993 0.386535 0.683672 151 92 48\n-0.362968 -0.038616 0.021783 0.809107 -0.465712 -0.358318 0.252236 0.778019 83 37 14\n1.105152 -0.043552 -0.095607 0.952513 0.285653 0.105380 0.762133 0.725159 39 14 8\n0.048520 -0.060082 0.219533 -0.185949 -0.982452 0.014252 0.224463 0.313674 109 64 39\n-0.524113 -0.073458 0.416240 -0.005493 -0.998169 -0.060152 0.180266 0.193611 114 50 17\n-0.384734 -0.072640 0.446591 -0.044343 -0.995270 -0.086337 0.180395 0.222456 116 47 19\n0.336513 -0.071011 0.406905 -0.043916 -0.998901 0.015351 0.190920 0.379121 125 75 34\n-1.239018 -0.073401 0.423162 -0.021363 -0.996063 0.085726 0.173254 0.039391 126 80 50\n0.279881 -0.069301 0.354785 -0.027558 -0.999268 0.025361 0.201429 0.361916 86 33 23\n-0.911493 -0.071099 0.446471 0.084017 -0.996399 -0.008301 0.172327 0.112088 116 63 25\n-0.315949 -0.090842 0.525670 -0.053133 -0.997528 -0.045686 0.164392 0.239651 122 59 25\n-0.350449 -0.015120 -0.115056 0.780358 -0.560961 0.276223 0.421500 0.903200 99 57 21\n-0.362117 0.008403 -0.084531 0.765313 -0.413923 0.492843 0.417647 0.900700 50 17 8\n-0.415650 -0.023183 -0.049520 0.962279 -0.231697 0.142430 0.421500 0.893600 86 41 16\n-0.837379 -0.080309 0.433124 -0.024049 -0.999146 0.033509 0.174976 0.128157 124 57 19\n-0.644771 -0.080238 0.434520 0.053346 -0.998505 0.011078 0.176416 0.167336 87 28 8\n-0.125754 -0.045399 0.284370 -0.124332 -0.768578 -0.627522 0.205473 0.277311 128 66 21\n0.369592 -0.068380 0.503787 -0.023438 -0.998413 -0.050874 0.436851 0.867285 97 40 13\n0.446463 -0.077355 0.477994 -0.103275 -0.994018 -0.034822 0.436900 0.879700 108 56 20\n0.442843 -0.082127 0.537064 -0.106510 -0.992370 -0.061922 0.433219 0.878061 124 56 27\n-0.331080 0.108576 -1.217490 -0.661580 0.344279 -0.666128 0.111796 0.848856 22 9 4\n-0.381339 0.084898 -1.148883 -0.691885 0.383801 -0.611499 0.108303 0.837535 25 6 3\n-0.387794 0.101694 -1.107244 -0.420545 0.386334 -0.820887 0.112100 0.830800 24 7 4\n1.052805 0.029367 -0.196493 0.818964 -0.453688 -0.351299 0.351721 0.804584 18 5 4\n1.124542 -0.028090 -0.122381 0.896512 0.365795 0.249855 0.362355 0.789840 42 20 11\n1.121976 -0.044679 -0.167669 0.913785 0.267220 -0.305887 0.365975 0.793960 35 14 7\n1.134895 -0.098123 0.131146 0.829768 -0.284555 -0.480087 0.773204 0.677476 17 5 3\n-0.227387 0.143749 -1.263102 -0.518357 0.258522 -0.815119 0.806565 0.630588 80 45 20\n-0.272238 0.041197 -1.248325 -0.466506 -0.225867 -0.855190 0.821707 0.640855 44 15 6\n1.090530 -0.046848 -0.239842 0.866817 0.362407 -0.342387 0.363773 0.815069 29 7 5\n-0.753770 -0.080911 0.425478 -0.031312 -0.999359 0.015656 0.177993 0.144988 122 55 20\n-0.324859 -0.055938 0.295257 0.118168 -0.964782 -0.234993 0.260900 0.728300 151 92 48\n-0.268978 -0.082381 0.421457 -0.013153 -0.990265 -0.138524 0.183989 0.246905 103 50 15\n-1.150989 -0.067094 0.350547 -0.227546 -0.971435 -0.067080 0.186849 0.060091 61 25 7\n-1.178018 -0.075362 0.397894 0.166784 -0.984100 0.060671 0.178498 0.053634 117 59 23\n0.112430 -0.058863 0.273012 -0.102329 -0.989746 0.099460 0.212701 0.327734 107 67 36\n-0.228127 -0.057430 0.286447 0.087985 -0.756340 -0.648183 0.205399 0.257335 137 87 52\n-0.342556 -0.067000 0.356445 0.010468 -0.993133 -0.116306 0.192861 0.231868 107 50 26\n-0.348460 -0.005896 0.038567 0.894925 -0.194250 -0.401685 0.644300 0.914000 74 28 14\n-0.343853 -0.014679 0.075061 0.848140 -0.529435 -0.017701 0.641600 0.910900 98 59 33\n-0.362968 -0.038616 0.021783 0.809107 -0.465712 -0.358318 0.644300 0.907500 83 37 14\n0.446463 -0.077355 0.477994 -0.103275 -0.994018 -0.034822 0.181412 0.402719 108 56 20\n0.555882 -0.090402 0.486336 -0.097781 -0.994385 -0.040315 0.182294 0.425404 100 39 12\n1.139069 0.003211 -0.655493 0.877224 -0.417676 -0.236610 0.754126 0.841968 108 48 17\n1.129025 0.044459 -0.725369 0.887967 -0.297098 -0.350993 0.746438 0.856302 112 56 22\n-0.213311 -0.081177 0.594978 -0.000641 -0.997803 -0.066073 0.152109 0.261517 63 32 18\n1.083684 0.082366 -0.860609 0.839412 -0.130894 -0.527451 0.741742 0.889234 43 19 8\n1.121125 0.115562 -0.802410 0.893765 0.011078 -0.448347 0.734114 0.875721 44 21 8\n1.087576 -0.010792 -0.765422 0.649709 -0.668111 -0.362560 0.759041 0.867180 112 58 21\n-0.324859 -0.055938 0.295257 0.118168 -0.964782 -0.234993 0.205102 0.231696 151 92 48\n0.153361 -0.050286 0.019732 -0.353984 -0.874355 -0.331889 0.260442 0.332915 45 22 23\n-0.451135 -0.074999 0.293633 0.077792 -0.996887 0.010315 0.205708 0.207338 114 46 14\n1.006358 -0.093549 0.744067 0.689901 -0.612842 0.385266 0.142216 0.521987 41 10 3\n-0.189327 -0.089619 0.523049 0.010010 -0.999817 -0.015595 0.168024 0.267781 106 76 42\n-1.276654 -0.074149 0.293312 -0.109867 -0.986267 0.123234 0.197739 0.032159 87 31 10\n-0.585129 -0.067095 0.393157 0.054231 -0.998291 -0.021180 0.185586 0.180911 99 46 21\n0.777929 -0.112828 0.663892 0.032136 -0.997436 0.063692 0.152595 0.474418 71 42 26\n0.855592 -0.104360 0.649539 0.006317 -0.992553 0.121525 0.156137 0.491179 49 16 6\n0.680949 -0.118056 0.602869 -0.078127 -0.995941 -0.044404 0.165362 0.453832 113 75 48\n-0.392332 -0.072633 0.070497 0.513962 -0.857784 -0.002777 0.259521 0.768434 124 60 18\n-0.488482 -0.074022 0.350219 0.028626 -0.999023 0.033418 0.194470 0.199528 116 51 17\n0.025250 -0.045986 0.120976 -0.492599 -0.810938 -0.315714 0.241477 0.307666 44 14 11\n-0.025412 -0.025531 0.150977 -0.721885 -0.537126 -0.436293 0.232576 0.297380 83 32 12\n0.099947 -0.027344 0.055212 -0.417035 -0.800287 -0.430799 0.248390 0.319362 25 9 7\n0.037920 -0.031608 0.059573 -0.389874 -0.758080 -0.522721 0.250697 0.310399 114 79 36\n-0.814843 0.091559 -0.986044 -0.413495 0.165349 -0.895352 0.795418 0.766552 69 38 18\n-0.697335 0.103141 -1.031649 -0.401410 0.061708 -0.913785 0.798907 0.740156 59 30 12\n1.063237 -0.021623 -0.259675 0.958129 0.264290 -0.110050 0.359470 0.817979 26 8 5\n1.160720 -0.107460 0.251952 0.952635 -0.299661 0.051363 0.773838 0.650452 72 24 6\n-0.170429 0.026562 -0.228867 0.643849 -0.361400 0.674398 0.346594 0.851545 76 39 20\n-0.220039 -0.023614 -0.249310 0.478805 -0.780633 0.401593 0.350705 0.863687 155 114 61\n-0.186913 -0.000816 -0.280536 0.583911 -0.772576 0.249306 0.344204 0.859416 107 59 28\n-0.103320 -0.012171 -0.384447 0.077731 -0.976135 0.202734 0.329589 0.271193 65 22 14\n0.359639 0.067271 -1.294928 0.074831 -0.716178 -0.693869 0.427154 0.758964 89 40 15\n0.351640 0.156603 -1.326921 0.086367 0.009980 -0.996185 0.409497 0.765405 63 24 7\n0.387047 0.139683 -1.325147 0.135533 -0.130802 -0.982086 0.412539 0.755582 59 22 6\n-0.679848 -0.087636 0.356040 0.024476 -0.996765 0.076357 0.191842 0.159144 138 75 30\n-1.320973 -0.072049 0.366310 -0.364299 -0.917386 0.160161 0.182360 0.023216 98 52 28\n-0.823521 -0.073007 0.373680 0.101779 -0.974364 0.200476 0.186820 0.129720 108 58 26\n0.878762 -0.116150 0.609917 -0.064577 -0.992218 0.106235 0.164882 0.495176 82 36 15\n1.056998 -0.065435 0.678531 0.806513 -0.458327 0.373363 0.156041 0.529927 57 29 10\n1.007370 -0.127136 0.653020 0.310190 -0.929472 0.199500 0.157887 0.522308 100 49 26\n-0.350449 -0.015120 -0.115056 0.780358 -0.560961 0.276223 0.033066 0.862138 99 57 21\n-0.415650 -0.023183 -0.049520 0.962279 -0.231697 0.142430 0.029494 0.873984 86 41 16\n-0.395899 -0.054912 -0.081976 0.678365 -0.655171 0.332438 0.029188 0.868115 124 58 22\n-0.170244 -0.020925 -0.364600 0.321390 -0.899258 0.296609 0.325951 0.259780 104 53 18\n1.149020 -0.017501 -0.491618 0.878536 -0.472365 -0.070681 0.756249 0.807424 103 44 13\n-0.878082 -0.084075 0.376738 0.057558 -0.991180 0.119144 0.186188 0.118730 106 54 17\n0.474350 -0.079318 0.361659 -0.066713 -0.997742 0.005341 0.203434 0.406347 119 55 22\n-1.228223 -0.087560 0.288062 0.061678 -0.994110 0.088992 0.199564 0.041982 125 69 29\n-1.164960 -0.055856 0.255085 -0.128208 -0.943571 0.305277 0.204500 0.055039 62 32 15\n1.079228 -0.126335 0.499677 0.539018 -0.818506 0.198645 0.780151 0.603417 87 39 15\n0.264553 0.123821 -1.328862 0.077303 -0.218787 -0.972686 0.419900 0.777200 63 24 8\n0.611716 0.189260 -1.257395 0.399030 0.248207 -0.882687 0.402607 0.718453 64 23 7\n0.547344 0.084414 -1.272725 0.257973 -0.544664 -0.797967 0.421868 0.724103 72 29 14\n0.538049 0.168107 -1.280952 0.366436 0.039552 -0.929594 0.412000 0.727200 51 17 6\n-0.410712 -0.052639 -0.033585 0.800989 -0.574084 -0.169744 0.254322 0.791097 123 70 26\n-0.415650 -0.023183 -0.049520 0.962279 -0.231697 0.142430 0.248908 0.793823 86 41 16\n-0.410712 -0.052639 -0.033585 0.800989 -0.574084 -0.169744 0.492400 0.913600 123 70 26\n-0.395899 -0.054912 -0.081976 0.678365 -0.655171 0.332438 0.489200 0.909100 124 58 22\n-0.415650 -0.023183 -0.049520 0.962279 -0.231697 0.142430 0.492400 0.908900 86 41 16\n-0.046484 0.016145 -0.310812 -0.087100 -0.013764 0.996094 0.692500 0.914100 102 47 26\n-0.050218 -0.003063 -0.298467 0.025483 -0.539018 0.841884 0.690200 0.914100 76 30 14\n0.029982 -0.021345 -0.273217 -0.358654 -0.917905 0.169713 0.690300 0.907100 115 53 24\n-0.387794 0.101694 -1.107244 -0.420545 0.386334 -0.820887 0.295881 0.870459 24 7 4\n-0.381339 0.084898 -1.148883 -0.691885 0.383801 -0.611499 0.301299 0.867322 25 6 3\n-0.454252 0.096763 -1.090296 -0.436598 -0.117344 -0.891934 0.297302 0.882195 72 37 14\n0.267434 0.017183 -0.563818 -0.024873 -0.998138 -0.055300 0.363445 0.349998 125 64 27\n0.330777 -0.004481 -0.359261 -0.010865 -0.992676 -0.120304 0.330129 0.363189 102 53 30\n0.178295 0.006838 -0.487354 0.059114 -0.994720 -0.083651 0.349399 0.333577 125 67 34\n-0.377578 -0.067305 0.209281 0.364727 -0.924863 -0.107486 0.220067 0.222034 130 59 24\n-1.123559 -0.087011 0.321633 -0.348643 -0.937071 0.017426 0.193411 0.064450 55 20 8\n0.179015 -0.007883 -0.360707 0.025483 -0.991638 -0.126347 0.329445 0.334549 104 48 19\n1.082677 -0.095396 0.572587 0.756127 -0.589312 0.284433 0.780900 0.580900 67 25 9\n0.179256 0.066109 -1.317494 0.150212 -0.511368 -0.846095 0.841830 0.547787 49 22 17\n0.264553 0.123821 -1.328862 0.077303 -0.218787 -0.972686 0.837174 0.529440 63 24 8\n0.244239 0.067965 -1.303843 0.121799 -0.711264 -0.692282 0.845541 0.535602 62 27 12\n-0.052188 -0.010042 -0.370284 0.008972 -0.997192 0.074129 0.327394 0.285022 133 69 34\n0.566300 -0.086112 0.339670 -0.084841 -0.996094 -0.023713 0.209946 0.425818 92 37 11\n-0.782303 -0.082872 0.343195 -0.013489 -0.987243 0.158605 0.193145 0.137117 110 58 21\n-0.515196 -0.076647 0.278445 0.050417 -0.997436 0.050264 0.207534 0.193824 91 29 8\n-0.990576 -0.095216 0.344853 -0.009186 -0.985656 0.168432 0.193641 0.094965 103 57 27\n0.263949 -0.012245 -0.304946 0.027650 -0.998138 -0.053774 0.318896 0.350878 128 71 36\n0.385589 -0.018136 -0.280654 -0.054842 -0.998199 -0.024140 0.315687 0.378241 132 71 33\n-0.599865 -0.087280 0.311746 0.084353 -0.992309 0.090243 0.200549 0.177934 111 46 17\n-0.367018 -0.055969 0.153727 0.613971 -0.774010 -0.154668 0.231015 0.222919 141 92 52\n-0.463361 -0.066620 0.176173 0.230323 -0.973083 0.001617 0.226059 0.204290 114 47 15\n-1.079741 -0.098716 0.281196 -0.168523 -0.978698 0.117100 0.202112 0.071371 93 57 29\n-1.193298 -0.072662 0.225990 0.135502 -0.966826 0.216407 0.210779 0.048088 73 30 11\n0.340252 -0.071363 0.253074 0.036927 -0.999054 0.022309 0.221886 0.376152 99 50 32\n1.129981 -0.116491 0.385880 0.664296 -0.728629 0.166631 0.775772 0.624289 78 30 11\n0.051272 -0.003205 -0.498094 0.102329 -0.994507 -0.021516 0.352481 0.307607 125 61 29\n0.142899 0.014536 -0.659910 0.126072 -0.991302 -0.037141 0.383319 0.324084 134 68 29\n0.677999 -0.101505 0.487319 -0.100925 -0.991852 -0.077517 0.182521 0.450593 111 62 32\n1.145389 -0.026602 -0.549582 0.860317 -0.504715 -0.071047 0.759186 0.819467 114 55 23\n-1.353791 -0.076417 0.256436 -0.438215 -0.890896 0.119358 0.202943 0.014874 90 47 25\n0.423690 0.000126 -0.547496 -0.076632 -0.994140 -0.076205 0.365041 0.383839 108 39 10\n0.221829 0.023589 -0.731078 -0.003418 -0.997284 -0.073550 0.394996 0.337259 75 22 5\n-1.375264 -0.045647 0.310768 -0.824061 -0.528703 0.203406 0.189933 0.011063 68 41 26\n-1.375264 -0.045647 0.310768 -0.824061 -0.528703 0.203406 0.859200 0.540200 68 41 26\n-1.409734 -0.029562 0.139571 -0.938963 -0.339702 0.054140 0.859200 0.554000 123 81 41\n-1.353791 -0.076417 0.256436 -0.438215 -0.890896 0.119358 0.855300 0.545800 90 47 25\n0.611199 0.058057 -1.223469 0.241523 -0.776543 -0.581866 0.426750 0.712513 77 24 14\n0.648312 0.137874 -1.246179 0.311624 -0.127415 -0.941618 0.410244 0.710054 59 20 7\n0.168634 0.126651 -1.326506 -0.019684 -0.106235 -0.994140 0.828921 0.547287 60 23 7\n1.073010 0.022413 -0.845550 0.744377 -0.521592 -0.416883 0.753062 0.885176 102 46 16\n0.025250 -0.045986 0.120976 -0.492599 -0.810938 -0.315714 0.389789 0.599968 44 14 11\n0.127613 -0.078963 0.090207 -0.289865 -0.915006 -0.280557 0.393831 0.585214 73 49 51\n1.056728 -0.022834 -0.404470 0.321512 -0.909116 0.264748 0.346551 0.519931 70 45 33\n-0.170803 -0.002840 -0.309938 0.350078 -0.861354 0.368053 0.065934 0.899917 73 23 13\n-0.186913 -0.000816 -0.280536 0.583911 -0.772576 0.249306 0.061700 0.902300 107 59 28\n-0.240726 -0.049700 -0.314089 0.376751 -0.920377 0.104617 0.062865 0.892876 117 56 23\n0.256980 -0.070793 -0.004984 -0.004975 -0.980102 -0.198340 0.269125 0.352848 100 81 75\n-0.500657 -0.084948 0.095545 0.139409 -0.989807 0.028291 0.241702 0.195480 152 82 35\n0.179963 -0.047571 -0.115539 -0.171117 -0.984710 -0.032014 0.287833 0.332106 120 78 47\n0.194803 -0.089629 0.198877 -0.076632 -0.993896 0.079012 0.230690 0.343715 80 52 57\n0.057832 -0.018212 -0.343118 0.001495 -0.998535 -0.053682 0.325754 0.307925 118 55 23\n1.082677 -0.095396 0.572587 0.756127 -0.589312 0.284433 0.167140 0.534695 67 25 9\n0.274615 -0.020713 -0.358554 0.081759 -0.822932 -0.562212 0.329917 0.354386 108 44 32\n0.179015 -0.007883 -0.360707 0.025483 -0.991638 -0.126347 0.399872 0.883124 104 48 19\n0.330777 -0.004481 -0.359261 -0.010865 -0.992676 -0.120304 0.400000 0.896000 102 53 30\n0.274615 -0.020713 -0.358554 0.081759 -0.822932 -0.562212 0.395200 0.888400 108 44 32\n0.439088 0.100837 -1.303515 0.194464 -0.366314 -0.909909 0.419057 0.745591 65 25 10\n-0.502234 -0.084774 0.218795 0.121799 -0.992126 0.028809 0.219002 0.196722 147 81 37\n-1.409734 -0.029562 0.139571 -0.938963 -0.339702 0.054140 0.219392 0.003677 123 81 41\n-1.405016 -0.059175 0.058598 -0.808618 -0.583941 0.071413 0.236510 0.003173 81 56 33\n-1.367795 -0.073402 0.073944 -0.574572 -0.810938 0.110416 0.235860 0.009174 69 31 13\n0.469307 -0.015957 -0.375854 -0.089206 -0.994598 -0.053011 0.333680 0.396445 96 40 15\n0.505445 -0.035566 -0.096535 -0.062258 -0.991760 -0.111728 0.285231 0.405785 121 60 26\n0.535755 -0.024059 -0.226269 -0.147252 -0.985046 -0.089084 0.311617 0.410787 109 55 21\n0.381821 -0.064930 0.169925 0.059969 -0.996490 -0.057985 0.236805 0.383933 117 65 38\n0.506040 -0.075619 0.164526 -0.062655 -0.994232 -0.087008 0.238865 0.411967 129 67 29\n0.334631 -0.067527 0.060732 0.146580 -0.980529 -0.130528 0.257184 0.372151 107 68 39\n0.438795 -0.062408 0.078510 -0.006867 -0.993561 -0.112980 0.255113 0.394255 111 52 21\n0.638932 -0.033807 -0.393023 -0.026460 -0.998901 -0.038484 0.341500 0.432407 107 42 23\n0.127613 -0.078963 0.090207 -0.289865 -0.915006 -0.280557 0.249196 0.328844 73 49 51\n1.059975 -0.049589 -0.311445 0.992615 -0.052248 -0.109226 0.768524 0.773730 33 8 5\n0.384906 0.015950 -0.728718 -0.040345 -0.994629 -0.095065 0.395963 0.377168 114 47 12\n1.162723 -0.113973 0.204426 0.927366 -0.348674 -0.135563 0.774952 0.661662 93 42 12\n0.290161 -0.089686 0.151001 0.122257 -0.992248 -0.022187 0.242393 0.364120 87 54 51\n0.358682 -0.042710 -0.061526 0.065340 -0.983825 -0.166692 0.277497 0.375862 129 86 56\n0.587257 -0.042724 -0.197801 -0.243721 -0.964080 -0.105289 0.306231 0.422389 106 42 19\n0.605949 -0.055274 0.005519 -0.177435 -0.980041 -0.089419 0.270097 0.429519 70 24 11\n0.825389 -0.115838 0.551072 -0.016663 -0.999664 -0.019440 0.174529 0.481848 108 53 22\n1.150252 -0.074722 0.030528 0.988861 0.032563 0.145085 0.118200 0.872400 36 12 8\n1.149444 -0.087713 -0.054429 0.977783 -0.109256 -0.178747 0.122000 0.878500 45 16 10\n1.105152 -0.043552 -0.095607 0.952513 0.285653 0.105380 0.116500 0.882475 39 14 8\n-0.454252 0.096763 -1.090296 -0.436598 -0.117344 -0.891934 0.813228 0.682564 72 37 14\n-0.381339 0.084898 -1.148883 -0.691885 0.383801 -0.611499 0.813847 0.670658 25 6 3\n-0.444586 0.041477 -1.125552 -0.640767 0.225715 -0.733757 0.820655 0.685997 31 11 7\n-0.331080 0.108576 -1.217490 -0.661580 0.344279 -0.666128 0.812419 0.655112 22 9 4\n0.309593 0.024395 -0.787281 0.008179 -0.980804 -0.194678 0.407061 0.358192 129 59 18\n0.307614 0.042647 -0.828553 0.074648 -0.996612 -0.033753 0.413280 0.355954 104 44 15\n0.408082 0.024633 -0.811435 -0.056124 -0.995086 -0.081362 0.412729 0.378260 106 43 13\n0.069095 -0.005940 -0.587501 0.227363 -0.973449 0.026002 0.369629 0.305940 130 64 31\n-0.762751 -0.086287 0.302263 -0.005646 -0.995392 0.095614 0.201398 0.141948 113 61 27\n0.084714 0.016283 -0.841853 0.154241 -0.987823 -0.019288 0.414701 0.308788 127 65 29\n0.163062 0.037667 -0.766832 0.254158 -0.856136 -0.449904 0.401448 0.325240 83 30 9\n0.120533 0.021865 -0.785528 0.287790 -0.935514 -0.204779 0.405507 0.317096 121 51 17\n-1.296865 -0.089859 0.196899 -0.081301 -0.987671 0.133610 0.216361 0.023591 118 56 25\n0.227250 0.023442 -0.843885 0.036439 -0.999329 0.002991 0.416649 0.339562 93 31 5\n-0.678611 -0.093625 0.228470 0.064272 -0.997589 0.025239 0.217521 0.159244 141 75 33\n-0.561553 -0.082507 0.196989 0.022889 -0.999084 0.035371 0.223438 0.181922 128 65 22\n-0.350449 -0.015120 -0.115056 0.780358 -0.560961 0.276223 0.486892 0.657936 99 57 21\n-0.379032 -0.053192 -0.146524 0.581957 -0.805261 0.113315 0.488762 0.670441 122 57 22\n-0.355441 -0.005263 -0.162945 0.742058 -0.513535 0.430799 0.481410 0.661880 61 26 10\n0.731949 0.122116 -1.198558 0.434339 -0.319193 -0.842280 0.490300 0.820800 86 38 17\n0.611199 0.058057 -1.223469 0.241523 -0.776543 -0.581866 0.490147 0.840777 77 24 14\n0.648312 0.137874 -1.246179 0.311624 -0.127415 -0.941618 0.479648 0.830403 59 20 7\n0.153361 -0.050286 0.019732 -0.353984 -0.874355 -0.331889 0.386370 0.572857 45 22 23\n-0.821973 0.039957 -0.982068 -0.252968 -0.111576 -0.960997 0.808500 0.771645 68 33 13\n0.807439 -0.112441 0.481265 -0.058931 -0.996887 -0.052004 0.186003 0.479778 104 47 16\n0.753277 -0.102571 0.333634 -0.105625 -0.993957 -0.028871 0.214995 0.467094 115 56 19\n-0.877206 -0.092945 0.270613 0.089175 -0.990448 0.104892 0.206841 0.117443 42 20 7\n0.025740 -0.001469 -0.745235 0.163854 -0.984619 -0.060610 0.397449 0.295845 130 63 29\n0.221829 0.023589 -0.731078 -0.003418 -0.997284 -0.073550 0.413043 0.830139 75 22 5\n0.120533 0.021865 -0.785528 0.287790 -0.935514 -0.204779 0.414200 0.844800 121 51 17\n0.163062 0.037667 -0.766832 0.254158 -0.856136 -0.449904 0.409692 0.837814 83 30 9\n0.340368 0.028194 -0.869664 -0.033662 -0.997955 0.053896 0.423316 0.362410 129 55 16\n0.934654 -0.120536 0.492043 -0.127812 -0.991729 -0.008515 0.187811 0.505142 104 50 18\n-0.410712 -0.052639 -0.033585 0.800989 -0.574084 -0.169744 0.261300 0.214600 123 70 26\n-0.362968 -0.038616 0.021783 0.809107 -0.465712 -0.358318 0.255740 0.219900 83 37 14\n-0.470496 -0.084469 -0.046421 0.243568 -0.969787 0.013367 0.267725 0.201648 136 69 29\n-0.235400 -0.044700 -0.335297 0.490555 -0.868679 0.068575 0.066300 0.892400 116 62 28\n-0.121791 -0.028855 -0.453955 0.228675 -0.973327 0.016724 0.344768 0.268231 118 59 28\n0.480355 0.005288 -0.664765 -0.020478 -0.996094 -0.085665 0.389492 0.392137 94 33 8\n0.788622 0.039969 -1.115285 0.271798 -0.795282 -0.541856 0.434166 0.783472 111 54 20\n0.832631 0.128027 -1.136496 0.571123 -0.075320 -0.817377 0.436270 0.765450 45 20 9\n0.877990 0.031156 -1.048513 0.393567 -0.725028 -0.565111 0.448051 0.788090 116 62 25\n-1.367795 -0.073402 0.073944 -0.574572 -0.810938 0.110416 0.380809 0.881112 69 31 13\n-1.335534 -0.099443 0.111235 -0.358531 -0.929685 0.084384 0.378900 0.875600 99 56 26\n-1.409734 -0.029562 0.139571 -0.938963 -0.339702 0.054140 0.381700 0.871300 123 81 41\n-0.388143 0.053953 -1.120055 -0.681051 0.101108 -0.725181 0.820647 0.675096 37 10 4\n-0.470496 -0.084469 -0.046421 0.243568 -0.969787 0.013367 0.260800 0.784400 136 69 29\n-0.355441 -0.005263 -0.162945 0.742058 -0.513535 0.430799 0.287583 0.222833 61 26 10\n-0.379032 -0.053192 -0.146524 0.581957 -0.805261 0.113315 0.291598 0.215720 122 57 22\n0.673321 -0.076311 0.110628 -0.142582 -0.988281 -0.053865 0.251514 0.446242 102 45 19\n1.079228 -0.126335 0.499677 0.539018 -0.818506 0.198645 0.187285 0.536731 87 39 15\n1.009468 -0.136715 0.550031 0.008179 -0.998962 0.044496 0.180187 0.520770 99 44 18\n1.022654 0.037459 -0.927904 0.656423 -0.492172 -0.571673 0.752786 0.904551 101 47 19\n0.877990 0.031156 -1.048513 0.393567 -0.725028 -0.565111 0.761449 0.925559 116 62 25\n0.914029 0.106661 -1.067466 0.639424 -0.120090 -0.759392 0.745713 0.937412 52 20 6\n0.651157 0.026621 -0.766466 -0.034120 -0.998779 -0.035096 0.043282 0.844825 72 23 6\n0.761982 0.011788 -0.722488 -0.075991 -0.996826 0.022980 0.042429 0.858197 99 52 23\n0.710149 -0.001719 -0.711533 0.097934 -0.921201 -0.376507 0.037817 0.853919 87 33 7\n0.622556 0.014185 -0.819535 -0.031526 -0.999420 0.011902 0.416588 0.423915 121 65 21\n0.738453 0.004302 -0.759440 -0.173925 -0.959441 0.221747 0.408885 0.448733 118 57 17\n0.651157 0.026621 -0.766466 -0.034120 -0.998779 -0.035096 0.406571 0.430110 72 23 6\n0.656662 -0.092793 0.234904 -0.041047 -0.995819 -0.081240 0.230199 0.443745 100 40 12\n0.475887 0.026573 -0.897570 -0.016114 -0.994903 -0.099490 0.428175 0.391712 106 37 14\n0.309593 0.024395 -0.787281 0.008179 -0.980804 -0.194678 0.319700 0.845300 129 59 18\n0.227250 0.023442 -0.843885 0.036439 -0.999329 0.002991 0.319596 0.858359 93 31 5\n0.307614 0.042647 -0.828553 0.074648 -0.996612 -0.033753 0.316100 0.853200 104 44 15\n0.781667 0.010246 -0.657926 0.021821 -0.972045 -0.233680 0.389335 0.459612 87 44 21\n0.710149 -0.001719 -0.711533 0.097934 -0.921201 -0.376507 0.400839 0.444099 87 33 7\n0.761982 0.011788 -0.722488 -0.075991 -0.996826 0.022980 0.401120 0.454944 99 52 23\n0.869159 -0.020178 -0.653615 -0.217689 -0.971160 -0.097049 0.391356 0.476515 102 44 15\n-0.289930 -0.046164 -0.244575 0.237220 -0.905881 0.350780 0.305141 0.234919 115 69 42\n-0.392332 -0.072633 0.070497 0.513962 -0.857784 -0.002777 0.246940 0.216659 124 60 18\n1.129981 -0.116491 0.385880 0.664296 -0.728629 0.166631 0.021800 0.903600 78 30 11\n1.113186 -0.063523 0.528075 0.882992 -0.380718 0.274453 0.021800 0.909300 64 32 13\n1.079228 -0.126335 0.499677 0.539018 -0.818506 0.198645 0.017600 0.905900 87 39 15\n0.573122 -0.006361 -0.552865 -0.088260 -0.988403 -0.123325 0.368562 0.415357 86 32 10\n-1.236743 -0.095750 0.185353 0.082461 -0.988220 0.128788 0.219891 0.038900 122 65 25\n-1.127649 -0.101418 0.175094 -0.183050 -0.973418 0.137425 0.219652 0.061324 121 71 33\n-0.042522 -0.015168 -0.527483 0.098270 -0.994293 0.041353 0.357173 0.285752 113 49 25\n-0.137442 0.052434 -1.304493 -0.185003 -0.383221 -0.904935 0.825905 0.608367 73 30 12\n-0.086775 0.090631 -1.318694 -0.118473 -0.139317 -0.983123 0.821393 0.597829 49 20 9\n-0.018869 0.090735 -1.322982 -0.024018 -0.208045 -0.977813 0.824605 0.585345 41 15 5\n0.560583 0.013157 -0.780270 -0.011475 -0.996307 -0.084964 0.409438 0.411450 116 53 20\n0.558539 0.010815 -0.676902 -0.064455 -0.995941 -0.062593 0.389786 0.411461 67 16 5\n-1.335534 -0.099443 0.111235 -0.358531 -0.929685 0.084384 0.231850 0.016965 99 56 26\n1.124542 -0.028090 -0.122381 0.896512 0.365795 0.249855 0.187600 0.892400 42 20 11\n1.105152 -0.043552 -0.095607 0.952513 0.285653 0.105380 0.190600 0.900674 39 14 8\n1.132540 -0.088402 -0.127385 0.958861 -0.252663 -0.129368 0.185695 0.898045 90 51 18\n1.121976 -0.044679 -0.167669 0.913785 0.267220 -0.305887 0.764996 0.739369 35 14 7\n1.132540 -0.088402 -0.127385 0.958861 -0.252663 -0.129368 0.771479 0.731655 90 51 18\n1.132540 -0.088402 -0.127385 0.958861 -0.252663 -0.129368 0.121732 0.887029 90 51 18\n-0.454252 0.096763 -1.090296 -0.436598 -0.117344 -0.891934 0.396286 0.847629 72 37 14\n-0.444586 0.041477 -1.125552 -0.640767 0.225715 -0.733757 0.403577 0.855476 31 11 7\n-0.459451 0.055269 -1.073410 -0.685873 0.034211 -0.726890 0.396425 0.853677 22 4 2\n1.097562 -0.093183 0.082056 0.706015 -0.702200 0.091922 0.775504 0.687465 19 6 6\n0.419680 0.039738 -1.039606 0.050600 -0.993378 -0.102939 0.454469 0.379585 109 42 12\n0.386844 0.054994 -1.148986 0.036500 -0.998871 -0.030152 0.472958 0.369183 83 26 6\n0.497041 0.048420 -1.115640 -0.007111 -0.999756 0.020478 0.467477 0.393708 122 56 16\n0.496593 0.062767 -1.065567 0.014222 -0.998596 -0.050569 0.456814 0.393128 76 27 8\n0.244239 0.067965 -1.303843 0.121799 -0.711264 -0.692282 0.433106 0.776393 62 27 12\n0.781667 0.010246 -0.657926 0.021821 -0.972045 -0.233680 0.043400 0.842100 87 44 21\n0.869159 -0.020178 -0.653615 -0.217689 -0.971160 -0.097049 0.051354 0.839414 102 44 15\n0.823173 -0.019514 -0.596820 -0.068606 -0.961791 -0.264992 0.047539 0.843115 86 30 8\n0.600836 0.035273 -1.012642 -0.093783 -0.987518 -0.126499 0.451937 0.414720 122 57 20\n-0.647865 -0.088886 0.173034 0.095553 -0.993896 0.054903 0.226474 0.164167 115 51 19\n-0.114867 -0.010757 -0.528465 0.174322 -0.978149 0.113132 0.357428 0.269051 73 25 11\n0.663171 0.044211 -1.164143 0.146245 -0.916379 -0.372600 0.467000 0.842606 115 57 24\n0.611199 0.058057 -1.223469 0.241523 -0.776543 -0.581866 0.455423 0.836707 77 24 14\n0.731949 0.122116 -1.198558 0.434339 -0.319193 -0.842280 0.470200 0.825000 86 38 17\n0.557182 0.024340 -0.900144 0.247291 -0.907559 -0.339335 0.429467 0.410385 117 57 20\n-0.569428 -0.031964 -1.012366 -0.467360 -0.466536 -0.750908 0.832299 0.721198 43 11 3\n-0.349736 0.007588 -1.180113 -0.518937 -0.295236 -0.802179 0.827936 0.663362 69 27 11\n0.070571 0.090288 -1.325141 -0.056093 -0.131748 -0.989685 0.831135 0.567595 51 21 9\n0.006725 0.038719 -1.299657 -0.036805 -0.735374 -0.676626 0.837629 0.584886 40 9 4\n-0.450068 -0.068808 0.062119 0.085910 -0.991272 -0.099796 0.863700 0.723400 102 81 59\n-0.392332 -0.072633 0.070497 0.513962 -0.857784 -0.002777 0.866900 0.718400 124 60 18\n-0.500657 -0.084948 0.095545 0.139409 -0.989807 0.028291 0.866900 0.728400 152 82 35\n-0.395899 -0.054912 -0.081976 0.678365 -0.655171 0.332438 0.275337 0.214242 124 58 22\n-0.410712 -0.052639 -0.033585 0.800989 -0.574084 -0.169744 0.265631 0.211875 123 70 26\n-0.395899 -0.054912 -0.081976 0.678365 -0.655171 0.332438 0.495600 0.666000 124 58 22\n-0.426717 -0.075112 -0.224824 0.251503 -0.966582 0.049196 0.301078 0.206314 125 59 23\n0.750514 -0.025324 -0.616366 0.075411 -0.962951 -0.258797 0.390600 0.453400 96 35 9\n0.822835 -0.109454 0.183144 -0.138890 -0.988708 -0.055696 0.240497 0.477222 109 67 32\n0.316018 0.037260 -1.036586 0.029206 -0.999390 -0.019074 0.451917 0.357039 122 56 17\n0.698465 -0.088968 0.026479 -0.254707 -0.966948 0.010834 0.268742 0.448475 84 38 21\n0.532263 0.035237 -0.940322 -0.020051 -0.992035 -0.124241 0.438926 0.401839 110 50 16\n0.659570 -0.044943 -0.313370 -0.130802 -0.970397 -0.202979 0.327420 0.437526 95 43 14\n-0.758884 -0.104834 0.178632 0.085726 -0.995972 0.025666 0.224866 0.140077 111 53 14\n-0.179761 -0.042852 -0.421235 0.404889 0.167821 0.898801 0.338802 0.256924 126 61 27\n0.250148 0.031260 -0.950679 0.045808 -0.997925 -0.045137 0.438346 0.341296 119 60 19\n1.056728 -0.022834 -0.404470 0.321512 -0.909116 0.264748 0.764188 0.792293 70 45 33\n1.062076 -0.062693 -0.348469 0.888821 -0.333598 -0.314127 0.770243 0.780651 50 18 10\n0.094946 0.022952 -0.964864 0.108097 -0.993988 -0.017151 0.437071 0.309057 87 23 7\n-0.566509 -0.087713 0.097241 0.072420 -0.996155 0.049043 0.242326 0.180290 115 52 15\n1.052824 -0.076838 -0.475636 0.067721 -0.984008 0.164678 0.364390 0.519916 126 78 42\n0.305476 0.044162 -1.171907 0.076785 -0.996033 -0.044313 0.475131 0.351533 123 57 17\n-1.193512 -0.098515 0.139283 -0.041139 -0.997040 0.064699 0.228394 0.047816 133 74 37\n0.152169 0.024656 -1.039500 0.106021 -0.992218 -0.064943 0.451235 0.319410 134 55 17\n0.255333 0.035111 -1.070169 0.013489 -0.995300 -0.095676 0.456350 0.342209 126 49 13\n0.750514 -0.025324 -0.616366 0.075411 -0.962951 -0.258797 0.382963 0.451717 96 35 9\n-0.240726 -0.049700 -0.314089 0.376751 -0.920377 0.104617 0.346800 0.872900 117 56 23\n-0.235400 -0.044700 -0.335297 0.490555 -0.868679 0.068575 0.322631 0.247479 116 62 28\n0.654193 -0.011541 -0.677766 -0.112583 -0.987854 -0.107059 0.393823 0.432981 123 62 27\n0.663171 0.044211 -1.164143 0.146245 -0.916379 -0.372600 0.479296 0.427674 115 57 24\n0.628936 0.044269 -1.078326 -0.098819 -0.989502 -0.105197 0.462381 0.420732 63 16 4\n1.129981 -0.116491 0.385880 0.664296 -0.728629 0.166631 0.206099 0.544151 78 30 11\n1.057437 -0.140329 0.433991 0.117862 -0.992248 0.038881 0.202157 0.531193 99 41 21\n0.092716 0.044732 -1.319553 -0.019959 -0.530045 -0.847713 0.840953 0.565806 49 27 21\n0.221024 0.045573 -1.265303 0.170965 -0.942167 -0.288156 0.470791 0.909082 42 21 14\n0.179256 0.066109 -1.317494 0.150212 -0.511368 -0.846095 0.474000 0.903700 49 22 17\n0.244239 0.067965 -1.303843 0.121799 -0.711264 -0.692282 0.474000 0.910600 62 27 12\n0.832631 0.128027 -1.136496 0.571123 -0.075320 -0.817377 0.372800 0.805700 45 20 9\n0.788622 0.039969 -1.115285 0.271798 -0.795282 -0.541856 0.387357 0.805047 111 54 20\n0.731949 0.122116 -1.198558 0.434339 -0.319193 -0.842280 0.373201 0.824004 86 38 17\n-0.417985 0.029573 -1.146033 -0.524064 0.254860 -0.812616 0.316171 0.903996 31 8 3\n-0.444586 0.041477 -1.125552 -0.640767 0.225715 -0.733757 0.312600 0.904500 31 11 7\n-0.388143 0.053953 -1.120055 -0.681051 0.101108 -0.725181 0.315355 0.898902 37 10 4\n-0.388143 0.053953 -1.120055 -0.681051 0.101108 -0.725181 0.104496 0.833749 37 10 4\n-0.417985 0.029573 -1.146033 -0.524064 0.254860 -0.812616 0.098100 0.835200 31 8 3\n1.059975 -0.049589 -0.311445 0.992615 -0.052248 -0.109226 0.363100 0.826200 33 8 5\n0.742904 -0.031366 -0.462937 -0.151555 -0.986206 -0.066256 0.355554 0.451602 65 26 12\n0.709177 -0.016415 -0.375771 -0.200751 -0.971191 -0.128147 0.339604 0.447014 49 17 6\n0.687183 -0.039987 -0.433049 0.050295 -0.994476 0.092013 0.350324 0.441425 91 39 32\n-0.958243 -0.124057 0.226282 0.162725 -0.979461 0.118931 0.215761 0.098332 80 46 47\n-1.083521 -0.104855 0.216266 -0.149083 -0.983947 0.097842 0.216091 0.071528 105 69 35\n-1.248874 -0.100856 0.085375 0.171606 -0.985046 0.013550 0.233599 0.039410 100 45 11\n-1.190114 -0.077490 0.035052 -0.014252 -0.997345 -0.071230 0.245986 0.045637 106 60 29\n-0.129808 -0.032192 -0.568162 0.264229 -0.959319 0.099368 0.366580 0.265627 120 50 21\n-1.399111 -0.068102 -0.048859 -0.875362 -0.483261 -0.013001 0.257640 0.001551 61 37 23\n1.002570 -0.038046 -0.406354 0.704550 -0.702567 0.099887 0.769631 0.796361 30 5 2\n0.695788 0.027766 -1.051905 -0.056307 -0.991150 -0.120151 0.460320 0.435685 135 95 80\n-0.851280 -0.101855 0.163055 0.049257 -0.995758 0.077395 0.228072 0.120913 83 37 12\n0.654193 -0.011541 -0.677766 -0.112583 -0.987854 -0.107059 0.032600 0.847200 123 62 27\n-0.459451 0.055269 -1.073410 -0.685873 0.034211 -0.726890 0.395900 0.858300 22 4 2\n-0.490435 0.019821 -1.060512 -0.708487 0.272713 -0.650868 0.396964 0.863351 35 9 3\n-0.450068 -0.068808 0.062119 0.085910 -0.991272 -0.099796 0.248683 0.205147 102 81 59\n0.751434 0.017442 -0.882759 -0.062166 -0.991333 -0.115604 0.431782 0.452521 95 37 12\n0.777049 0.019961 -0.971410 -0.056642 -0.995911 -0.070040 0.446437 0.454438 103 42 13\n0.659570 -0.044943 -0.313370 -0.130802 -0.970397 -0.202979 0.863700 0.867000 95 43 14\n0.638932 -0.033807 -0.393023 -0.026460 -0.998901 -0.038484 0.863700 0.877300 107 42 23\n0.709177 -0.016415 -0.375771 -0.200751 -0.971191 -0.128147 0.859800 0.873300 49 17 6\n-0.240726 -0.049700 -0.314089 0.376751 -0.920377 0.104617 0.317905 0.245461 117 56 23\n-0.218003 -0.053029 -0.391148 0.304697 -0.939909 0.153905 0.334115 0.249749 124 61 25\n0.179434 0.045873 -1.099810 0.133854 -0.989654 -0.050996 0.462812 0.325333 84 35 13\n0.256980 -0.070793 -0.004984 -0.004975 -0.980102 -0.198340 0.390140 0.552480 100 81 75\n0.663171 0.044211 -1.164143 0.146245 -0.916379 -0.372600 0.392200 0.824400 115 57 24\n0.818427 -0.006421 -0.771398 -0.157903 -0.987426 0.001892 0.412104 0.465233 119 49 15\n-0.928356 -0.100554 0.231702 0.454390 -0.872860 -0.177740 0.214539 0.106443 66 27 15\n1.150948 -0.027560 -0.428848 0.686026 -0.704123 0.183172 0.353332 0.538590 110 55 18\n-0.108317 -0.021179 -0.642702 0.169439 -0.981628 -0.087344 0.378731 0.268787 101 40 10\n0.331652 0.046731 -1.246077 0.043825 -0.981079 -0.188513 0.489299 0.355229 131 61 25\n0.795651 -0.101693 0.090057 -0.187292 -0.981597 0.037019 0.261171 0.473714 96 49 37\n-0.135808 -0.015725 -0.716782 0.151921 -0.944334 -0.291726 0.393648 0.264045 101 41 12\n-0.196592 -0.006028 -0.762155 0.336589 -0.908017 -0.249336 0.399464 0.248753 100 38 16\n-0.113416 0.015347 -0.794750 -0.160192 -0.987060 0.005737 0.404868 0.265759 93 47 28\n0.009349 0.001487 -0.830543 0.186193 -0.980438 -0.063540 0.413668 0.293382 81 21 5\n0.359639 0.067271 -1.294928 0.074831 -0.716178 -0.693869 0.496500 0.362200 89 40 15\n0.611199 0.058057 -1.223469 0.241523 -0.776543 -0.581866 0.488525 0.397655 77 24 14\n0.244239 0.067965 -1.303843 0.121799 -0.711264 -0.692282 0.498100 0.350200 62 27 12\n0.711729 -0.077427 -0.158073 -0.237983 -0.968413 -0.074252 0.302426 0.449888 35 16 8\n0.750514 -0.025324 -0.616366 0.075411 -0.962951 -0.258797 0.190566 0.834658 96 35 9\n0.781667 0.010246 -0.657926 0.021821 -0.972045 -0.233680 0.185938 0.836588 87 44 21\n0.823173 -0.019514 -0.596820 -0.068606 -0.961791 -0.264992 0.189934 0.824491 86 30 8\n-0.381339 0.084898 -1.148883 -0.691885 0.383801 -0.611499 0.816497 0.667808 25 6 3\n-0.662623 -0.100698 0.118214 0.078097 -0.992157 0.097324 0.237664 0.160538 100 38 10\n0.911487 -0.124502 0.360199 -0.132145 -0.990509 0.037202 0.214186 0.501332 107 56 24\n-0.121791 -0.028855 -0.453955 0.228675 -0.973327 0.016724 0.325500 0.891800 118 59 28\n-0.187162 -0.050391 -0.522639 0.289010 -0.956572 0.037873 0.325317 0.900948 105 42 18\n-0.114867 -0.010757 -0.528465 0.174322 -0.978149 0.113132 0.320600 0.893101 73 25 11\n-0.734920 -0.097680 0.156391 0.124363 -0.991974 -0.021973 0.231494 0.144706 130 65 27\n1.129477 -0.134593 0.294762 0.439497 -0.892087 0.104801 0.780239 0.642807 104 50 27\n0.842694 0.011256 -0.869231 -0.061953 -0.932920 -0.354656 0.428732 0.468571 85 33 10\n-0.192825 0.004798 -0.811348 0.363201 -0.919919 0.147618 0.408544 0.249237 96 50 23\n0.191055 0.030073 -1.152546 0.130680 -0.980071 0.149480 0.471399 0.323632 81 32 22\n-1.135041 -0.108679 0.077332 -0.217780 -0.975555 -0.028565 0.309686 0.901835 95 52 24\n-1.193512 -0.098515 0.139283 -0.041139 -0.997040 0.064699 0.308700 0.893500 133 74 37\n-1.190114 -0.077490 0.035052 -0.014252 -0.997345 -0.071230 0.312600 0.897000 106 60 29\n-0.379032 -0.053192 -0.146524 0.581957 -0.805261 0.113315 0.284756 0.218860 122 57 22\n-0.071096 -0.016366 -0.703812 0.031373 -0.995422 -0.090182 0.391893 0.277557 76 22 3\n0.844748 0.018257 -1.029327 0.009583 -0.976318 -0.216010 0.445300 0.792400 128 65 26\n1.149444 -0.087713 -0.054429 0.977783 -0.109256 -0.178747 0.771011 0.714737 45 16 10\n1.145976 -0.120923 0.027663 0.715415 -0.655934 0.240547 0.777662 0.698711 126 111 77\n-1.287996 -0.105750 0.058623 -0.077273 -0.985656 0.149815 0.242956 0.026106 114 51 20\n-1.248874 -0.100856 0.085375 0.171606 -0.985046 0.013550 0.238460 0.034432 100 45 11\n-1.336007 -0.106391 0.000338 -0.339335 -0.939360 0.048891 0.252996 0.015606 101 49 25\n0.788622 0.039969 -1.115285 0.271798 -0.795282 -0.541856 0.476462 0.442410 111 54 20\n-1.135041 -0.108679 0.077332 -0.217780 -0.975555 -0.028565 0.238947 0.057089 95 52 24\n0.057825 0.017534 -1.033074 0.106998 -0.993957 -0.024262 0.448853 0.299923 154 86 32\n0.807585 -0.072391 -0.442475 -0.269936 -0.917417 -0.292306 0.355808 0.462343 71 50 54\n0.102826 0.022961 -1.159423 0.089816 -0.995727 0.021302 0.477274 0.310155 93 55 47\n-1.074277 -0.110933 0.077709 -0.157689 -0.985198 0.066836 0.242677 0.070666 121 63 24\n-1.239260 -0.101158 -0.007057 0.452773 -0.889248 -0.064669 0.255185 0.032940 120 53 19\n-1.135041 -0.108679 0.077332 -0.217780 -0.975555 -0.028565 0.244738 0.054726 95 52 24\n-1.142006 -0.091909 -0.018430 -0.363475 -0.931578 0.003235 0.257033 0.057847 90 38 12\n1.106746 -0.045947 -0.647789 0.523362 -0.820795 -0.228767 0.764329 0.840829 125 69 30\n-0.113237 -0.016078 -0.886489 0.144322 -0.983093 0.112552 0.424017 0.263720 132 65 27\n0.221024 0.045573 -1.265303 0.170965 -0.942167 -0.288156 0.492088 0.334571 42 21 14\n-0.407045 -0.071539 -0.341199 0.158055 -0.986633 0.039552 0.323426 0.208774 134 71 35\n1.090530 -0.046848 -0.239842 0.866817 0.362407 -0.342387 0.767255 0.756716 29 7 5\n1.101631 -0.123545 -0.257821 0.735130 -0.614704 -0.285775 0.780634 0.759139 67 28 19\n0.331652 0.046731 -1.246077 0.043825 -0.981079 -0.188513 0.855300 0.534300 131 61 25\n0.221024 0.045573 -1.265303 0.170965 -0.942167 -0.288156 0.850606 0.543463 42 21 14\n-0.197211 -0.044095 -0.688456 0.246834 -0.937803 -0.244026 0.383807 0.860500 96 30 7\n-0.196592 -0.006028 -0.762155 0.336589 -0.908017 -0.249336 0.389500 0.869400 100 38 16\n-0.135808 -0.015725 -0.716782 0.151921 -0.944334 -0.291726 0.383100 0.871800 101 41 12\n0.659570 -0.044943 -0.313370 -0.130802 -0.970397 -0.202979 0.291666 0.833196 95 43 14\n0.709177 -0.016415 -0.375771 -0.200751 -0.971191 -0.128147 0.300239 0.841265 49 17 6\n0.751809 -0.066493 -0.306077 -0.373974 -0.913968 -0.157414 0.289770 0.848250 81 42 21\n-0.064002 -0.015064 -0.815397 -0.083651 -0.996429 0.009583 0.410010 0.275933 131 58 19\n-0.564816 -0.093801 -0.017565 0.084109 -0.996338 0.014405 0.264707 0.178918 140 80 37\n-1.230628 -0.084309 -0.073946 0.189276 -0.977996 0.087436 0.268501 0.038659 96 42 14\n0.814500 -0.039418 -0.517869 -0.139256 -0.956542 -0.256081 0.365815 0.467584 117 57 23\n0.710149 -0.001719 -0.711533 0.097934 -0.921201 -0.376507 0.397876 0.443708 87 33 7\n-0.135808 -0.015725 -0.716782 0.151921 -0.944334 -0.291726 0.459838 0.869949 101 41 12\n-0.113416 0.015347 -0.794750 -0.160192 -0.987060 0.005737 0.460400 0.861500 93 47 28\n-0.071096 -0.016366 -0.703812 0.031373 -0.995422 -0.090182 0.464200 0.861800 76 22 3\n-0.920669 -0.122823 0.123562 0.195654 -0.979003 -0.056764 0.234412 0.106643 76 45 35\n0.844748 0.018257 -1.029327 0.009583 -0.976318 -0.216010 0.457435 0.466712 128 65 26\n0.877990 0.031156 -1.048513 0.393567 -0.725028 -0.565111 0.458765 0.477040 116 62 25\n0.996623 -0.016228 -0.855898 0.171148 -0.947996 -0.268227 0.428851 0.497233 121 58 22\n-0.839103 -0.110452 0.041526 0.014283 -0.996155 0.086154 0.251611 0.121350 106 48 17\n-0.753189 -0.098924 0.064142 0.058565 -0.994720 0.084140 0.246811 0.139428 103 43 16\n0.846515 -0.117768 -0.014215 -0.138798 -0.985015 -0.102054 0.279073 0.480251 93 62 39\n1.002570 -0.038046 -0.406354 0.704550 -0.702567 0.099887 0.349639 0.510749 30 5 2\n1.002251 -0.065586 -0.422611 0.446516 -0.893796 0.041200 0.354117 0.509298 69 21 5\n0.996623 -0.016228 -0.855898 0.171148 -0.947996 -0.268227 0.763527 0.900160 121 58 22\n-0.671501 -0.104304 0.007180 0.079318 -0.996704 0.015320 0.258696 0.156401 101 38 13\n0.739839 -0.059671 -0.383207 -0.652699 -0.693350 -0.305307 0.343034 0.453494 66 34 22\n0.751809 -0.066493 -0.306077 -0.373974 -0.913968 -0.157414 0.329917 0.456708 81 42 21\n-0.079851 -0.008002 -0.967938 0.178045 -0.982849 -0.047670 0.438400 0.272020 116 52 17\n0.926955 -0.001815 -0.784914 -0.044313 -0.997955 -0.045747 0.415262 0.488699 110 55 28\n0.918588 -0.025174 -0.724953 -0.097781 -0.977264 -0.188025 0.406134 0.487943 106 39 16\n1.022654 0.037459 -0.927904 0.656423 -0.492172 -0.571673 0.444800 0.494100 101 47 19\n0.869037 -0.021056 -0.828738 -0.056185 -0.989502 -0.133030 0.424260 0.476134 135 77 41\n0.751434 0.017442 -0.882759 -0.062166 -0.991333 -0.115604 0.417129 0.829527 95 37 12\n0.842694 0.011256 -0.869231 -0.061953 -0.932920 -0.354656 0.420430 0.840447 85 33 10\n0.869037 -0.021056 -0.828738 -0.056185 -0.989502 -0.133030 0.414334 0.843015 135 77 41\n1.112088 -0.098430 -0.180235 0.959716 -0.207404 -0.189459 0.776141 0.742736 55 19 11\n0.878488 -0.109743 0.153037 -0.180212 -0.983245 0.027131 0.248199 0.488975 18 5 3\n0.962330 -0.131957 0.226001 -0.165227 -0.985900 0.026124 0.240397 0.505634 36 13 6\n0.823173 -0.019514 -0.596820 -0.068606 -0.961791 -0.264992 0.379035 0.470466 86 30 8\n0.128382 0.019252 -1.282178 0.134373 -0.932188 -0.336039 0.869200 0.633700 46 20 17\n0.179256 0.066109 -1.317494 0.150212 -0.511368 -0.846095 0.866100 0.629700 49 22 17\n0.221024 0.045573 -1.265303 0.170965 -0.942167 -0.288156 0.867023 0.624844 42 21 14\n-1.239260 -0.101158 -0.007057 0.452773 -0.889248 -0.064669 0.155253 0.865503 120 53 19\n-1.248874 -0.100856 0.085375 0.171606 -0.985046 0.013550 0.160468 0.852229 100 45 11\n-1.269024 -0.114538 0.033916 0.126896 -0.986114 0.106937 0.161700 0.861358 135 85 60\n-0.781900 -0.112228 0.016837 0.054933 -0.990051 0.129337 0.254938 0.134680 110 52 16\n0.128382 0.019252 -1.282178 0.134373 -0.932188 -0.336039 0.846800 0.556300 46 20 17\n1.104590 -0.069563 -0.512500 0.413007 -0.910703 -0.004852 0.765900 0.803500 126 64 29\n-0.050993 0.011136 -1.152319 0.006043 -0.998505 0.053835 0.471457 0.275219 140 69 23\n-1.190114 -0.077490 0.035052 -0.014252 -0.997345 -0.071230 0.189562 0.855392 106 60 29\n-1.239260 -0.101158 -0.007057 0.452773 -0.889248 -0.064669 0.191711 0.868650 120 53 19\n-1.230628 -0.084309 -0.073946 0.189276 -0.977996 0.087436 0.186794 0.873308 96 42 14\n-0.548499 -0.094089 -0.123920 0.104831 -0.994232 0.021851 0.283843 0.182614 148 86 42\n-0.614340 -0.094974 -0.065613 0.094913 -0.995209 0.022980 0.272399 0.168369 109 51 19\n0.771925 -0.092261 -0.202725 -0.242409 -0.969054 -0.046297 0.315249 0.463307 84 35 26\n-0.881959 -0.102568 0.088776 0.090823 -0.995758 -0.012421 0.241598 0.112950 79 36 15\n0.128382 0.019252 -1.282178 0.134373 -0.932188 -0.336039 0.496781 0.313315 46 20 17\n-0.976546 -0.121326 0.069677 0.043184 -0.995941 -0.078738 0.245138 0.093227 84 52 25\n-0.949678 -0.114378 0.019408 0.045900 -0.998932 0.004456 0.254316 0.097583 110 70 31\n-0.280505 -0.070540 -0.415339 0.114200 -0.993378 -0.009949 0.339269 0.235731 117 59 37\n1.073488 -0.138366 0.324913 0.059694 -0.996460 0.058809 0.219164 0.528308 111 60 26\n0.922211 -0.050897 -0.528639 -0.090396 -0.971160 -0.220496 0.371578 0.489479 112 57 23\n-1.115889 -0.115366 0.005920 -0.302316 -0.949919 -0.078860 0.255351 0.062267 109 49 16\n-0.187162 -0.050391 -0.522639 0.289010 -0.956572 0.037873 0.358755 0.255422 105 42 18\n-1.359707 -0.100085 -0.087814 -0.494461 -0.868587 0.032228 0.269494 0.011178 88 44 22\n-0.221442 -0.062004 -0.581242 0.117405 -0.987396 -0.106113 0.368611 0.246947 93 40 31\n-0.224918 -0.053271 -0.616802 0.194586 -0.975463 -0.102725 0.375949 0.244486 78 25 16\n1.116762 -0.141083 0.150768 0.393750 -0.835963 -0.382183 0.781943 0.673732 131 73 35\n1.079745 -0.126902 0.124234 0.368450 -0.859676 -0.353801 0.780254 0.680009 98 48 24\n1.150252 -0.074722 0.030528 0.988861 0.032563 0.145085 0.208100 0.894700 36 12 8\n1.097562 -0.093183 0.082056 0.706015 -0.702200 0.091922 0.207050 0.901860 19 6 6\n1.145976 -0.120923 0.027663 0.715415 -0.655934 0.240547 0.202825 0.896318 126 111 77\n-0.197211 -0.044095 -0.688456 0.246834 -0.937803 -0.244026 0.387312 0.251467 96 30 7\n-0.928356 -0.100554 0.231702 0.454390 -0.872860 -0.177740 0.471488 0.618821 66 27 15\n-0.958243 -0.124057 0.226282 0.162725 -0.979461 0.118931 0.475077 0.618988 80 46 47\n-0.920669 -0.122823 0.123562 0.195654 -0.979003 -0.056764 0.472200 0.635900 76 45 35\n1.129477 -0.134593 0.294762 0.439497 -0.892087 0.104801 0.226944 0.543785 104 50 27\n1.160720 -0.107460 0.251952 0.952635 -0.299661 0.051363 0.233000 0.550100 72 24 6\n1.162723 -0.113973 0.204426 0.927366 -0.348674 -0.135563 0.237000 0.545600 93 42 12\n-0.242213 -0.035120 -0.723638 0.333781 -0.915677 -0.223823 0.389500 0.856100 93 27 6\n-0.050819 0.020344 -1.101240 0.006226 -0.997925 -0.064058 0.461457 0.275452 63 15 4\n-0.144486 0.021371 -1.106326 0.121281 -0.956694 -0.264565 0.462368 0.256553 77 27 7\n-0.546599 -0.094134 -0.193017 0.117405 -0.992462 0.034486 0.296075 0.181795 83 22 4\n-1.031176 -0.120782 0.103638 -0.121677 -0.992553 0.004364 0.239048 0.082506 70 33 9\n-0.327895 -0.051106 -0.492798 0.228736 -0.972503 0.043611 0.352468 0.225036 87 47 32\n-0.248569 -0.055929 -0.458102 0.105747 -0.993469 -0.042695 0.346770 0.241064 65 19 7\n-0.892789 -0.048977 -0.958776 -0.526170 -0.093142 -0.845241 0.819333 0.789340 57 14 4\n-0.927887 -0.007464 -0.943665 -0.501663 -0.024537 -0.864681 0.810607 0.796215 52 26 9\n-1.385369 -0.074857 -0.141526 -0.867458 -0.496994 -0.021210 0.869700 0.577800 38 17 9\n-1.359707 -0.100085 -0.087814 -0.494461 -0.868587 0.032228 0.869700 0.586200 88 44 22\n-1.399111 -0.068102 -0.048859 -0.875362 -0.483261 -0.013001 0.866500 0.584100 61 37 23\n-0.490435 0.019821 -1.060512 -0.708487 0.272713 -0.650868 0.825557 0.699749 35 9 3\n-0.851280 -0.101855 0.163055 0.049257 -0.995758 0.077395 0.213700 0.884700 83 37 12\n-0.920669 -0.122823 0.123562 0.195654 -0.979003 -0.056764 0.210200 0.882800 76 45 35\n-0.881959 -0.102568 0.088776 0.090823 -0.995758 -0.012421 0.212337 0.875556 79 36 15\n-0.976546 -0.121326 0.069677 0.043184 -0.995941 -0.078738 0.305200 0.877700 84 52 25\n-0.881959 -0.102568 0.088776 0.090823 -0.995758 -0.012421 0.302400 0.869700 79 36 15\n-0.920669 -0.122823 0.123562 0.195654 -0.979003 -0.056764 0.305200 0.865700 76 45 35\n1.049364 -0.044937 -0.708152 0.050722 -0.976959 -0.207282 0.405624 0.512976 121 56 22\n0.971299 -0.024973 -0.664935 0.091525 -0.974578 -0.204413 0.395680 0.500005 92 37 15\n0.739839 -0.059671 -0.383207 -0.652699 -0.693350 -0.305307 0.141506 0.831059 66 34 22\n0.709177 -0.016415 -0.375771 -0.200751 -0.971191 -0.128147 0.136134 0.831231 49 17 6\n0.807585 -0.072391 -0.442475 -0.269936 -0.917417 -0.292306 0.140008 0.808528 71 50 54\n-0.207117 0.011183 -1.143161 0.437117 -0.825343 0.357372 0.469125 0.242994 104 38 10\n-0.109976 0.016063 -1.171227 -0.001312 -0.992004 0.126072 0.473754 0.261646 105 49 17\n-0.100249 -0.004549 -1.059458 0.147404 -0.942656 -0.299417 0.455312 0.265747 118 53 14\n-0.170066 -0.034450 -0.885498 0.337779 -0.907956 0.247932 0.424762 0.253304 119 60 33\n-0.100249 -0.004549 -1.059458 0.147404 -0.942656 -0.299417 0.229376 0.900600 118 53 14\n-0.050819 0.020344 -1.101240 0.006226 -0.997925 -0.064058 0.228200 0.894400 63 15 4\n0.057825 0.017534 -1.033074 0.106998 -0.993957 -0.024262 0.232300 0.893100 154 86 32\n-0.356821 -0.073337 -0.442140 0.179785 -0.983673 -0.001984 0.342580 0.218765 101 49 32\n0.833423 -0.106421 -0.053167 -0.074648 -0.981689 -0.175237 0.288877 0.478799 29 8 6\n-0.028190 0.018511 -1.224609 0.120090 -0.987487 -0.101993 0.485437 0.280288 123 61 29\n0.918588 -0.025174 -0.724953 -0.097781 -0.977264 -0.188025 0.498887 0.586111 106 39 16\n0.926955 -0.001815 -0.784914 -0.044313 -0.997955 -0.045747 0.495600 0.578200 110 55 28\n1.049364 -0.044937 -0.708152 0.050722 -0.976959 -0.207282 0.499600 0.569200 121 56 22\n1.004560 -0.048957 -0.583443 -0.183355 -0.969481 -0.162572 0.382475 0.506724 121 56 21\n1.079745 -0.126902 0.124234 0.368450 -0.859676 -0.353801 0.052985 0.882641 98 48 24\n1.097562 -0.093183 0.082056 0.706015 -0.702200 0.091922 0.053559 0.875762 19 6 6\n1.134895 -0.098123 0.131146 0.829768 -0.284555 -0.480087 0.057100 0.877100 17 5 3\n1.008719 -0.146897 0.153751 -0.063417 -0.997986 -0.000763 0.252458 0.517386 75 42 29\n0.850698 -0.106344 -0.148383 -0.154424 -0.987732 -0.022340 0.306575 0.480090 58 30 25\n-0.417985 0.029573 -1.146033 -0.524064 0.254860 -0.812616 0.824781 0.682726 31 8 3\n-1.169943 -0.099817 -0.113380 -0.030488 -0.972808 0.229560 0.275903 0.049605 128 75 38\n-1.269024 -0.114538 0.033916 0.126896 -0.986114 0.106937 0.248331 0.029132 135 85 60\n-1.000421 -0.112243 -0.011584 -0.029511 -0.999420 -0.015107 0.260366 0.086774 122 64 24\n-0.196592 -0.006028 -0.762155 0.336589 -0.908017 -0.249336 0.355464 0.832595 100 38 16\n-0.281625 -0.066275 -0.792851 0.592517 -0.797021 0.116703 0.363293 0.841541 67 31 26\n-0.192825 0.004798 -0.811348 0.363201 -0.919919 0.147618 0.352015 0.839660 96 50 23\n-0.775972 -0.116589 -0.098556 0.215064 -0.975249 -0.051149 0.050000 0.900200 142 79 35\n-0.732891 -0.094907 -0.101665 0.194128 -0.976531 -0.093173 0.053900 0.897400 122 69 33\n-0.671501 -0.104304 0.007180 0.079318 -0.996704 0.015320 0.050077 0.904830 101 38 13\n-0.732891 -0.094907 -0.101665 0.194128 -0.976531 -0.093173 0.278773 0.143376 122 69 33\n-0.665066 -0.102853 -0.075464 0.003906 -0.999908 -0.012635 0.273661 0.157449 116 49 11\n-0.240792 -0.041095 -0.842344 0.524888 -0.784143 0.331034 0.417348 0.239067 37 12 10\n-0.725873 -0.040566 -0.956100 0.061251 -0.603442 -0.795007 0.827757 0.757287 74 33 14\n-0.290937 -0.064960 -0.540423 0.113254 -0.984710 0.132298 0.361637 0.231366 95 52 29\n-0.216760 -0.004692 -1.247287 -0.113193 -0.818781 -0.562822 0.834798 0.633556 105 50 22\n0.905301 -0.087441 -0.422824 -0.016602 -0.971526 -0.236335 0.142191 0.796503 38 14 11\n0.814500 -0.039418 -0.517869 -0.139256 -0.956542 -0.256081 0.132247 0.807975 117 57 23\n1.004350 -0.103430 -0.375049 0.283853 -0.824152 -0.490066 0.779791 0.789293 22 5 4\n1.002251 -0.065586 -0.422611 0.446516 -0.893796 0.041200 0.775823 0.798345 69 21 5\n0.905301 -0.087441 -0.422824 -0.016602 -0.971526 -0.236335 0.354498 0.492243 38 14 11\n-0.664544 -0.100359 -0.117769 -0.037660 -0.998566 0.037324 0.283670 0.158639 100 37 13\n-0.686659 -0.116274 -0.214259 -0.035157 -0.993194 0.110843 0.301786 0.152891 127 62 24\n-0.594168 -0.100140 -0.138242 0.104862 -0.993469 0.044313 0.286534 0.171490 128 56 22\n-1.300164 -0.120728 -0.105982 0.115299 -0.993316 -0.003052 0.274015 0.022697 113 55 34\n1.096172 -0.125201 -0.012490 0.216285 -0.950591 -0.222571 0.777800 0.715100 58 24 18\n1.104590 -0.069563 -0.512500 0.413007 -0.910703 -0.004852 0.372462 0.528348 126 64 29\n1.104590 -0.069563 -0.512500 0.413007 -0.910703 -0.004852 0.768755 0.818143 126 64 29\n0.128382 0.019252 -1.282178 0.134373 -0.932188 -0.336039 0.846828 0.566918 46 20 17\n1.087576 -0.010792 -0.765422 0.649709 -0.668111 -0.362560 0.413287 0.518119 112 58 21\n-0.050819 0.020344 -1.101240 0.006226 -0.997925 -0.064058 0.482181 0.862416 63 15 4\n-0.100249 -0.004549 -1.059458 0.147404 -0.942656 -0.299417 0.475359 0.844150 118 53 14\n-0.144486 0.021371 -1.106326 0.121281 -0.956694 -0.264565 0.482929 0.847780 77 27 7\n-0.242366 -0.006939 -1.111589 0.550737 -0.833613 0.041505 0.464437 0.236209 91 37 12\n-0.775972 -0.116589 -0.098556 0.215064 -0.975249 -0.051149 0.279009 0.135577 142 79 35\n0.963473 -0.059672 -0.449145 0.065432 -0.971526 -0.227699 0.358074 0.496129 68 23 9\n-0.207382 -0.015262 -1.161740 0.367870 -0.900021 0.233650 0.473478 0.242016 124 57 16\n-1.142006 -0.091909 -0.018430 -0.363475 -0.931578 0.003235 0.860227 0.669599 90 38 12\n-1.096821 -0.115155 -0.025874 -0.168584 -0.985046 -0.035035 0.860700 0.661500 134 70 33\n-1.115889 -0.115366 0.005920 -0.302316 -0.949919 -0.078860 0.863700 0.665950 109 49 16\n-1.040212 -0.110885 -0.118253 0.000458 -0.998505 0.054353 0.278498 0.077178 120 59 22\n-0.972512 -0.120702 -0.093573 -0.103732 -0.994140 0.029664 0.274894 0.091017 116 53 20\n1.116762 -0.141083 0.150768 0.393750 -0.835963 -0.382183 0.254252 0.540312 131 73 35\n-0.118290 0.001437 -1.258886 0.041047 -0.938536 -0.342692 0.838157 0.604124 135 66 29\n1.108493 -0.112087 -0.123673 0.386883 -0.921079 -0.043580 0.776000 0.728300 93 67 54\n-0.852790 -0.117181 -0.060315 0.020661 -0.998505 0.050539 0.270720 0.117173 131 77 37\n0.006725 0.038719 -1.299657 -0.036805 -0.735374 -0.676626 0.498800 0.289600 40 9 4\n-0.164560 -0.025303 -0.959988 0.208106 -0.972625 -0.103092 0.438688 0.253753 117 55 21\n0.006725 0.038719 -1.299657 -0.036805 -0.735374 -0.676626 0.496069 0.283645 40 9 4\n-0.118290 0.001437 -1.258886 0.041047 -0.938536 -0.342692 0.488867 0.262524 135 66 29\n-0.194254 -0.028187 -1.022821 0.115665 -0.991089 -0.065859 0.450604 0.246255 126 66 27\n1.059179 -0.141829 0.032372 0.165685 -0.985595 -0.033387 0.258601 0.866080 66 30 18\n1.097562 -0.093183 0.082056 0.706015 -0.702200 0.091922 0.249243 0.867599 19 6 6\n1.079745 -0.126902 0.124234 0.368450 -0.859676 -0.353801 0.249800 0.856600 98 48 24\n-1.096821 -0.115155 -0.025874 -0.168584 -0.985046 -0.035035 0.262733 0.067700 134 70 33\n-0.600529 -0.098087 -0.215359 0.119053 -0.992645 0.020661 0.301146 0.169064 109 47 16\n-0.189430 -0.012363 -1.079973 0.216376 -0.878048 -0.426832 0.384500 0.907700 35 10 4\n-0.144486 0.021371 -1.106326 0.121281 -0.956694 -0.264565 0.388600 0.903000 77 27 7\n-0.100249 -0.004549 -1.059458 0.147404 -0.942656 -0.299417 0.388600 0.909400 118 53 14\n1.096172 -0.125201 -0.012490 0.216285 -0.950591 -0.222571 0.287856 0.531584 58 24 18\n1.108493 -0.112087 -0.123673 0.386883 -0.921079 -0.043580 0.302793 0.534411 93 67 54\n1.149444 -0.087713 -0.054429 0.977783 -0.109256 -0.178747 0.288295 0.543953 45 16 10\n1.043824 -0.109869 -0.078716 0.064486 -0.994079 -0.087252 0.293386 0.522068 72 29 20\n-1.300164 -0.120728 -0.105982 0.115299 -0.993316 -0.003052 0.191300 0.878300 113 55 34\n1.106746 -0.045947 -0.647789 0.523362 -0.820795 -0.228767 0.391094 0.528314 125 69 30\n-0.543391 -0.101149 -0.259742 0.123020 -0.990478 0.061678 0.310307 0.181284 131 64 30\n0.817001 -0.098686 -0.288020 -0.229286 -0.968169 -0.100040 0.328080 0.471964 81 49 47\n-0.464944 -0.083176 -0.424245 0.143040 -0.989563 0.015748 0.341414 0.191739 136 75 29\n0.807585 -0.072391 -0.442475 -0.269936 -0.917417 -0.292306 0.350687 0.469729 71 50 54\n-1.382542 -0.092654 -0.233944 -0.729118 -0.608203 -0.313761 0.294452 0.003296 53 29 17\n-1.322418 -0.123377 -0.181863 -0.266549 -0.962004 0.058657 0.286855 0.016045 107 54 30\n-1.385369 -0.074857 -0.141526 -0.867458 -0.496994 -0.021210 0.279132 0.003404 38 17 9\n1.145976 -0.120923 0.027663 0.715415 -0.655934 0.240547 0.276857 0.543867 126 111 77\n1.097562 -0.093183 0.082056 0.706015 -0.702200 0.091922 0.264077 0.536654 19 6 6\n1.059179 -0.141829 0.032372 0.165685 -0.985595 -0.033387 0.275242 0.525315 66 30 18\n-0.808037 -0.062876 -0.973079 0.245003 -0.010315 -0.969451 0.827038 0.772723 74 26 8\n0.846515 -0.117768 -0.014215 -0.138798 -0.985015 -0.102054 0.347156 0.834443 93 62 39\n0.833423 -0.106421 -0.053167 -0.074648 -0.981689 -0.175237 0.350702 0.829692 29 8 6\n0.974084 -0.125885 -0.028021 -0.035859 -0.993255 -0.110019 0.351200 0.846000 56 18 11\n-0.189430 -0.012363 -1.079973 0.216376 -0.878048 -0.426832 0.483511 0.896122 35 10 4\n-0.242366 -0.006939 -1.111589 0.550737 -0.833613 0.041505 0.487000 0.902400 91 37 12\n-0.144486 0.021371 -1.106326 0.121281 -0.956694 -0.264565 0.482500 0.900800 77 27 7\n1.044622 -0.112308 -0.146144 0.119846 -0.980712 0.154332 0.306948 0.522030 43 18 13\n-1.331138 -0.118067 -0.220445 -0.378704 -0.924131 -0.049898 0.296521 0.011865 80 45 24\n-0.381838 -0.089976 -0.552304 0.167852 -0.977783 0.125401 0.364990 0.211679 87 45 28\n-1.382542 -0.092654 -0.233944 -0.729118 -0.608203 -0.313761 0.448413 0.882321 53 29 17\n-1.379331 -0.063209 -0.265322 -0.962279 -0.159490 -0.220313 0.451316 0.873258 40 27 21\n-1.331138 -0.118067 -0.220445 -0.378704 -0.924131 -0.049898 0.454900 0.884400 80 45 24\n1.079745 -0.126902 0.124234 0.368450 -0.859676 -0.353801 0.256700 0.530500 98 48 24\n1.096172 -0.125201 -0.012490 0.216285 -0.950591 -0.222571 0.281277 0.532500 58 24 18\n0.905301 -0.087441 -0.422824 -0.016602 -0.971526 -0.236335 0.219492 0.857181 38 14 11\n0.963473 -0.059672 -0.449145 0.065432 -0.971526 -0.227699 0.216039 0.848126 68 23 9\n1.002251 -0.065586 -0.422611 0.446516 -0.893796 0.041200 0.223900 0.846000 69 21 5\n-0.248428 -0.057772 -0.686420 0.167760 -0.948729 -0.267830 0.387200 0.850900 117 45 25\n0.974084 -0.125885 -0.028021 -0.035859 -0.993255 -0.110019 0.283806 0.505069 56 18 11\n0.987070 -0.125124 -0.113518 0.044252 -0.998932 0.010651 0.302387 0.508087 83 59 41\n-0.196592 -0.006028 -0.762155 0.336589 -0.908017 -0.249336 0.403800 0.242200 100 38 16\n-0.242213 -0.035120 -0.723638 0.333781 -0.915677 -0.223823 0.394841 0.239308 93 27 6\n-0.281625 -0.066275 -0.792851 0.592517 -0.797021 0.116703 0.408888 0.231902 67 31 26\n-0.225363 -0.057250 -0.878654 0.356059 -0.915250 0.188391 0.424375 0.241752 73 40 35\n-0.210385 -0.047212 -0.920943 0.301614 -0.937346 -0.174261 0.430846 0.244031 90 43 32\n1.112088 -0.098430 -0.180235 0.959716 -0.207404 -0.189459 0.312700 0.534400 55 19 11\n1.132540 -0.088402 -0.127385 0.958861 -0.252663 -0.129368 0.304900 0.539700 90 51 18\n1.053763 -0.114021 -0.338380 0.479476 -0.763237 -0.432997 0.780218 0.778397 97 66 58\n-0.832464 -0.127489 -0.239988 0.025758 -0.996307 0.081698 0.305175 0.119641 124 79 34\n-0.724438 -0.106832 -0.218914 -0.023133 -0.983520 0.179174 0.301541 0.142193 92 35 13\n-1.140618 -0.109106 -0.164008 -0.039033 -0.996063 0.079501 0.285071 0.054918 115 62 28\n-1.349109 -0.105540 -0.295143 -0.628712 -0.776147 -0.047792 0.870900 0.803500 44 21 14\n-1.379331 -0.063209 -0.265322 -0.962279 -0.159490 -0.220313 0.867000 0.803000 40 27 21\n-1.343913 -0.100609 -0.377725 -0.851222 -0.494400 -0.176000 0.870900 0.798600 44 19 10\n-0.330846 -0.079002 -0.601624 0.271889 -0.962310 0.001404 0.374607 0.222617 56 15 6\n-0.981675 -0.107959 -0.164319 -0.250862 -0.966002 -0.061983 0.288370 0.088426 100 40 12\n-0.248428 -0.057772 -0.686420 0.167760 -0.948729 -0.267830 0.388624 0.237685 117 45 25\n-0.197211 -0.044095 -0.688456 0.246834 -0.937803 -0.244026 0.388516 0.248124 96 30 7\n-0.330846 -0.079002 -0.601624 0.271889 -0.962310 0.001404 0.454900 0.887400 56 15 6\n-0.291474 -0.052695 -0.705911 0.392315 -0.919736 -0.011414 0.451598 0.892713 94 48 22\n-0.248428 -0.057772 -0.686420 0.167760 -0.948729 -0.267830 0.447766 0.885418 117 45 25\n-0.291474 -0.052695 -0.705911 0.392315 -0.919736 -0.011414 0.390823 0.229830 94 48 22\n-0.240792 -0.041095 -0.842344 0.524888 -0.784143 0.331034 0.360100 0.848300 37 12 10\n-0.888678 -0.120663 -0.137317 0.043611 -0.998871 0.018586 0.285642 0.109392 133 77 40\n1.042489 -0.127729 -0.211677 0.008026 -0.999908 0.007843 0.319755 0.520232 88 77 65\n-1.218133 -0.135847 -0.190478 0.195776 -0.979980 0.036073 0.291992 0.037531 121 52 15\n-0.189430 -0.012363 -1.079973 0.216376 -0.878048 -0.426832 0.459393 0.247408 35 10 4\n-0.207117 0.011183 -1.143161 0.437117 -0.825343 0.357372 0.319800 0.780800 104 38 10\n-0.242366 -0.006939 -1.111589 0.550737 -0.833613 0.041505 0.319800 0.784300 91 37 12\n-0.207382 -0.015262 -1.161740 0.367870 -0.900021 0.233650 0.316800 0.781400 124 57 16\n-0.607112 -0.104542 -0.306172 0.032899 -0.987793 0.152074 0.318853 0.167080 81 21 4\n-1.331138 -0.118067 -0.220445 -0.378704 -0.924131 -0.049898 0.177200 0.900600 80 45 24\n-1.379331 -0.063209 -0.265322 -0.962279 -0.159490 -0.220313 0.178400 0.908800 40 27 21\n-1.349109 -0.105540 -0.295143 -0.628712 -0.776147 -0.047792 0.174900 0.908800 44 21 14\n-0.242213 -0.035120 -0.723638 0.333781 -0.915677 -0.223823 0.461100 0.906500 93 27 6\n-0.248428 -0.057772 -0.686420 0.167760 -0.948729 -0.267830 0.465300 0.905600 117 45 25\n-0.291474 -0.052695 -0.705911 0.392315 -0.919736 -0.011414 0.462905 0.910283 94 48 22\n-1.072913 -0.131827 -0.172592 -0.049135 -0.981201 0.186499 0.290299 0.069770 132 68 30\n-1.132693 -0.109095 -0.223669 -0.180486 -0.977477 0.109134 0.297501 0.056683 65 34 18\n-1.079282 -0.127181 -0.235502 -0.136723 -0.985382 0.101566 0.301249 0.067422 104 56 21\n-0.472858 -0.030061 -1.100768 -0.594958 -0.230140 -0.770074 0.831738 0.697219 56 16 6\n1.004350 -0.103430 -0.375049 0.283853 -0.824152 -0.490066 0.345568 0.512403 22 5 4\n-0.397248 -0.047607 -1.118617 -0.107059 -0.869686 -0.481796 0.837985 0.679739 102 46 19\n-0.968750 -0.127300 -0.156622 -0.454634 -0.879543 -0.140233 0.287820 0.092217 136 70 36\n-0.968750 -0.127300 -0.156622 -0.454634 -0.879543 -0.140233 0.129764 0.836932 136 70 36\n-0.972512 -0.120702 -0.093573 -0.103732 -0.994140 0.029664 0.129000 0.842600 116 53 20\n-0.981675 -0.107959 -0.164319 -0.250862 -0.966002 -0.061983 0.125872 0.836462 100 40 12\n-0.866012 -0.090865 -0.983652 -0.379254 -0.249580 -0.890957 0.826360 0.783499 81 32 9\n-0.472858 -0.030061 -1.100768 -0.594958 -0.230140 -0.770074 0.833210 0.695562 56 16 6\n-1.039012 -0.128281 -0.222324 0.131718 -0.987335 0.088382 0.299547 0.077004 110 60 22\n-1.009112 -0.127078 -0.284443 0.573290 -0.683584 0.451674 0.310926 0.080415 90 50 24\n-0.915544 -0.122739 -0.224503 -0.018433 -0.996643 0.079470 0.301234 0.101080 96 35 13\n-0.861338 -0.119329 -0.207116 -0.207862 -0.978027 -0.015625 0.298405 0.113930 78 29 9\n-0.222141 -0.025108 -0.993810 0.170995 -0.977874 -0.120334 0.444399 0.240239 44 13 6\n-0.777164 -0.126647 -0.256959 0.093539 -0.978698 0.182623 0.308643 0.131265 130 69 32\n-0.216760 -0.004692 -1.247287 -0.113193 -0.818781 -0.562822 0.485260 0.236027 105 50 22\n-0.627807 -0.117535 -0.369174 0.113437 -0.993469 0.010346 0.329973 0.161672 134 67 28\n-1.211142 -0.108942 -0.234932 0.379833 -0.923399 -0.054842 0.299142 0.040736 80 50 24\n-0.493780 -0.082436 -0.532225 -0.022156 -0.999420 0.025697 0.358359 0.189361 79 32 10\n-0.578105 -0.103097 -0.477774 0.287942 -0.946226 -0.147252 0.349712 0.170706 68 20 6\n-0.493780 -0.082436 -0.532225 -0.022156 -0.999420 0.025697 0.213700 0.884800 79 32 10\n-0.578105 -0.103097 -0.477774 0.287942 -0.946226 -0.147252 0.213509 0.894732 68 20 6\n-0.559929 -0.071827 -0.568229 0.113315 -0.993255 0.023530 0.208600 0.889200 105 56 29\n-1.120866 -0.143005 -0.313804 -0.155492 -0.984161 0.085025 0.317096 0.060041 68 32 28\n-0.378376 -0.095664 -0.630980 0.245064 -0.968383 0.046419 0.381043 0.211823 85 53 42\n-0.714659 -0.122564 -0.291986 0.124577 -0.985809 0.112278 0.316957 0.144500 130 79 31\n-0.321639 -0.083805 -0.712658 0.562639 -0.797418 0.217902 0.395520 0.222428 87 44 38\n-0.547264 -0.065169 -1.029075 -0.669424 -0.351299 -0.654530 0.838435 0.716250 74 32 10\n-0.242366 -0.006939 -1.111589 0.550737 -0.833613 0.041505 0.855453 0.626876 91 37 12\n-0.189430 -0.012363 -1.079973 0.216376 -0.878048 -0.426832 0.859200 0.624800 35 10 4\n-0.292214 -0.037955 -1.078416 0.206732 -0.972503 -0.106906 0.856715 0.635386 85 23 5\n-0.620531 -0.121138 -0.441428 0.172216 -0.983612 0.053041 0.344938 0.161737 146 85 36\n-0.638753 -0.055527 -0.916842 -0.665487 -0.502884 -0.551530 0.143430 0.833932 55 23 11\n-0.725873 -0.040566 -0.956100 0.061251 -0.603442 -0.795007 0.143193 0.842393 74 33 14\n-0.619227 -0.054734 -0.955224 -0.451399 -0.470351 -0.758263 0.130360 0.833165 100 54 25\n-1.087683 -0.053581 -0.833939 -0.661763 -0.105533 -0.742210 0.814892 0.837258 38 14 6\n-1.098197 -0.100884 -0.802741 -0.532640 -0.611744 -0.584796 0.825474 0.843753 72 34 13\n-1.172536 -0.069951 -0.732038 -0.805872 -0.126621 -0.578356 0.819255 0.864256 33 12 6\n-0.559929 -0.071827 -0.568229 0.113315 -0.993255 0.023530 0.365268 0.173448 105 56 29\n-0.509080 -0.094510 -0.593918 -0.153142 -0.964538 0.214881 0.370809 0.183068 109 67 43\n1.101631 -0.123545 -0.257821 0.735130 -0.614704 -0.285775 0.328697 0.531835 67 28 19\n-0.321639 -0.083805 -0.712658 0.562639 -0.797418 0.217902 0.392900 0.906100 87 44 38\n-0.281625 -0.066275 -0.792851 0.592517 -0.797021 0.116703 0.392900 0.912400 67 31 26\n-0.291474 -0.052695 -0.705911 0.392315 -0.919736 -0.011414 0.389700 0.906600 94 48 22\n-0.619227 -0.054734 -0.955224 -0.451399 -0.470351 -0.758263 0.833700 0.736200 100 54 25\n1.108493 -0.112087 -0.123673 0.386883 -0.921079 -0.043580 0.779951 0.739281 93 67 54\n-0.580743 -0.045419 -0.973262 -0.394818 -0.588641 -0.705374 0.465500 0.896400 57 31 28\n-0.619227 -0.054734 -0.955224 -0.451399 -0.470351 -0.758263 0.469000 0.887200 100 54 25\n-0.569428 -0.031964 -1.012366 -0.467360 -0.466536 -0.750908 0.468994 0.900399 43 11 3\n-0.210385 -0.047212 -0.920943 0.301614 -0.937346 -0.174261 0.869229 0.879962 90 43 32\n-0.170066 -0.034450 -0.885498 0.337779 -0.907956 0.247932 0.866900 0.875000 119 60 33\n-0.225363 -0.057250 -0.878654 0.356059 -0.915250 0.188391 0.870700 0.876400 73 40 35\n-0.915544 -0.122739 -0.224503 -0.018433 -0.996643 0.079470 0.127671 0.827372 96 35 13\n-0.222141 -0.025108 -0.993810 0.170995 -0.977874 -0.120334 0.439666 0.235127 44 13 6\n-0.292214 -0.037955 -1.078416 0.206732 -0.972503 -0.106906 0.461163 0.227478 85 23 5\n-0.325499 -0.047189 -1.052443 0.202246 -0.958953 -0.198645 0.454294 0.216118 57 13 3\n-0.915544 -0.122739 -0.224503 -0.018433 -0.996643 0.079470 0.299647 0.101658 96 35 13\n-1.211142 -0.108942 -0.234932 0.379833 -0.923399 -0.054842 0.855744 0.670850 80 50 24\n-1.140618 -0.109106 -0.164008 -0.039033 -0.996063 0.079501 0.859700 0.661500 115 62 28\n-1.218133 -0.135847 -0.190478 0.195776 -0.979980 0.036073 0.859700 0.670600 121 52 15\n-0.272900 -0.072001 -0.865474 0.358165 -0.932798 0.039247 0.422418 0.231131 75 42 40\n-1.135349 -0.106915 -0.427423 -0.106845 -0.927244 0.358837 0.335598 0.053365 38 14 13\n-1.122210 -0.123474 -0.371720 -0.445540 -0.860653 -0.246406 0.329300 0.057300 22 6 7\n-1.148125 -0.113845 -0.385813 0.019166 -0.970550 -0.240059 0.328411 0.050693 14 5 6\n-0.489456 -0.064318 -1.067428 -0.207221 -0.762596 -0.612751 0.840245 0.703141 100 42 23\n-0.189430 -0.012363 -1.079973 0.216376 -0.878048 -0.426832 0.458274 0.242050 35 10 4\n-0.469618 -0.108848 -0.644763 -0.002533 -0.989776 0.142552 0.381315 0.191071 97 66 54\n-0.240792 -0.041095 -0.842344 0.524888 -0.784143 0.331034 0.415918 0.238161 37 12 10\n-1.037022 -0.002985 -0.873085 -0.598682 0.077731 -0.797174 0.806251 0.820338 70 37 16\n-0.996144 -0.106676 -0.872318 -0.411206 -0.626362 -0.662221 0.827619 0.820092 91 45 19\n-0.397248 -0.047607 -1.118617 -0.107059 -0.869686 -0.481796 0.463779 0.199736 102 46 19\n1.053763 -0.114021 -0.338380 0.479476 -0.763237 -0.432997 0.340228 0.521355 97 66 58\n-1.252493 -0.141175 -0.263838 0.096805 -0.991546 0.086337 0.306659 0.030477 107 57 29\n-1.252493 -0.141175 -0.263838 0.096805 -0.991546 0.086337 0.712500 0.906100 107 57 29\n-1.211142 -0.108942 -0.234932 0.379833 -0.923399 -0.054842 0.712500 0.912600 80 50 24\n-1.218133 -0.135847 -0.190478 0.195776 -0.979980 0.036073 0.709500 0.911000 121 52 15\n-0.324191 -0.090126 -0.742933 0.373516 -0.925901 0.055940 0.405801 0.220069 79 49 51\n-1.312158 -0.086825 -0.521188 -0.885922 -0.166173 -0.432997 0.824800 0.904200 25 9 4\n-1.255367 -0.085719 -0.603907 -0.831355 -0.097324 -0.547105 0.823827 0.890291 35 15 8\n-1.278107 -0.119620 -0.544123 -0.696616 -0.611896 -0.374554 0.832901 0.902104 55 30 15\n-0.578105 -0.103097 -0.477774 0.287942 -0.946226 -0.147252 0.258070 0.800493 68 20 6\n-0.648174 -0.115503 -0.623413 0.258217 -0.965880 -0.018952 0.258627 0.827030 120 68 26\n-0.559929 -0.071827 -0.568229 0.113315 -0.993255 0.023530 0.250212 0.816017 105 56 29\n-1.193450 -0.131493 -0.340331 0.108921 -0.993866 0.017579 0.320139 0.041305 70 43 27\n-1.349109 -0.105540 -0.295143 -0.628712 -0.776147 -0.047792 0.307149 0.009030 44 21 14\n-1.343913 -0.100609 -0.377725 -0.851222 -0.494400 -0.176000 0.319446 0.009441 44 19 10\n-0.869412 -0.130332 -0.319126 0.034608 -0.998016 0.052522 0.319692 0.111112 127 72 33\n-0.720740 -0.132336 -0.388476 0.100986 -0.994415 0.029939 0.334619 0.146112 123 63 24\n-1.078304 -0.116741 -0.427063 -0.433058 -0.779931 -0.451796 0.337391 0.064070 10 3 2\n-1.067604 -0.102567 -0.516675 0.088534 -0.995636 0.029328 0.353736 0.064789 47 21 13\n-1.046248 -0.112401 -0.482181 -0.245552 -0.933134 -0.262551 0.346695 0.070675 52 26 16\n-0.989557 -0.141510 -0.323058 0.044710 -0.992859 0.110416 0.318696 0.086018 108 66 31\n-0.660105 -0.105225 -0.410898 0.232978 -0.930906 0.281198 0.118400 0.910600 121 85 50\n-0.627807 -0.117535 -0.369174 0.113437 -0.993469 0.010346 0.115100 0.909500 134 67 28\n-0.720740 -0.132336 -0.388476 0.100986 -0.994415 0.029939 0.117009 0.903805 123 63 24\n-0.648174 -0.115503 -0.623413 0.258217 -0.965880 -0.018952 0.377317 0.154598 120 68 26\n-0.606833 -0.115842 -0.705175 -0.000549 -0.969878 0.243538 0.391878 0.163100 106 63 35\n-1.277895 -0.140582 -0.352341 -0.238502 -0.971099 0.007874 0.321454 0.022695 106 55 30\n-1.178786 -0.116971 -0.436321 0.355022 -0.925138 0.134404 0.337779 0.044672 48 25 18\n-0.638753 -0.055527 -0.916842 -0.665487 -0.502884 -0.551530 0.247600 0.833400 55 23 11\n-0.690206 -0.114654 -0.867844 -0.278085 -0.867641 -0.412091 0.244055 0.849065 88 34 11\n-0.725873 -0.040566 -0.956100 0.061251 -0.603442 -0.795007 0.238254 0.831045 74 33 14\n-1.039012 -0.128281 -0.222324 0.131718 -0.987335 0.088382 0.816200 0.910500 110 60 22\n-0.989557 -0.141510 -0.323058 0.044710 -0.992859 0.110416 0.812850 0.905233 108 66 31\n-1.009112 -0.127078 -0.284443 0.573290 -0.683584 0.451674 0.816200 0.904900 90 50 24\n-0.660105 -0.105225 -0.410898 0.232978 -0.930906 0.281198 0.337362 0.154543 121 85 50\n-1.015499 -0.102682 -0.588198 -0.068148 -0.996887 0.039491 0.366353 0.076014 85 44 19\n-1.002836 -0.121050 -0.498520 -0.358623 -0.925382 -0.122471 0.352018 0.082383 40 12 5\n-1.312158 -0.086825 -0.521188 -0.885922 -0.166173 -0.432997 0.321429 0.837933 25 9 4\n-1.263089 -0.141836 -0.521318 -0.413892 -0.893033 -0.176489 0.327777 0.838599 53 29 14\n-1.343913 -0.100609 -0.377725 -0.851222 -0.494400 -0.176000 0.327900 0.850800 44 19 10\n-1.078304 -0.116741 -0.427063 -0.433058 -0.779931 -0.451796 0.204800 0.819900 10 3 2\n-1.046248 -0.112401 -0.482181 -0.245552 -0.933134 -0.262551 0.206267 0.811233 52 26 16\n-1.066072 -0.142222 -0.427059 -0.377514 -0.838343 -0.393231 0.210381 0.816830 86 38 18\n-1.079282 -0.127181 -0.235502 -0.136723 -0.985382 0.101566 0.300336 0.067046 104 56 21\n-0.580743 -0.045419 -0.973262 -0.394818 -0.588641 -0.705374 0.840400 0.727400 57 31 28\n-0.661525 -0.088471 -0.935987 -0.978668 -0.134495 -0.155187 0.458264 0.904908 10 4 2\n-0.638753 -0.055527 -0.916842 -0.665487 -0.502884 -0.551530 0.454900 0.899900 55 23 11\n-0.619227 -0.054734 -0.955224 -0.451399 -0.470351 -0.758263 0.459900 0.900500 100 54 25\n-1.135349 -0.106915 -0.427423 -0.106845 -0.927244 0.358837 0.873300 0.812200 38 14 13\n-1.098104 -0.145024 -0.385675 -0.328074 -0.921842 -0.206275 0.873300 0.819600 17 4 3\n-1.122210 -0.123474 -0.371720 -0.445540 -0.860653 -0.246406 0.870800 0.816700 22 6 7\n-1.098104 -0.145024 -0.385675 -0.328074 -0.921842 -0.206275 0.211772 0.830759 17 4 3\n-1.135349 -0.106915 -0.427423 -0.106845 -0.927244 0.358837 0.203700 0.829000 38 14 13\n-1.078304 -0.116741 -0.427063 -0.433058 -0.779931 -0.451796 0.209349 0.823310 10 3 2\n-1.312158 -0.086825 -0.521188 -0.885922 -0.166173 -0.432997 0.708500 0.898700 25 9 4\n-1.278107 -0.119620 -0.544123 -0.696616 -0.611896 -0.374554 0.708500 0.906400 55 30 15\n-1.263089 -0.141836 -0.521318 -0.413892 -0.893033 -0.176489 0.704700 0.903600 53 29 14\n-1.122210 -0.123474 -0.371720 -0.445540 -0.860653 -0.246406 0.323542 0.051490 22 6 7\n-0.853054 -0.133432 -0.404448 0.044893 -0.998962 0.006073 0.335173 0.110735 110 55 17\n-0.957576 -0.139736 -0.421705 0.016633 -0.999176 -0.036897 0.338204 0.090507 123 79 32\n-1.107364 -0.136415 -0.597166 0.224464 -0.967589 0.115513 0.368567 0.058110 110 51 17\n-0.802681 -0.131817 -0.413153 0.003174 -0.999969 -0.000641 0.338105 0.123910 97 43 17\n-0.281625 -0.066275 -0.792851 0.592517 -0.797021 0.116703 0.394099 0.862508 67 31 26\n-0.324191 -0.090126 -0.742933 0.373516 -0.925901 0.055940 0.389835 0.863203 79 49 51\n-0.272900 -0.072001 -0.865474 0.358165 -0.932798 0.039247 0.391300 0.850900 75 42 40\n-1.166918 -0.120330 -0.698228 -0.609882 -0.632496 -0.477432 0.830314 0.865724 65 27 11\n-0.521219 -0.094916 -0.652957 -0.083193 -0.937986 0.336497 0.383445 0.181423 114 80 58\n-0.690206 -0.114654 -0.867844 -0.278085 -0.867641 -0.412091 0.242838 0.801270 88 34 11\n-0.638753 -0.055527 -0.916842 -0.665487 -0.502884 -0.551530 0.244664 0.820271 55 23 11\n-0.669542 -0.092241 -0.892641 -0.806085 0.271432 -0.525834 0.243792 0.810528 6 2 1\n-1.148125 -0.113845 -0.385813 0.019166 -0.970550 -0.240059 0.319800 0.774418 14 5 6\n-1.122210 -0.123474 -0.371720 -0.445540 -0.860653 -0.246406 0.316581 0.777188 22 6 7\n-1.193450 -0.131493 -0.340331 0.108921 -0.993866 0.017579 0.318600 0.763700 70 43 27\n-0.643695 -0.095372 -0.911761 -0.893033 -0.148198 -0.424818 0.240900 0.813700 10 2 1\n-0.540993 -0.112845 -0.984131 -0.131413 -0.870052 -0.475082 0.846719 0.720322 26 5 2\n-1.149264 -0.144003 -0.522493 0.241951 -0.956450 0.163060 0.355417 0.049324 120 54 21\n-0.913230 -0.120141 -0.900575 -0.248451 -0.861690 -0.442366 0.832972 0.801471 99 50 25\n-1.018819 -0.131238 -0.452684 -0.057405 -0.939024 -0.339000 0.213489 0.806590 114 87 50\n-0.661525 -0.088471 -0.935987 -0.978668 -0.134495 -0.155187 0.636900 0.911900 10 4 2\n-0.643695 -0.095372 -0.911761 -0.893033 -0.148198 -0.424818 0.633500 0.911600 10 2 1\n-0.638753 -0.055527 -0.916842 -0.665487 -0.502884 -0.551530 0.636130 0.907380 55 23 11\n-0.619227 -0.054734 -0.955224 -0.451399 -0.470351 -0.758263 0.400907 0.870738 100 54 25\n-0.580743 -0.045419 -0.973262 -0.394818 -0.588641 -0.705374 0.400513 0.881046 57 31 28\n-0.595537 -0.086812 -0.975258 -0.325053 0.060244 -0.943754 0.395200 0.876900 25 6 2\n-0.652125 -0.129482 -0.534977 0.189001 -0.980193 -0.058840 0.362775 0.153287 141 77 29\n-1.263089 -0.141836 -0.521318 -0.413892 -0.893033 -0.176489 0.349193 0.024142 53 29 14\n-1.343913 -0.100609 -0.377725 -0.851222 -0.494400 -0.176000 0.324894 0.011980 44 19 10\n-1.120866 -0.143005 -0.313804 -0.155492 -0.984161 0.085025 0.872256 0.720092 68 32 28\n-1.122210 -0.123474 -0.371720 -0.445540 -0.860653 -0.246406 0.872600 0.725900 22 6 7\n-1.098104 -0.145024 -0.385675 -0.328074 -0.921842 -0.206275 0.870000 0.724600 17 4 3\n-0.721868 -0.096228 -0.923716 0.489334 -0.583300 -0.648274 0.237455 0.841942 92 38 12\n-1.098104 -0.145024 -0.385675 -0.328074 -0.921842 -0.206275 0.329879 0.061828 17 4 3\n-0.994762 -0.102696 -0.671427 0.240120 -0.933927 0.264718 0.381392 0.080456 110 60 28\n-0.945348 -0.113482 -0.695060 0.048616 -0.980438 0.190558 0.387909 0.089699 118 61 25\n-0.382616 -0.087779 -0.969232 0.197394 -0.956969 -0.212622 0.440641 0.205253 76 43 42\n-1.066072 -0.142222 -0.427059 -0.377514 -0.838343 -0.393231 0.213919 0.823490 86 38 18\n-0.965734 -0.128673 -0.610915 -0.192816 -0.956359 -0.219459 0.372895 0.087041 137 78 33\n-0.781546 -0.122993 -0.642673 0.020020 -0.998932 -0.041505 0.114861 0.848383 134 75 33\n-0.680081 -0.119618 -0.680948 0.068270 -0.997467 0.018677 0.113244 0.833678 98 43 11\n-0.708028 -0.123480 -0.642440 0.047639 -0.996124 -0.073611 0.116426 0.836998 127 58 17\n-1.015499 -0.102682 -0.588198 -0.068148 -0.996887 0.039491 0.869800 0.543200 85 44 19\n-1.014764 -0.130978 -0.696144 0.280648 -0.937956 0.203528 0.869800 0.551300 108 49 17\n-0.994762 -0.102696 -0.671427 0.240120 -0.933927 0.264718 0.866500 0.547900 110 60 28\n-0.865503 -0.130493 -0.487309 0.033357 -0.999054 -0.027772 0.351150 0.110085 123 68 36\n-0.580743 -0.045419 -0.973262 -0.394818 -0.588641 -0.705374 0.871700 0.911000 57 31 28\n-0.540993 -0.112845 -0.984131 -0.131413 -0.870052 -0.475082 0.871700 0.915800 26 5 2\n-0.595537 -0.086812 -0.975258 -0.325053 0.060244 -0.943754 0.869900 0.913000 25 6 2\n-0.885830 -0.119901 -0.588810 -0.188543 -0.972137 -0.139256 0.367917 0.100345 138 81 34\n-0.971839 -0.142136 -0.527914 -0.278054 -0.955870 -0.094668 0.357801 0.086691 132 86 41\n-0.767495 -0.131414 -0.527032 0.027680 -0.999207 -0.028565 0.359722 0.129649 106 39 13\n-0.690994 -0.128882 -0.480317 0.057039 -0.998352 -0.000946 0.352401 0.147710 143 85 38\n-0.489456 -0.064318 -1.067428 -0.207221 -0.762596 -0.612751 0.451712 0.179750 100 42 23\n-1.002836 -0.121050 -0.498520 -0.358623 -0.925382 -0.122471 0.208800 0.804000 40 12 5\n-1.018819 -0.131238 -0.452684 -0.057405 -0.939024 -0.339000 0.343235 0.078160 114 87 50\n-1.235110 -0.150423 -0.445505 0.064638 -0.996704 0.048799 0.341802 0.032902 122 65 35\n-0.808037 -0.062876 -0.973079 0.245003 -0.010315 -0.969451 0.494565 0.880076 74 26 8\n-0.725873 -0.040566 -0.956100 0.061251 -0.603442 -0.795007 0.492300 0.874300 74 33 14\n-0.783465 -0.110687 -0.929149 0.237892 -0.887845 -0.393811 0.497594 0.874995 95 38 15\n-0.721868 -0.096228 -0.923716 0.489334 -0.583300 -0.648274 0.840171 0.761252 92 38 12\n-0.783465 -0.110687 -0.929149 0.237892 -0.887845 -0.393811 0.837287 0.773876 95 38 15\n-0.708028 -0.123480 -0.642440 0.047639 -0.996124 -0.073611 0.380729 0.142587 127 58 17\n-0.680081 -0.119618 -0.680948 0.068270 -0.997467 0.018677 0.388003 0.146857 98 43 11\n-1.015499 -0.102682 -0.588198 -0.068148 -0.996887 0.039491 0.859800 0.624200 85 44 19\n-0.945348 -0.113482 -0.695060 0.048616 -0.980438 0.190558 0.860020 0.614004 118 61 25\n-0.965734 -0.128673 -0.610915 -0.192816 -0.956359 -0.219459 0.863300 0.619055 137 78 33\n-0.902345 -0.104530 -0.631036 -0.111606 -0.987213 -0.113590 0.375987 0.100149 102 52 27\n-0.861001 -0.133366 -0.581168 -0.211188 -0.976623 -0.040010 0.368887 0.110584 134 67 29\n-1.066072 -0.142222 -0.427059 -0.377514 -0.838343 -0.393231 0.338126 0.068143 86 38 18\n-0.957576 -0.139736 -0.421705 0.016633 -0.999176 -0.036897 0.863300 0.580362 123 79 32\n-1.066072 -0.142222 -0.427059 -0.377514 -0.838343 -0.393231 0.861600 0.589800 86 38 18\n-1.018819 -0.131238 -0.452684 -0.057405 -0.939024 -0.339000 0.859651 0.583604 114 87 50\n-0.661525 -0.088471 -0.935987 -0.978668 -0.134495 -0.155187 0.492900 0.901400 10 4 2\n-0.619227 -0.054734 -0.955224 -0.451399 -0.470351 -0.758263 0.492900 0.908900 100 54 25\n-0.595537 -0.086812 -0.975258 -0.325053 0.060244 -0.943754 0.489200 0.903700 25 6 2\n-0.902345 -0.104530 -0.631036 -0.111606 -0.987213 -0.113590 0.870700 0.892300 102 52 27\n-0.869522 -0.123466 -0.666418 -0.165136 -0.986236 -0.001801 0.873200 0.890300 107 52 23\n-0.885830 -0.119901 -0.588810 -0.188543 -0.972137 -0.139256 0.872320 0.897172 138 81 34\n-0.885830 -0.119901 -0.588810 -0.188543 -0.972137 -0.139256 0.271970 0.882642 138 81 34\n-0.965734 -0.128673 -0.610915 -0.192816 -0.956359 -0.219459 0.275896 0.870358 137 78 33\n-0.902345 -0.104530 -0.631036 -0.111606 -0.987213 -0.113590 0.277200 0.884700 102 52 27\n-0.781546 -0.122993 -0.642673 0.020020 -0.998932 -0.041505 0.380148 0.125713 134 75 33\n-0.740810 -0.124796 -0.716812 0.015870 -0.999786 0.013062 0.394502 0.134848 127 67 31\n-0.885830 -0.119901 -0.588810 -0.188543 -0.972137 -0.139256 0.370100 0.103594 138 81 34\n-0.869522 -0.123466 -0.666418 -0.165136 -0.986236 -0.001801 0.383424 0.106673 107 52 23\n-1.002836 -0.121050 -0.498520 -0.358623 -0.925382 -0.122471 0.102115 0.883945 40 12 5\n-0.965734 -0.128673 -0.610915 -0.192816 -0.956359 -0.219459 0.103028 0.893435 137 78 33\n-0.971839 -0.142136 -0.527914 -0.278054 -0.955870 -0.094668 0.098100 0.888400 132 86 41\n-0.382616 -0.087779 -0.969232 0.197394 -0.956969 -0.212622 0.855300 0.693100 76 43 42\n-1.014764 -0.130978 -0.696144 0.280648 -0.937956 0.203528 0.387610 0.076337 108 49 17\n-0.570637 -0.130859 -0.812383 0.110050 -0.993896 -0.001862 0.418133 0.171398 77 54 61\n-0.805537 -0.105270 -0.987143 0.440504 -0.447462 -0.778283 0.498528 0.882175 96 45 23\n-0.831782 -0.124630 -0.730017 -0.089999 -0.995880 -0.007935 0.396148 0.113093 134 69 28\n-1.055209 -0.136520 -0.639572 0.234809 -0.956816 0.171331 0.377992 0.067395 127 60 24\n-1.145639 -0.141603 -0.682382 -0.231147 -0.946440 -0.225379 0.837229 0.866432 111 62 35\n-0.698768 -0.125663 -0.777863 -0.081149 -0.996521 0.017945 0.408961 0.142302 31 8 5\n-0.919598 -0.127557 -0.758465 0.086703 -0.994079 0.065401 0.400121 0.096359 144 73 28\n-0.869801 -0.106467 -0.746199 -0.144963 -0.783807 0.603778 0.398098 0.105218 77 18 5\n-0.831782 -0.124630 -0.730017 -0.089999 -0.995880 -0.007935 0.092400 0.911000 134 69 28\n-0.869522 -0.123466 -0.666418 -0.165136 -0.986236 -0.001801 0.096100 0.907300 107 52 23\n-0.869801 -0.106467 -0.746199 -0.144963 -0.783807 0.603778 0.096100 0.912200 77 18 5\n-0.540993 -0.112845 -0.984131 -0.131413 -0.870052 -0.475082 0.444215 0.185754 26 5 2\n-0.866012 -0.090865 -0.983652 -0.379254 -0.249580 -0.890957 0.864100 0.731000 81 32 9\n-0.808037 -0.062876 -0.973079 0.245003 -0.010315 -0.969451 0.863846 0.738826 74 26 8\n-0.805537 -0.105270 -0.987143 0.440504 -0.447462 -0.778283 0.860163 0.736408 96 45 23\n-1.278107 -0.119620 -0.544123 -0.696616 -0.611896 -0.374554 0.368200 0.032800 55 30 15\n-1.145639 -0.141603 -0.682382 -0.231147 -0.946440 -0.225379 0.384648 0.049926 111 62 35\n-0.813665 -0.117196 -0.817061 0.015137 -0.998108 -0.059236 0.411940 0.116751 73 18 4\n-0.646835 -0.132200 -0.762439 -0.105533 -0.971191 0.213599 0.404401 0.153158 95 68 50\n-0.643695 -0.095372 -0.911761 -0.893033 -0.148198 -0.424818 0.159346 0.903271 10 2 1\n-0.661525 -0.088471 -0.935987 -0.978668 -0.134495 -0.155187 0.155800 0.901933 10 4 2\n-0.611859 -0.119593 -0.967783 -0.347392 -0.651357 -0.674520 0.160000 0.895300 16 3 2\n-0.611859 -0.119593 -0.967783 -0.347392 -0.651357 -0.674520 0.847432 0.736108 16 3 2\n-0.661525 -0.088471 -0.935987 -0.978668 -0.134495 -0.155187 0.843081 0.745906 10 4 2\n-0.595537 -0.086812 -0.975258 -0.325053 0.060244 -0.943754 0.843178 0.731987 25 6 2\n-0.690206 -0.114654 -0.867844 -0.278085 -0.867641 -0.412091 0.422191 0.143327 88 34 11\n-0.783465 -0.110687 -0.929149 0.237892 -0.887845 -0.393811 0.431560 0.120781 95 38 15\n-0.721868 -0.096228 -0.923716 0.489334 -0.583300 -0.648274 0.429700 0.136100 92 38 12\n-1.145639 -0.141603 -0.682382 -0.231147 -0.946440 -0.225379 0.835679 0.854486 111 62 35\n-0.913230 -0.120141 -0.900575 -0.248451 -0.861690 -0.442366 0.428421 0.102334 99 50 25\n-1.007597 -0.134153 -0.789502 -0.086764 -0.981384 -0.171270 0.405376 0.076741 132 72 35\n-0.669542 -0.092241 -0.892641 -0.806085 0.271432 -0.525834 0.277900 0.902500 6 2 1\n-0.643695 -0.095372 -0.911761 -0.893033 -0.148198 -0.424818 0.281583 0.898254 10 2 1\n-0.656453 -0.136171 -0.900622 -0.454085 -0.765526 -0.455794 0.283216 0.903925 74 30 16\n-1.098197 -0.100884 -0.802741 -0.532640 -0.611744 -0.584796 0.405700 0.065700 72 34 13\n-0.996144 -0.106676 -0.872318 -0.411206 -0.626362 -0.662221 0.416105 0.077564 91 45 19\n-0.805537 -0.105270 -0.987143 0.440504 -0.447462 -0.778283 0.440444 0.115817 96 45 23\n-0.656453 -0.136171 -0.900622 -0.454085 -0.765526 -0.455794 0.236236 0.806318 74 30 16\n-0.866012 -0.090865 -0.983652 -0.379254 -0.249580 -0.890957 0.440565 0.107246 81 32 9\n-0.656453 -0.136171 -0.900622 -0.454085 -0.765526 -0.455794 0.430324 0.150470 74 30 16\n-0.611859 -0.119593 -0.967783 -0.347392 -0.651357 -0.674520 0.368900 0.894700 16 3 2\n-0.656453 -0.136171 -0.900622 -0.454085 -0.765526 -0.455794 0.372000 0.904699 74 30 16\n-0.643695 -0.095372 -0.911761 -0.893033 -0.148198 -0.424818 0.368300 0.900500 10 2 1\n-0.611859 -0.119593 -0.967783 -0.347392 -0.651357 -0.674520 0.443598 0.164436 16 3 2\n-1.255367 -0.085719 -0.603907 -0.831355 -0.097324 -0.547105 0.264000 0.837000 35 15 8\n-1.312158 -0.086825 -0.521188 -0.885922 -0.166173 -0.432997 0.272282 0.835828 25 9 4\n-1.268966 -0.016724 -0.528064 -0.787347 0.411817 -0.458724 0.273188 0.849191 24 8 5\n-1.265234 -0.014248 -0.562508 -0.881741 0.359844 -0.304971 0.266917 0.849349 73 53 36\n-1.172536 -0.069951 -0.732038 -0.805872 -0.126621 -0.578356 0.206742 0.560886 33 12 6\n-1.255367 -0.085719 -0.603907 -0.831355 -0.097324 -0.547105 0.222639 0.577781 35 15 8\n-1.221852 -0.003147 -0.614916 -0.780023 0.495346 -0.382305 0.208156 0.583518 70 40 17\n-1.203775 -0.038756 0.733989 -0.543687 -0.749474 0.377636 0.650000 0.616900 87 51 27\n-1.124293 -0.046547 0.856799 -0.572131 -0.725913 0.381634 0.653980 0.595355 30 16 10\n-1.163353 0.012277 0.813351 -0.862606 -0.003388 0.505814 0.661626 0.608169 45 26 15\n-1.221852 -0.003147 -0.614916 -0.780023 0.495346 -0.382305 0.097354 0.876179 70 40 17\n-1.255367 -0.085719 -0.603907 -0.831355 -0.097324 -0.547105 0.094800 0.888000 35 15 8\n-1.265234 -0.014248 -0.562508 -0.881741 0.359844 -0.304971 0.092468 0.878099 73 53 36\n-1.343913 -0.100609 -0.377725 -0.851222 -0.494400 -0.176000 0.621512 0.867188 44 19 10\n-1.319517 -0.014229 -0.479190 -0.831172 0.387127 -0.399060 0.637579 0.883615 82 50 24\n-1.312158 -0.086825 -0.521188 -0.885922 -0.166173 -0.432997 0.626947 0.884091 25 9 4\n-1.340670 -0.002389 0.477552 -0.930967 -0.120670 0.344554 0.185000 0.884800 54 34 20\n-1.359543 -0.010113 0.428423 -0.886441 -0.308817 0.344676 0.181934 0.878715 38 20 10\n-1.320973 -0.072049 0.366310 -0.364299 -0.917386 0.160161 0.185000 0.865600 98 52 28\n-1.343462 -0.000329 -0.365137 -0.884915 0.391705 -0.251839 0.638707 0.859581 68 38 17\n-1.379331 -0.063209 -0.265322 -0.962279 -0.159490 -0.220313 0.627289 0.839689 40 27 21\n-1.409734 -0.029562 0.139571 -0.938963 -0.339702 0.054140 0.633031 0.759555 123 81 41\n-1.375264 -0.045647 0.310768 -0.824061 -0.528703 0.203406 0.633338 0.719530 68 41 26\n-1.407422 0.011051 0.195631 -0.990600 0.066256 0.119419 0.640911 0.745171 42 20 11\n-1.340670 -0.002389 0.477552 -0.930967 -0.120670 0.344554 0.151700 0.023400 54 34 20\n-1.126080 0.002421 0.869035 -0.819788 0.065676 0.568834 0.663721 0.594557 44 26 15\n-1.170725 0.006925 -0.713207 -0.802484 0.374615 -0.464370 0.812837 0.855373 60 32 15\n-1.362171 0.027620 -0.231560 -0.897580 0.359172 -0.255593 0.643984 0.833480 66 43 26\n-1.399111 -0.068102 -0.048859 -0.875362 -0.483261 -0.013001 0.625922 0.794413 61 37 23\n-1.405016 -0.059175 0.058598 -0.808618 -0.583941 0.071413 0.627413 0.774243 81 56 33\n-1.404793 0.027793 -0.024867 -0.982330 0.172277 -0.072848 0.641911 0.791352 55 33 18\n-1.382542 -0.092654 -0.233944 -0.729118 -0.608203 -0.313761 0.619799 0.832675 53 29 17\n-1.385369 -0.074857 -0.141526 -0.867458 -0.496994 -0.021210 0.625586 0.813670 38 17 9\n-1.398217 0.003556 -0.105783 -0.983215 0.109104 -0.146123 0.638177 0.809013 55 34 17\n-0.861524 -0.016066 1.130648 -0.593432 -0.171911 0.786279 0.039998 0.131360 44 26 14\n-1.170725 0.006925 -0.713207 -0.802484 0.374615 -0.464370 0.193224 0.566570 60 32 15\n-1.312158 -0.086825 -0.521188 -0.885922 -0.166173 -0.432997 0.278105 0.872116 25 9 4\n-1.319517 -0.014229 -0.479190 -0.831172 0.387127 -0.399060 0.284734 0.866531 82 50 24\n-1.268966 -0.016724 -0.528064 -0.787347 0.411817 -0.458724 0.283233 0.877533 24 8 5\n-1.278477 0.009310 0.632254 -0.907315 0.000702 0.420423 0.653318 0.649604 50 30 16\n-1.293162 -0.060060 0.520686 -0.539201 -0.813257 0.218726 0.638700 0.665600 60 37 21\n-1.253533 -0.053577 0.643783 -0.572649 -0.752922 0.324259 0.642800 0.645900 77 51 34\n-1.081946 -0.023481 0.930568 -0.707724 -0.295602 0.641652 0.661832 0.580889 36 19 10\n-1.359543 -0.010113 0.428423 -0.886441 -0.308817 0.344676 0.171869 0.013272 38 20 10\n-0.960274 0.021874 1.049076 -0.608234 0.237098 0.757469 0.679685 0.552358 47 26 15\n-1.012141 -0.022217 1.004401 -0.602985 -0.396924 0.691946 0.668184 0.562936 62 32 18\n-0.943916 -0.034643 1.060016 -0.525285 -0.594501 0.608753 0.670863 0.549956 68 40 22\n-0.834243 0.018027 1.143491 -0.478561 0.300119 0.825129 0.172460 0.842090 50 35 20\n-0.861524 -0.016066 1.130648 -0.593432 -0.171911 0.786279 0.170900 0.837400 44 26 14\n-0.768511 -0.019966 1.186536 -0.423658 -0.399609 0.812860 0.173300 0.829100 64 36 21\n-1.359543 -0.010113 0.428423 -0.886441 -0.308817 0.344676 0.641560 0.695529 38 20 10\n-1.390107 0.003725 0.290826 -0.983306 0.021699 0.180578 0.643319 0.723569 53 31 17\n-1.218189 -0.007180 0.739221 -0.821314 -0.081851 0.564531 0.655513 0.627077 52 29 18\n-0.680919 0.031466 1.223432 -0.432417 0.284463 0.855586 0.023800 0.167100 41 22 13\n-1.093289 0.026477 0.911970 -0.708823 0.240425 0.663106 0.670538 0.586203 52 34 21\n-1.068712 0.013788 0.927253 -0.649983 0.248390 0.718192 0.669896 0.580699 48 29 15\n-1.340670 -0.002389 0.477552 -0.930967 -0.120670 0.344554 0.645686 0.683820 54 34 20\n-0.901443 0.025188 1.089537 -0.598743 0.244423 0.762719 0.684569 0.543192 48 30 17\n-0.664545 -0.029934 1.237198 -0.355907 -0.529283 0.770135 0.547600 0.959300 65 38 21\n-0.442005 -0.029214 1.306769 -0.229804 -0.656301 0.718619 0.541700 0.945900 60 32 19\n-0.488608 0.032374 1.296660 -0.320933 0.272652 0.906980 0.551331 0.941527 55 34 21\n-1.081946 -0.023481 0.930568 -0.707724 -0.295602 0.641652 0.661800 0.574700 36 19 10\n-1.035747 0.016698 0.979447 -0.711173 0.191717 0.676351 0.672688 0.568762 50 30 19\n-0.434000 0.026024 1.321100 -0.321055 0.171056 0.931455 0.005615 0.225060 49 30 18\n-1.000591 0.025718 1.000449 -0.671041 0.117527 0.731986 0.448011 0.899035 45 23 12\n-1.035747 0.016698 0.979447 -0.711173 0.191717 0.676351 0.450874 0.894775 50 30 19\n-1.012141 -0.022217 1.004401 -0.602985 -0.396924 0.691946 0.452700 0.902000 62 32 18\n-1.103156 0.036091 -0.795015 -0.732566 0.389721 -0.558061 0.800719 0.838797 86 51 24\n-0.861524 -0.016066 1.130648 -0.593432 -0.171911 0.786279 0.680648 0.531046 44 26 14\n-0.834243 0.018027 1.143491 -0.478561 0.300119 0.825129 0.687791 0.529503 50 35 20\n-1.171377 0.068983 0.765206 -0.764733 0.415601 0.492325 0.672741 0.619055 60 34 20\n-1.362454 0.064590 0.379607 -0.925047 0.273934 0.263070 0.656128 0.707545 35 11 9\n-0.680919 0.031466 1.223432 -0.432417 0.284463 0.855586 0.057767 0.864018 41 22 13\n-0.664545 -0.029934 1.237198 -0.355907 -0.529283 0.770135 0.055662 0.871886 65 38 21\n-0.621157 0.007041 1.255422 -0.338206 0.057131 0.939299 0.052900 0.860700 48 28 17\n-0.621157 0.007041 1.255422 -0.338206 0.057131 0.939299 0.557108 0.965935 48 28 17\n-1.000591 0.025718 1.000449 -0.671041 0.117527 0.731986 0.677118 0.563346 45 23 12\n-0.680919 0.031466 1.223432 -0.432417 0.284463 0.855586 0.079519 0.887506 41 22 13\n-0.756475 0.025519 1.178981 -0.480148 0.342967 0.807337 0.072771 0.888880 55 37 25\n-0.768511 -0.019966 1.186536 -0.423658 -0.399609 0.812860 0.075500 0.879700 64 36 21\n-0.834243 0.018027 1.143491 -0.478561 0.300119 0.825129 0.581080 0.997135 50 35 20\n-0.768511 -0.019966 1.186536 -0.423658 -0.399609 0.812860 0.572721 0.992510 64 36 21\n-0.756475 0.025519 1.178981 -0.480148 0.342967 0.807337 0.576501 0.985703 55 37 25\n-1.395870 0.076496 0.080804 -0.950285 0.311350 -0.001556 0.652046 0.771491 63 37 19\n-0.969647 0.037887 -0.905714 -0.519211 0.224921 -0.824488 0.801109 0.806015 68 37 16\n-1.153797 0.037870 0.829175 -0.782830 0.278451 0.556383 0.667881 0.604593 49 35 22\n-1.269729 0.056258 0.624431 -0.849483 0.325419 0.415265 0.661572 0.652262 63 43 27\n-1.283328 0.093949 0.545358 -0.794977 0.530473 0.294198 0.666125 0.668356 74 51 32\n-1.228275 0.089587 0.665818 -0.748009 0.487960 0.449812 0.671584 0.641801 69 46 28\n-0.488608 0.032374 1.296660 -0.320933 0.272652 0.906980 0.282400 0.801000 55 34 21\n-0.442005 -0.029214 1.306769 -0.229804 -0.656301 0.718619 0.289000 0.808277 60 32 19\n-0.434000 0.026024 1.321100 -0.321055 0.171056 0.931455 0.281500 0.806000 49 30 18\n-1.281736 0.055762 -0.388622 -0.776605 0.547502 -0.311594 0.655806 0.865436 74 50 29\n-1.265234 -0.014248 -0.562508 -0.881741 0.359844 -0.304971 0.649700 0.897100 73 53 36\n-1.268966 -0.016724 -0.528064 -0.787347 0.411817 -0.458724 0.645083 0.891340 24 8 5\n-1.219651 0.054803 -0.524782 -0.783258 0.397015 -0.478347 0.658446 0.892226 36 17 12\n-0.597885 0.051570 1.251493 -0.298532 0.468215 0.831629 0.053700 0.854600 61 41 25\n-1.161554 0.067852 -0.634328 -0.611225 0.786309 -0.089969 0.189284 0.586689 78 52 32\n-0.800493 0.038652 1.141421 -0.395520 0.479781 0.783135 0.584184 0.992161 47 30 17\n-0.901443 0.025188 1.089537 -0.598743 0.244423 0.762719 0.848900 0.909400 48 30 17\n-0.834243 0.018027 1.143491 -0.478561 0.300119 0.825129 0.844900 0.909900 50 35 20\n-0.840802 0.072674 1.112306 -0.451033 0.471511 0.757775 0.847669 0.905136 52 34 20\n-1.221852 -0.003147 -0.614916 -0.780023 0.495346 -0.382305 0.442233 0.847027 70 40 17\n-1.265234 -0.014248 -0.562508 -0.881741 0.359844 -0.304971 0.434789 0.840415 73 53 36\n-1.188479 0.036422 -0.567090 -0.690085 0.554979 -0.464492 0.445900 0.840698 21 9 7\n-1.375720 0.095159 -0.078294 -0.905667 0.414350 -0.089602 0.657413 0.804610 58 31 13\n-1.382529 0.080457 0.225945 -0.883724 0.440687 0.157353 0.655402 0.739333 63 38 22\n-1.188479 0.036422 -0.567090 -0.690085 0.554979 -0.464492 0.200033 0.596875 21 9 7\n-0.597885 0.051570 1.251493 -0.298532 0.468215 0.831629 0.563071 0.959136 61 41 25\n-1.006166 0.051573 0.994153 -0.626423 0.381451 0.679739 0.681942 0.565953 63 44 29\n-0.708749 0.087894 1.177639 -0.382916 0.593707 0.707694 0.409761 0.847127 68 45 30\n-0.756475 0.025519 1.178981 -0.480148 0.342967 0.807337 0.412500 0.856100 55 37 25\n-0.680919 0.031466 1.223432 -0.432417 0.284463 0.855586 0.404761 0.851588 41 22 13\n-0.273804 0.064988 1.333682 -0.115696 0.561174 0.819544 0.541410 0.901855 62 39 23\n-0.387080 0.066643 1.312660 -0.203162 0.549242 0.810572 0.550135 0.921292 65 42 26\n-0.210902 -0.001703 1.374397 -0.121860 -0.143620 0.982086 0.522835 0.893680 51 25 12\n0.343930 -0.005998 1.317758 0.267678 -0.102512 0.958007 0.501584 0.779451 42 19 9\n0.433660 -0.001013 1.294470 0.387799 -0.038331 0.920927 0.502107 0.760474 35 17 9\n0.377305 0.071794 1.268577 0.294351 0.594043 0.748619 0.517898 0.768799 45 27 17\n-0.840802 0.072674 1.112306 -0.451033 0.471511 0.757775 0.595334 0.996986 52 34 20\n-0.434000 0.026024 1.321100 -0.321055 0.171056 0.931455 0.543620 0.933379 49 30 18\n-1.219651 0.054803 -0.524782 -0.783258 0.397015 -0.478347 0.440611 0.831621 36 17 12\n-1.045552 0.076387 0.931456 -0.645253 0.495041 0.581835 0.682671 0.580866 66 42 27\n-1.086884 0.077031 0.880686 -0.785668 0.496719 0.368664 0.679628 0.591959 61 41 25\n-1.355526 0.105927 0.287417 -0.853481 0.515336 0.077120 0.662002 0.728130 64 41 25\n-1.304682 0.106012 0.450775 -0.787286 0.455092 0.415937 0.667304 0.690642 68 47 33\n-0.901443 0.025188 1.089537 -0.598743 0.244423 0.762719 0.252400 0.902600 48 30 17\n-0.840802 0.072674 1.112306 -0.451033 0.471511 0.757775 0.255800 0.902700 52 34 20\n-0.881495 0.064953 1.086367 -0.737724 0.460250 0.493851 0.253079 0.907885 55 39 24\n-0.027006 -0.002569 1.388605 0.006256 -0.149266 0.988769 0.511891 0.858381 50 28 16\n-0.103842 0.081263 1.332640 -0.032777 0.672018 0.739769 0.537223 0.869546 55 32 18\n0.194801 0.007679 1.364660 0.184057 -0.017640 0.982727 0.506381 0.812534 48 23 12\n0.290132 0.083986 1.288170 0.213630 0.624836 0.750938 0.522128 0.786453 49 30 17\n-0.800493 0.038652 1.141421 -0.395520 0.479781 0.783135 0.154346 0.864171 47 30 17\n-0.756475 0.025519 1.178981 -0.480148 0.342967 0.807337 0.149860 0.866479 55 37 25\n-0.786655 0.092211 1.127502 -0.391675 0.589282 0.706595 0.152082 0.852037 56 37 21\n0.578436 -0.005196 1.212256 0.482803 -0.041688 0.874722 0.504004 0.724062 103 46 17\n0.596188 0.038982 1.185781 0.471786 0.283822 0.834742 0.511355 0.718876 37 18 9\n0.572553 0.068492 1.190433 0.358531 0.512650 0.780114 0.517834 0.723522 41 23 14\n-1.061555 0.119001 -0.741346 -0.726798 0.629963 -0.273629 0.166403 0.577757 85 56 33\n-1.103156 0.036091 -0.795015 -0.732566 0.389721 -0.558061 0.178335 0.558095 86 51 24\n-0.007291 0.053714 1.359376 0.011628 0.573687 0.818964 0.522819 0.851240 49 29 17\n-0.967781 0.093396 -0.891195 -0.566942 0.426923 -0.704459 0.792015 0.812343 81 48 23\n-1.330054 0.119123 -0.196855 -0.800897 0.525040 -0.287820 0.664780 0.828161 70 43 23\n0.513129 0.073962 1.207413 0.313944 0.527879 0.789148 0.518659 0.737873 43 24 14\n0.133559 0.087243 1.316999 0.104007 0.675436 0.730003 0.526127 0.820596 50 31 18\n-0.708749 0.087894 1.177639 -0.382916 0.593707 0.707694 0.582949 0.976715 68 45 30\n-0.786655 0.092211 1.127502 -0.391675 0.589282 0.706595 0.593649 0.986969 56 37 21\n0.338102 0.062024 1.291302 0.253548 0.479965 0.839808 0.515732 0.778226 48 30 17\n-1.066751 0.126016 0.846574 -0.549211 0.726737 0.412519 0.690835 0.599802 114 67 34\n0.469537 0.057392 1.235100 0.360515 0.528855 0.768303 0.515440 0.747469 40 22 12\n-1.006166 0.051573 0.994153 -0.626423 0.381451 0.679739 0.208700 0.861000 63 44 29\n-0.960274 0.021874 1.049076 -0.608234 0.237098 0.757469 0.204165 0.848881 47 26 15\n-0.901443 0.025188 1.089537 -0.598743 0.244423 0.762719 0.210081 0.842385 48 30 17\n-1.161554 0.067852 -0.634328 -0.611225 0.786309 -0.089969 0.489300 0.882600 78 52 32\n-1.067024 0.115415 -0.697824 -0.779382 0.622578 -0.070040 0.494500 0.884727 79 57 39\n-1.170725 0.006925 -0.713207 -0.802484 0.374615 -0.464370 0.490306 0.890861 60 32 15\n0.691216 0.067100 1.116684 0.517350 0.563372 0.644154 0.519275 0.694784 39 17 9\n0.841700 0.032920 1.036582 0.621632 0.389569 0.679525 0.402660 0.845760 28 14 9\n-1.230752 0.103239 -0.445059 -0.905423 0.281045 -0.318064 0.665670 0.876844 54 44 32\n-0.860682 0.112684 1.064100 -0.439650 0.675985 0.591357 0.703645 0.547192 65 50 34\n0.238267 0.074691 1.310244 0.182318 0.636860 0.749077 0.520692 0.800078 48 28 16\n-1.067024 0.115415 -0.697824 -0.779382 0.622578 -0.070040 0.174908 0.585364 79 57 39\n-1.111327 0.117349 0.801611 -0.575091 0.701529 0.420820 0.684957 0.610695 91 72 55\n0.712605 0.069511 1.090443 0.509995 0.563219 0.650105 0.522592 0.687344 39 18 8\n0.801344 0.039115 1.048908 0.599170 0.388806 0.699850 0.517767 0.667404 35 14 6\n0.820858 -0.015253 1.046373 0.672994 -0.255776 0.693960 0.509354 0.663658 35 17 8\n-0.881495 0.064953 1.086367 -0.737724 0.460250 0.493851 0.694091 0.542372 55 39 24\n-0.680919 0.031466 1.223432 -0.432417 0.284463 0.855586 0.570841 0.974517 41 22 13\n-0.597885 0.051570 1.251493 -0.298532 0.468215 0.831629 0.565478 0.965811 61 41 25\n-1.161554 0.067852 -0.634328 -0.611225 0.786309 -0.089969 0.392700 0.740600 78 52 32\n-1.188479 0.036422 -0.567090 -0.690085 0.554979 -0.464492 0.395100 0.746400 21 9 7\n-1.093666 0.091420 -0.605947 -0.444899 0.863338 -0.238105 0.390900 0.746400 24 13 8\n-0.564846 0.125606 1.196582 -0.223518 0.772881 0.593829 0.578836 0.949838 82 60 41\n-0.991669 0.121174 0.935537 -0.482650 0.723350 0.493728 0.695076 0.578971 81 57 38\n-1.368546 0.134786 0.069286 -0.798853 0.601337 0.013855 0.665299 0.773332 78 54 34\n-0.421209 0.116048 1.259979 -0.199377 0.738060 0.644581 0.564879 0.926112 73 48 31\n-0.967781 0.093396 -0.891195 -0.566942 0.426923 -0.704459 0.792804 0.798941 81 48 23\n0.776228 0.075689 1.050908 0.536515 0.532853 0.654347 0.524720 0.672878 43 21 9\n0.841700 0.032920 1.036582 0.621632 0.389569 0.679525 0.517275 0.658107 28 14 9\n-0.840802 0.072674 1.112306 -0.451033 0.471511 0.757775 0.698582 0.536328 52 34 20\n0.838840 0.052162 0.993082 0.612964 0.577960 0.538682 0.525242 0.655008 34 14 7\n-1.337579 0.131584 0.382229 -0.723167 0.643452 0.250862 0.670262 0.706525 65 36 29\n-0.860682 0.112684 1.064100 -0.439650 0.675985 0.591357 0.604381 0.993650 65 50 34\n-1.093666 0.091420 -0.605947 -0.444899 0.863338 -0.238105 0.320013 0.833237 24 13 8\n-1.188479 0.036422 -0.567090 -0.690085 0.554979 -0.464492 0.324439 0.817410 21 9 7\n-1.184292 0.127958 -0.567677 -0.475600 0.357463 -0.803735 0.332940 0.832213 47 24 20\n1.008121 0.050549 0.795185 0.761467 0.432875 0.482437 0.539647 0.605577 38 21 11\n0.957610 0.081365 0.824978 0.597095 0.691305 0.406812 0.540783 0.618887 42 22 9\n-1.219651 0.054803 -0.524782 -0.783258 0.397015 -0.478347 0.330444 0.812944 36 17 12\n-1.245760 0.143470 0.496859 -0.503922 0.831996 0.231971 0.677935 0.677986 85 59 37\n-1.161554 0.067852 -0.634328 -0.611225 0.786309 -0.089969 0.172600 0.763600 78 52 32\n-1.093666 0.091420 -0.605947 -0.444899 0.863338 -0.238105 0.163006 0.766050 24 13 8\n-1.067024 0.115415 -0.697824 -0.779382 0.622578 -0.070040 0.165784 0.754296 79 57 39\n0.040935 0.118069 1.293391 0.011322 0.791742 0.610736 0.538222 0.836674 71 49 32\n-0.231720 0.122568 1.283100 -0.053438 0.787286 0.614215 0.552980 0.890530 71 47 29\n0.872692 0.091495 0.930880 0.515152 0.733390 0.443525 0.536065 0.644048 49 25 11\n-0.856098 0.121064 0.328493 -0.410230 0.892544 0.187201 0.865604 0.116040 98 87 69\n-0.896294 0.099340 0.406209 0.052492 0.993805 -0.097903 0.878592 0.117604 91 83 63\n-0.794296 0.125931 0.421931 -0.326304 0.935118 0.138066 0.876749 0.135963 84 71 57\n-1.184292 0.127958 -0.567677 -0.475600 0.357463 -0.803735 0.172106 0.783854 47 24 20\n-1.053088 0.131126 -0.544747 -0.572893 0.651021 -0.497879 0.152430 0.777602 12 5 5\n0.403620 0.106535 1.222272 0.261727 0.747612 0.610370 0.527627 0.757849 51 29 16\n1.094622 0.071194 0.594058 0.792322 0.487777 0.366405 0.742091 0.586410 39 17 8\n-1.346260 0.150018 -0.074287 -0.739006 0.663564 -0.116184 0.669151 0.802916 96 66 43\n-0.967781 0.093396 -0.891195 -0.566942 0.426923 -0.704459 0.158034 0.556498 81 48 23\n-0.999458 0.134337 -0.815302 -0.598895 0.627155 -0.497940 0.155066 0.566026 89 56 33\n-0.857432 0.118161 0.498163 0.030671 0.974273 -0.223212 0.895710 0.132561 97 72 53\n-1.194966 0.133041 0.652641 -0.538438 0.783929 0.309030 0.681892 0.644904 83 64 46\n-0.938596 0.102031 0.257734 0.045717 0.998810 0.015412 0.858411 0.099650 78 68 54\n1.113937 0.080723 0.513876 0.834620 0.488907 0.253639 0.739779 0.601427 62 33 20\n1.160336 0.015857 0.435051 0.969817 0.038209 0.240761 0.010500 0.878700 42 18 8\n1.110659 0.100621 0.476427 0.775079 0.578570 0.253914 0.012311 0.868220 60 33 17\n1.113937 0.080723 0.513876 0.834620 0.488907 0.253639 0.017100 0.873600 62 33 20\n1.110659 0.100621 0.476427 0.775079 0.578570 0.253914 0.446847 0.837711 60 33 17\n1.160336 0.015857 0.435051 0.969817 0.038209 0.240761 0.453999 0.836343 42 18 8\n1.146792 0.084496 0.410761 0.842219 0.450270 0.296426 0.452269 0.846527 58 30 14\n1.146792 0.084496 0.410761 0.842219 0.450270 0.296426 0.741599 0.621604 58 30 14\n0.918352 0.076507 0.913999 0.554674 0.433241 0.710349 0.534030 0.632852 36 18 10\n1.035486 0.008994 0.773399 0.875149 -0.004975 0.483810 0.536700 0.594400 39 20 10\n1.093218 0.012471 0.647811 0.913053 0.096072 0.396313 0.548212 0.579774 35 13 5\n-0.954190 0.115614 0.119004 -0.147374 0.959441 0.240272 0.833071 0.089020 70 52 37\n-0.977650 0.114410 0.155259 0.159764 0.987121 0.003265 0.838929 0.082377 90 71 47\n-1.015529 0.146944 0.413601 0.278634 0.948241 -0.152196 0.888463 0.094075 58 20 14\n-1.136720 0.141729 -0.549536 0.146428 0.536515 -0.831080 0.163879 0.783494 20 8 7\n-0.152405 0.120276 -1.306005 -0.342357 0.055361 -0.937925 0.811945 0.611458 71 30 11\n1.003906 0.085173 0.757785 0.644215 0.669851 0.369091 0.551308 0.603961 56 34 19\n0.493692 0.105235 1.185222 0.282327 0.751122 0.596698 0.529193 0.738453 59 40 24\n-1.276064 0.152603 -0.261789 -0.765648 0.596912 -0.239601 0.675166 0.839069 74 48 30\n-1.228660 0.199273 -0.374707 -0.883816 0.458754 -0.091556 0.686192 0.866627 64 43 25\n-1.314486 0.152821 0.264605 -0.567980 0.818476 0.086367 0.674771 0.730404 77 45 29\n-0.911193 0.169038 0.918692 -0.255440 0.934904 0.246345 0.701700 0.574000 89 54 34\n-1.082917 0.125685 0.039497 0.184088 0.968841 0.165532 0.827219 0.056228 87 71 54\n0.648959 0.113823 1.102948 0.343974 0.779077 0.524064 0.530673 0.701268 61 38 19\n-0.736539 0.161363 1.060107 -0.154180 0.930509 0.332194 0.609560 0.972911 95 64 44\n-0.680301 0.144185 1.118692 -0.222480 0.842708 0.490188 0.597756 0.966874 90 64 43\n0.822628 0.097285 0.983052 0.537370 0.706717 0.460158 0.534007 0.658202 50 24 10\n-1.158488 0.150325 0.134574 0.239631 0.970061 -0.038728 0.846141 0.047796 97 78 54\n-0.794296 0.125931 0.421931 -0.326304 0.935118 0.138066 0.132275 0.770217 84 71 57\n-0.807154 0.157998 0.354723 -0.359233 0.928465 0.094089 0.144247 0.773751 67 27 19\n-0.856098 0.121064 0.328493 -0.410230 0.892544 0.187201 0.136737 0.782634 98 87 69\n-0.782456 0.144423 0.244629 -0.192358 0.975036 -0.110782 0.843740 0.129625 79 70 49\n0.739467 0.110349 1.042437 0.380291 0.795312 0.472030 0.532962 0.679392 63 42 25\n1.037119 0.120425 0.617557 0.452437 0.863063 0.224433 0.569017 0.585867 82 52 27\n-0.704429 0.147083 0.530633 -0.194769 0.980499 -0.025819 0.892091 0.164999 78 62 45\n-0.778037 0.147647 0.582311 -0.037263 0.915616 -0.400281 0.906764 0.153343 57 30 25\n1.094622 0.071194 0.594058 0.792322 0.487777 0.366405 0.285400 0.890000 39 17 8\n1.123388 0.010793 0.560847 0.954222 0.016633 0.298532 0.288700 0.879600 46 20 8\n1.113937 0.080723 0.513876 0.834620 0.488907 0.253639 0.288700 0.895900 62 33 20\n-0.834898 0.138089 -0.955488 -0.471084 0.467147 -0.748192 0.789544 0.781589 85 50 27\n-1.093666 0.091420 -0.605947 -0.444899 0.863338 -0.238105 0.180000 0.598474 24 13 8\n-1.053088 0.131126 -0.544747 -0.572893 0.651021 -0.497879 0.177049 0.616229 12 5 5\n-0.845843 0.146094 1.022316 -0.316965 0.852809 0.414960 0.617824 0.986842 79 51 32\n-0.871526 0.176087 -0.896529 -0.468673 0.681234 -0.562304 0.649059 0.040740 99 63 34\n-0.967781 0.093396 -0.891195 -0.566942 0.426923 -0.704459 0.648817 0.022531 81 48 23\n-0.999458 0.134337 -0.815302 -0.598895 0.627155 -0.497940 0.666432 0.021227 89 56 33\n-0.834898 0.138089 -0.955488 -0.471084 0.467147 -0.748192 0.637485 0.037352 85 50 27\n0.297899 0.128672 1.236909 0.191351 0.807947 0.557298 0.534479 0.781849 65 41 25\n-0.825479 0.142525 0.124462 -0.059938 0.980102 0.189123 0.828594 0.113449 97 92 76\n-1.082917 0.125685 0.039497 0.184088 0.968841 0.165532 0.441400 0.849000 87 71 54\n-0.954190 0.115614 0.119004 -0.147374 0.959441 0.240272 0.445900 0.851300 70 52 37\n-1.109885 0.167855 -0.097324 0.124119 0.977874 0.168218 0.437760 0.859966 85 61 40\n-1.337579 0.131584 0.382229 -0.723167 0.643452 0.250862 0.676300 0.704300 65 36 29\n-1.111327 0.117349 0.801611 -0.575091 0.701529 0.420820 0.499700 0.672500 91 72 55\n-1.031968 0.180050 0.729301 -0.192114 0.968505 0.158208 0.499700 0.682900 109 82 59\n-1.194966 0.133041 0.652641 -0.538438 0.783929 0.309030 0.495600 0.678300 83 64 46\n-1.325244 0.171252 0.070276 -0.445021 0.894131 0.049196 0.676219 0.771816 97 67 45\n-0.991669 0.121174 0.935537 -0.482650 0.723350 0.493728 0.412566 0.869774 81 57 38\n-1.006830 0.157793 0.842306 -0.303751 0.913694 0.269967 0.411561 0.879380 88 63 40\n-1.066751 0.126016 0.846574 -0.549211 0.726737 0.412519 0.404000 0.870100 114 67 34\n-1.209987 0.186271 -0.499631 -0.832575 0.317576 -0.453810 0.684942 0.888697 49 33 32\n-1.184292 0.127958 -0.567677 -0.475600 0.357463 -0.803735 0.672883 0.897757 47 24 20\n-1.050835 0.156321 -0.633924 -0.957976 0.273904 -0.084964 0.166468 0.600910 53 30 16\n1.094622 0.071194 0.594058 0.792322 0.487777 0.366405 0.562245 0.572825 39 17 8\n0.755948 0.090066 0.336574 0.336161 0.927641 0.162603 0.772361 0.452342 62 46 32\n0.822815 0.089681 0.377848 -0.000916 0.932310 -0.361553 0.777871 0.467498 92 71 47\n0.840808 0.065953 0.331084 -0.042055 0.998505 -0.034120 0.766498 0.467906 49 34 24\n-1.024713 0.186653 -0.112006 -0.349681 0.887692 0.299478 0.444909 0.868956 89 75 60\n-1.059599 0.148295 0.244922 0.242561 0.965117 -0.098209 0.867186 0.070984 84 57 33\n-0.075811 0.153499 -1.322539 -0.143376 0.139256 -0.979797 0.810778 0.593757 64 28 11\n0.176685 0.149412 1.235977 0.060457 0.936460 0.345500 0.542573 0.805763 93 58 35\n-0.911193 0.169038 0.918692 -0.255440 0.934904 0.246345 0.710754 0.577840 89 54 34\n-0.845843 0.146094 1.022316 -0.316965 0.852809 0.414960 0.708800 0.558500 79 51 32\n-0.352423 0.155315 1.209753 -0.042024 0.957121 0.286538 0.573920 0.915338 99 68 47\n-1.006830 0.157793 0.842306 -0.303751 0.913694 0.269967 0.701102 0.611979 88 63 40\n0.718395 0.096611 0.376791 0.482315 0.874722 -0.047060 0.783317 0.446826 68 51 35\n0.011307 0.156754 1.227158 0.000793 0.971435 0.237159 0.550959 0.838815 87 54 32\n-0.823004 0.170270 0.616123 0.026643 0.971923 -0.233680 0.918235 0.145785 55 28 28\n-0.772699 0.161539 0.337434 -0.258370 0.965880 0.016511 0.864247 0.138474 66 29 25\n-1.131196 0.181033 0.553198 -0.171697 0.981506 0.084323 0.690086 0.664310 107 80 55\n-0.722528 0.133721 0.154354 -0.237190 0.962432 0.132084 0.827066 0.135157 52 31 24\n-0.954190 0.115614 0.119004 -0.147374 0.959441 0.240272 0.129673 0.555803 70 52 37\n-0.825479 0.142525 0.124462 -0.059938 0.980102 0.189123 0.137405 0.569092 97 92 76\n-0.929397 0.164773 0.055588 -0.291635 0.851924 0.434889 0.119704 0.563726 101 86 60\n-0.494936 0.163091 1.157162 -0.081851 0.963317 0.255501 0.585574 0.938018 98 69 49\n-0.911193 0.169038 0.918692 -0.255440 0.934904 0.246345 0.706206 0.583336 89 54 34\n-1.006830 0.157793 0.842306 -0.303751 0.913694 0.269967 0.703000 0.592000 88 63 40\n-1.082917 0.125685 0.039497 0.184088 0.968841 0.165532 0.154400 0.880300 87 71 54\n-1.109885 0.167855 -0.097324 0.124119 0.977874 0.168218 0.145800 0.881300 85 61 40\n-1.158488 0.150325 0.134574 0.239631 0.970061 -0.038728 0.153786 0.868959 97 78 54\n-1.024713 0.186653 -0.112006 -0.349681 0.887692 0.299478 0.199299 0.704017 89 75 60\n-0.954190 0.115614 0.119004 -0.147374 0.959441 0.240272 0.221790 0.732438 70 52 37\n-0.929397 0.164773 0.055588 -0.291635 0.851924 0.434889 0.213509 0.734349 101 86 60\n-0.905388 0.178729 0.659426 0.060488 0.992309 -0.107822 0.930048 0.130812 72 31 21\n0.497954 0.140261 1.129742 0.181768 0.923795 0.336924 0.537393 0.732587 87 55 32\n-0.856098 0.121064 0.328493 -0.410230 0.892544 0.187201 0.864326 0.127797 98 87 69\n-0.672403 0.169006 0.606774 -0.043794 0.994598 -0.093997 0.908800 0.175296 56 25 24\n-1.337579 0.131584 0.382229 -0.723167 0.643452 0.250862 0.898073 0.033623 65 36 29\n-1.233285 0.176250 0.362977 -0.281472 0.953856 0.104404 0.896195 0.046399 96 68 44\n-1.314486 0.152821 0.264605 -0.567980 0.818476 0.086367 0.881424 0.026030 77 45 29\n-0.911193 0.169038 0.918692 -0.255440 0.934904 0.246345 0.454894 0.854769 89 54 34\n-0.845843 0.146094 1.022316 -0.316965 0.852809 0.414960 0.452301 0.871369 79 51 32\n-0.817200 0.180034 0.929816 -0.051271 0.992157 0.113773 0.445900 0.862500 86 50 31\n-0.180962 0.147393 1.244297 0.005707 0.936949 0.349345 0.560288 0.877437 85 56 36\n-0.709568 0.170815 -1.007889 -0.465987 0.423109 -0.777032 0.787680 0.743257 81 46 22\n-0.834898 0.138089 -0.955488 -0.471084 0.467147 -0.748192 0.787826 0.765994 85 50 27\n0.755948 0.090066 0.336574 0.336161 0.927641 0.162603 0.444701 0.738743 62 46 32\n0.840808 0.065953 0.331084 -0.042055 0.998505 -0.034120 0.434329 0.722342 49 34 24\n0.793524 0.124928 0.211015 0.206977 0.936583 0.282693 0.455912 0.723712 91 69 45\n-0.679833 0.176578 0.447741 -0.211707 0.959624 0.185064 0.143100 0.754300 54 24 21\n-0.794296 0.125931 0.421931 -0.326304 0.935118 0.138066 0.137575 0.764619 84 71 57\n-0.704429 0.147083 0.530633 -0.194769 0.980499 -0.025819 0.136147 0.743776 78 62 45\n-0.754181 0.150659 0.088875 -0.136418 0.932432 0.334544 0.819809 0.128301 75 55 40\n-1.131196 0.181033 0.553198 -0.171697 0.981506 0.084323 0.924986 0.079047 107 80 55\n-1.194966 0.133041 0.652641 -0.538438 0.783929 0.309030 0.938195 0.074360 83 64 46\n-1.031968 0.180050 0.729301 -0.192114 0.968505 0.158208 0.948767 0.110336 109 82 59\n0.947767 0.124797 0.392565 -0.285012 0.954405 -0.088504 0.775671 0.493031 129 94 60\n0.908744 0.098267 0.282276 -0.326121 0.914853 0.238044 0.755303 0.476980 85 60 42\n-0.582881 0.165230 1.099248 -0.059816 0.988067 0.141728 0.594760 0.948372 97 67 45\n0.908744 0.098267 0.282276 -0.326121 0.914853 0.238044 0.441031 0.704018 85 60 42\n0.866166 0.136737 0.182730 -0.197577 0.930479 0.308420 0.457278 0.700574 85 54 34\n-0.494936 0.163091 1.157162 -0.081851 0.963317 0.255501 0.378500 0.901400 98 69 49\n-0.582881 0.165230 1.099248 -0.059816 0.988067 0.141728 0.378500 0.907000 97 67 45\n-0.564846 0.125606 1.196582 -0.223518 0.772881 0.593829 0.373500 0.902500 82 60 41\n1.159339 0.141024 0.255026 0.670003 0.700247 0.246406 0.372400 0.851600 95 74 51\n1.146792 0.084496 0.410761 0.842219 0.450270 0.296426 0.370438 0.861355 58 30 14\n1.186190 0.049407 0.303333 0.994690 -0.001099 0.102817 0.363500 0.851500 61 26 9\n-1.014287 0.170347 0.520927 0.174200 0.971007 -0.163640 0.912076 0.099315 116 88 55\n0.822628 0.097285 0.983052 0.537370 0.706717 0.460158 0.865100 0.843200 50 24 10\n0.872692 0.091495 0.930880 0.515152 0.733390 0.443525 0.865100 0.854900 49 25 11\n0.783923 0.147038 0.856507 0.231880 0.932646 0.276284 0.861900 0.849700 84 58 35\n0.952696 0.133705 0.706998 0.277383 0.952422 0.126102 0.564161 0.609405 89 49 34\n-1.179919 0.183460 0.419088 -0.079653 0.996033 0.039155 0.904100 0.062439 108 82 56\n-0.497863 0.155083 0.987853 0.024476 0.999237 -0.030061 0.966902 0.235670 114 83 57\n-0.401616 0.161787 0.876604 -0.026124 0.950774 0.308756 0.950090 0.238335 85 68 48\n-0.593321 0.148121 0.899705 0.027070 0.997589 0.063448 0.953604 0.210259 95 73 50\n-1.245760 0.143470 0.496859 -0.503922 0.831996 0.231971 0.904300 0.044500 85 59 37\n-0.845843 0.146094 1.022316 -0.316965 0.852809 0.414960 0.990100 0.171500 79 51 32\n-0.736539 0.161363 1.060107 -0.154180 0.930509 0.332194 0.989571 0.189622 95 64 44\n-0.817200 0.180034 0.929816 -0.051271 0.992157 0.113773 0.975573 0.166360 86 50 31\n-0.807154 0.157998 0.354723 -0.359233 0.928465 0.094089 0.868933 0.133428 67 27 19\n-1.031968 0.180050 0.729301 -0.192114 0.968505 0.158208 0.693746 0.628184 109 82 59\n-1.278227 0.179095 0.074052 -0.005493 0.997894 0.064577 0.845943 0.022449 120 100 72\n1.159339 0.141024 0.255026 0.670003 0.700247 0.246406 0.729563 0.651574 95 74 51\n-0.754181 0.150659 0.088875 -0.136418 0.932432 0.334544 0.142775 0.588736 75 55 40\n-0.754181 0.150659 0.088875 -0.136418 0.932432 0.334544 0.173799 0.800544 75 55 40\n-0.722528 0.133721 0.154354 -0.237190 0.962432 0.132084 0.178449 0.792260 52 31 24\n-0.691581 0.183864 0.098612 -0.512467 0.832026 0.212256 0.183462 0.804505 52 29 23\n0.312548 0.153336 1.181125 0.097629 0.964751 0.244362 0.544211 0.773871 97 62 36\n-1.236035 0.209536 -0.202278 -0.334910 0.934599 -0.119633 0.686253 0.831260 91 64 40\n-0.582881 0.165230 1.099248 -0.059816 0.988067 0.141728 0.603300 0.954200 97 67 45\n0.783923 0.147038 0.856507 0.231880 0.932646 0.276284 0.557590 0.653895 84 58 35\n0.874901 0.151073 0.764574 0.290475 0.951415 0.102023 0.564378 0.634519 74 31 22\n1.113937 0.080723 0.513876 0.834620 0.488907 0.253639 0.571503 0.562741 62 33 20\n1.146792 0.084496 0.410761 0.842219 0.450270 0.296426 0.581688 0.550875 58 30 14\n1.088062 0.143897 0.423090 0.417585 0.887204 0.196112 0.592671 0.561184 69 35 24\n1.110659 0.100621 0.476427 0.775079 0.578570 0.253914 0.579469 0.561769 60 33 17\n-0.794296 0.125931 0.421931 -0.326304 0.935118 0.138066 0.480600 0.902000 84 71 57\n-0.772699 0.161539 0.337434 -0.258370 0.965880 0.016511 0.475200 0.899000 66 29 25\n-0.807154 0.157998 0.354723 -0.359233 0.928465 0.094089 0.480205 0.895680 67 27 19\n0.865729 0.123833 0.472363 -0.008148 0.991333 -0.130955 0.793963 0.479907 138 96 58\n-0.316162 0.139506 0.936646 -0.073061 0.976531 0.202490 0.946457 0.269034 81 67 51\n-0.270791 0.153199 1.055344 0.011505 0.999603 -0.025636 0.964202 0.284676 112 86 56\n0.673728 0.137841 1.013051 0.178564 0.962249 0.205298 0.542821 0.703875 99 65 38\n0.673728 0.137841 1.013051 0.178564 0.962249 0.205298 0.543274 0.684396 99 65 38\n-0.601250 0.172937 0.639801 -0.390423 0.918577 -0.061068 0.909885 0.192471 63 41 26\n-0.663582 0.154120 0.708721 -0.085482 0.994110 -0.066530 0.925091 0.184365 77 55 37\n-0.806819 0.166985 0.694537 0.107852 0.975127 -0.193548 0.931435 0.152769 70 44 30\n-1.325244 0.171252 0.070276 -0.445021 0.894131 0.049196 0.847445 0.011091 97 67 45\n-0.911193 0.169038 0.918692 -0.255440 0.934904 0.246345 0.976836 0.144705 89 54 34\n-0.875911 0.175226 0.815432 -0.071780 0.995849 0.055666 0.958766 0.147612 103 82 58\n-1.006830 0.157793 0.842306 -0.303751 0.913694 0.269967 0.967524 0.123438 88 63 40\n-0.582881 0.165230 1.099248 -0.059816 0.988067 0.141728 0.990682 0.225074 97 67 45\n0.095644 0.145251 1.110821 0.004089 0.999939 -0.008454 0.954388 0.362863 114 80 51\n-0.111899 0.138714 1.023804 0.007111 0.996002 0.088809 0.948807 0.315715 84 64 45\n-0.119648 0.153881 1.152331 0.009919 0.999390 -0.033174 0.974569 0.324432 120 86 54\n-0.591682 0.165641 0.590203 -0.383862 0.911740 -0.146123 0.900449 0.190004 63 38 24\n0.718395 0.096611 0.376791 0.482315 0.874722 -0.047060 0.451580 0.745982 68 51 35\n0.705888 0.152321 0.261685 0.633076 0.742210 0.219825 0.461514 0.739270 80 45 18\n0.648959 0.113823 1.102948 0.343974 0.779077 0.524064 0.349300 0.883000 61 38 19\n0.739467 0.110349 1.042437 0.380291 0.795312 0.472030 0.348706 0.894112 63 42 25\n0.673728 0.137841 1.013051 0.178564 0.962249 0.205298 0.344200 0.887000 99 65 38\n-0.679833 0.176578 0.447741 -0.211707 0.959624 0.185064 0.880239 0.164547 54 24 21\n-1.245760 0.143470 0.496859 -0.503922 0.831996 0.231971 0.923304 0.062049 85 59 37\n-0.494936 0.163091 1.157162 -0.081851 0.963317 0.255501 0.995870 0.246743 98 69 49\n-0.352423 0.155315 1.209753 -0.042024 0.957121 0.286538 0.993711 0.275702 99 68 47\n-1.245760 0.143470 0.496859 -0.503922 0.831996 0.231971 0.909905 0.049381 85 59 37\n-0.056795 0.156368 0.971528 -0.037233 0.939940 0.339274 0.938441 0.339601 88 71 48\n1.046270 0.154476 0.300256 -0.086001 0.984222 0.154515 0.754725 0.505220 88 50 30\n1.146792 0.084496 0.410761 0.842219 0.450270 0.296426 0.586904 0.544971 58 30 14\n1.159339 0.141024 0.255026 0.670003 0.700247 0.246406 0.605933 0.535107 95 74 51\n-0.199820 0.162711 0.935518 -0.077334 0.944426 0.319437 0.944752 0.295671 95 79 59\n0.011307 0.156754 1.227158 0.000793 0.971435 0.237159 0.978558 0.355873 87 54 32\n-0.180962 0.147393 1.244297 0.005707 0.936949 0.349345 0.992939 0.315014 85 56 36\n0.708914 0.121618 0.442781 0.457167 0.866909 -0.198523 0.799716 0.447563 84 64 39\n-0.588844 0.187018 0.431686 -0.095340 0.994964 0.030824 0.874727 0.178534 91 71 55\n-0.696425 0.173906 0.811798 0.095065 0.994140 0.051271 0.946546 0.183882 94 70 49\n0.214026 0.145646 1.021137 0.002197 0.999756 -0.021027 0.933646 0.383833 112 83 47\n0.125126 0.154374 0.959998 0.092563 0.981017 0.170293 0.927374 0.361237 80 64 44\n-0.616013 0.168240 0.204544 -0.374493 0.882412 0.284677 0.833782 0.163217 61 43 38\n-0.699195 0.176681 0.298937 -0.145482 0.982971 -0.112186 0.854957 0.152753 104 86 61\n0.011567 0.168644 -1.322847 -0.118656 0.066225 -0.990722 0.812854 0.576727 64 27 8\n-0.846200 0.201253 0.003743 -0.061007 0.905759 0.419355 0.118518 0.586420 82 61 39\n1.187323 0.150468 0.155115 0.820826 0.515976 0.244850 0.722556 0.664797 71 43 23\n0.355159 0.142006 0.888267 0.067873 0.989868 0.124485 0.902737 0.406872 106 79 54\n0.434991 0.143766 0.990566 0.020539 0.992889 -0.117130 0.915501 0.427518 121 93 58\n0.507337 0.131060 0.901781 -0.079775 0.992767 0.089663 0.894066 0.432759 87 64 41\n0.845780 0.130808 0.653304 0.159642 0.977630 -0.136784 0.829944 0.488057 111 79 49\n0.949600 0.121845 0.547895 -0.014679 0.999786 0.013825 0.802650 0.505500 106 73 44\n-0.617581 0.178919 0.780268 -0.219642 0.972015 0.082949 0.936189 0.198016 110 79 55\n-1.109885 0.167855 -0.097324 0.124119 0.977874 0.168218 0.816792 0.051052 85 61 40\n-0.199820 0.162711 0.935518 -0.077334 0.944426 0.319437 0.012999 0.752577 95 79 59\n-0.111899 0.138714 1.023804 0.007111 0.996002 0.088809 0.000256 0.738246 84 64 45\n-0.056795 0.156368 0.971528 -0.037233 0.939940 0.339274 0.009495 0.727728 88 71 48\n0.194563 0.147144 0.902966 0.204993 0.919156 0.336314 0.912921 0.371574 52 34 20\n0.461123 0.147516 0.822147 -0.084628 0.915036 0.394360 0.884575 0.417645 79 60 36\n0.312548 0.153336 1.181125 0.097629 0.964751 0.244362 0.954128 0.413290 97 62 36\n0.497954 0.140261 1.129742 0.181768 0.923795 0.336924 0.935236 0.445771 87 55 32\n0.346390 0.157220 1.093317 0.018494 0.999817 -0.000641 0.938082 0.413744 134 104 69\n0.355159 0.142006 0.888267 0.067873 0.989868 0.124485 0.902792 0.406547 106 79 54\n-1.090056 0.168091 -0.200285 -0.153264 0.961547 0.227790 0.786252 0.040238 67 57 44\n-1.168678 0.205311 -0.247417 0.080508 0.995239 0.054842 0.784045 0.024104 90 70 42\n-1.109885 0.167855 -0.097324 0.124119 0.977874 0.168218 0.804540 0.041025 85 61 40\n0.176685 0.149412 1.235977 0.060457 0.936460 0.345500 0.973661 0.379362 93 58 35\n-1.117037 0.193051 -0.517198 0.141758 0.476669 -0.867550 0.157075 0.791996 18 7 6\n-1.043913 0.172387 -0.529940 -0.926939 0.155156 -0.341594 0.171064 0.621217 37 26 20\n-1.007599 0.187888 -0.726055 -0.624989 0.665456 -0.408063 0.688434 0.024786 92 58 33\n-0.153423 0.198348 -1.288302 -0.427717 0.396802 -0.812128 0.799665 0.613309 85 46 21\n-0.779273 0.196458 0.759159 0.044465 0.997589 -0.053163 0.942040 0.164015 51 19 15\n-0.833311 0.181756 0.727944 -0.035676 0.986328 -0.160863 0.941150 0.147865 60 26 19\n-0.316162 0.139506 0.936646 -0.073061 0.976531 0.202490 0.009924 0.778244 81 67 51\n-0.401616 0.161787 0.876604 -0.026124 0.950774 0.308756 0.019718 0.795333 85 68 48\n-0.933303 0.223478 -0.104850 -0.256447 0.882107 0.395032 0.194370 0.712762 95 82 62\n-1.109885 0.167855 -0.097324 0.124119 0.977874 0.168218 0.302031 0.765365 85 61 40\n-1.195621 0.210091 -0.141227 0.150517 0.982910 0.105930 0.289200 0.756900 90 58 35\n-1.278227 0.179095 0.074052 -0.005493 0.997894 0.064577 0.289224 0.746250 120 100 72\n0.575045 0.147548 0.986673 -0.001740 0.999481 0.031953 0.905559 0.453698 122 89 62\n-1.024713 0.186653 -0.112006 -0.349681 0.887692 0.299478 0.798349 0.055743 89 75 60\n-0.616013 0.168240 0.204544 -0.374493 0.882412 0.284677 0.191600 0.786000 61 43 38\n-0.632571 0.183328 0.175351 -0.449629 0.773247 0.447096 0.191366 0.792062 63 45 46\n-0.691581 0.183864 0.098612 -0.512467 0.832026 0.212256 0.221500 0.894900 52 29 23\n-0.701785 0.171308 0.044164 -0.385876 0.882534 0.268685 0.225727 0.901245 56 41 35\n-0.754181 0.150659 0.088875 -0.136418 0.932432 0.334544 0.220200 0.901600 75 55 40\n0.691915 0.149500 0.567238 0.522111 0.825800 -0.213111 0.822989 0.452397 61 37 23\n0.732772 0.146394 0.590568 0.247658 0.932615 -0.262398 0.823720 0.460581 91 69 53\n0.294460 0.170866 0.820957 0.203894 0.881497 0.425886 0.897200 0.387600 69 51 34\n-0.704429 0.147083 0.530633 -0.194769 0.980499 -0.025819 0.210439 0.860861 78 62 45\n-0.588844 0.187018 0.431686 -0.095340 0.994964 0.030824 0.213700 0.873700 91 71 55\n-0.679833 0.176578 0.447741 -0.211707 0.959624 0.185064 0.202917 0.869353 54 24 21\n0.108514 0.142192 -1.328924 0.016114 -0.114139 -0.993316 0.822878 0.558466 53 19 6\n0.793524 0.124928 0.211015 0.206977 0.936583 0.282693 0.357500 0.901700 91 69 45\n0.731982 0.162998 0.130017 0.620167 0.706290 0.341350 0.352100 0.897300 69 43 23\n0.705888 0.152321 0.261685 0.633076 0.742210 0.219825 0.357500 0.893500 80 45 18\n0.673728 0.137841 1.013051 0.178564 0.962249 0.205298 0.900189 0.475494 99 65 38\n-1.043913 0.172387 -0.529940 -0.926939 0.155156 -0.341594 0.145800 0.785200 37 26 20\n-1.062510 0.195247 -0.499473 -0.401471 0.401502 -0.823145 0.147256 0.791119 9 3 3\n-1.007599 0.187888 -0.726055 -0.624989 0.665456 -0.408063 0.152650 0.588363 92 58 33\n1.037119 0.120425 0.617557 0.452437 0.863063 0.224433 0.810831 0.522562 82 52 27\n0.952696 0.133705 0.706998 0.277383 0.952422 0.126102 0.831539 0.513978 89 49 34\n-1.236035 0.209536 -0.202278 -0.334910 0.934599 -0.119633 0.796717 0.009520 91 64 40\n-1.346260 0.150018 -0.074287 -0.739006 0.663564 -0.116184 0.822200 0.004200 96 66 43\n0.125126 0.154374 0.959998 0.092563 0.981017 0.170293 0.012678 0.686584 80 64 44\n0.138855 0.180439 0.885876 0.202490 0.765801 0.610309 0.025513 0.687369 54 37 22\n0.194563 0.147144 0.902966 0.204993 0.919156 0.336314 0.017007 0.673782 52 34 20\n0.783923 0.147038 0.856507 0.231880 0.932646 0.276284 0.871060 0.489258 84 58 35\n0.355159 0.142006 0.888267 0.067873 0.989868 0.124485 0.022801 0.642144 106 79 54\n0.461123 0.147516 0.822147 -0.084628 0.915036 0.394360 0.032347 0.617357 79 60 36\n0.294460 0.170866 0.820957 0.203894 0.881497 0.425886 0.031998 0.652169 69 51 34\n-0.509926 0.210253 0.763151 -0.115543 0.934294 0.337230 0.937200 0.223800 102 82 57\n1.030179 0.152093 0.428709 -0.046266 0.989532 0.136662 0.779164 0.511844 69 26 19\n1.046270 0.154476 0.300256 -0.086001 0.984222 0.154515 0.011891 0.856080 88 50 30\n1.002006 0.165190 0.231211 -0.298166 0.896054 0.328806 0.018003 0.843201 71 29 25\n0.908744 0.098267 0.282276 -0.326121 0.914853 0.238044 0.020838 0.854084 85 60 42\n1.088062 0.143897 0.423090 0.417585 0.887204 0.196112 0.783636 0.520814 69 35 24\n-0.897146 0.207645 -0.820281 -0.453261 0.792138 -0.408673 0.666349 0.039931 98 65 38\n-1.232764 0.195340 -0.271598 -0.471664 0.880917 -0.037904 0.685545 0.842359 88 66 40\n1.056279 0.141947 -0.892172 0.809626 0.260872 -0.525742 0.731712 0.895151 54 25 9\n0.914029 0.106661 -1.067466 0.639424 -0.120090 -0.759392 0.452346 0.778270 52 20 6\n-1.195621 0.210091 -0.141227 0.150517 0.982910 0.105930 0.806476 0.021996 90 58 35\n-0.833311 0.181756 0.727944 -0.035676 0.986328 -0.160863 0.499700 0.737500 60 26 19\n-0.875911 0.175226 0.815432 -0.071780 0.995849 0.055666 0.494500 0.728800 103 82 58\n-0.779273 0.196458 0.759159 0.044465 0.997589 -0.053163 0.499700 0.728200 51 19 15\n-1.051043 0.261971 -0.541634 -0.884762 0.465926 -0.008850 0.155163 0.625060 88 65 47\n0.874901 0.151073 0.764574 0.290475 0.951415 0.102023 0.849410 0.499694 74 31 22\n-0.593321 0.148121 0.899705 0.027070 0.997589 0.063448 0.012203 0.830316 95 73 50\n-0.509926 0.210253 0.763151 -0.115543 0.934294 0.337230 0.039476 0.813329 102 82 57\n0.682954 0.151918 0.340109 0.818232 0.554552 0.151463 0.165600 0.861500 70 36 15\n0.718395 0.096611 0.376791 0.482315 0.874722 -0.047060 0.167976 0.860432 68 51 35\n0.705888 0.152321 0.261685 0.633076 0.742210 0.219825 0.163600 0.869800 80 45 18\n-0.513944 0.204192 0.258183 -0.086978 0.903165 0.420362 0.835400 0.171100 46 25 26\n-0.521546 0.186536 0.300136 -0.148473 0.969420 0.195318 0.844951 0.186778 92 81 65\n0.637801 0.163540 0.860349 -0.016175 0.968413 0.248726 0.881774 0.459388 93 69 44\n-0.875911 0.175226 0.815432 -0.071780 0.995849 0.055666 0.035014 0.860397 103 82 58\n-0.696425 0.173906 0.811798 0.095065 0.994140 0.051271 0.043340 0.872990 94 70 49\n-0.779273 0.196458 0.759159 0.044465 0.997589 -0.053163 0.035400 0.870900 51 19 15\n0.949600 0.121845 0.547895 -0.014679 0.999786 0.013825 0.494895 0.781225 106 73 44\n1.088062 0.143897 0.423090 0.417585 0.887204 0.196112 0.499448 0.806554 69 35 24\n1.030179 0.152093 0.428709 -0.046266 0.989532 0.136662 0.494266 0.799980 69 26 19\n-0.591682 0.165641 0.590203 -0.383862 0.911740 -0.146123 0.473195 0.772777 63 38 24\n-0.601250 0.172937 0.639801 -0.390423 0.918577 -0.061068 0.474164 0.780091 63 41 26\n-0.527102 0.234258 0.588418 -0.504807 0.854335 -0.123417 0.458648 0.777213 71 30 23\n-0.490381 0.183167 0.378403 -0.108249 0.978179 -0.177282 0.858099 0.200160 96 78 49\n0.268029 0.192855 0.423171 0.559160 0.812433 0.165014 0.278817 0.572169 51 34 24\n0.335637 0.154673 0.436691 0.209113 0.973144 -0.096042 0.288400 0.589800 77 69 61\n0.359140 0.168071 0.328047 0.468947 0.790033 0.394848 0.276763 0.595450 50 40 32\n0.402308 0.145327 0.336704 0.125767 0.980316 0.151982 0.286800 0.597800 51 42 35\n-0.433746 0.175409 0.247842 0.088015 0.963469 0.252876 0.830512 0.203017 45 22 14\n-0.336610 0.185732 0.330613 -0.106265 0.978607 -0.176092 0.842634 0.227626 119 98 73\n-0.379923 0.189602 0.241876 -0.152074 0.954772 0.255470 0.827234 0.214213 113 91 81\n1.002006 0.165190 0.231211 -0.298166 0.896054 0.328806 0.448116 0.690626 71 29 25\n1.187323 0.150468 0.155115 0.820826 0.515976 0.244850 0.722511 0.674977 71 43 23\n1.005844 0.137174 -0.975163 0.777184 0.160680 -0.608386 0.734580 0.916877 57 27 10\n1.139203 0.162512 -0.756314 0.814020 0.386883 -0.433180 0.724167 0.864969 74 38 15\n-1.062510 0.195247 -0.499473 -0.401471 0.401502 -0.823145 0.145892 0.901794 9 3 3\n-1.051043 0.261971 -0.541634 -0.884762 0.465926 -0.008850 0.147000 0.893900 88 65 47\n-1.043913 0.172387 -0.529940 -0.926939 0.155156 -0.341594 0.150700 0.899511 37 26 20\n-1.172236 0.216223 -0.504276 -0.188421 0.367138 -0.910855 0.166572 0.799197 22 9 7\n0.470695 0.174605 0.421534 -0.282388 0.923765 -0.258583 0.810586 0.396530 123 100 73\n0.335637 0.154673 0.436691 0.209113 0.973144 -0.096042 0.819421 0.370323 77 69 61\n0.359899 0.173867 0.500530 0.025819 0.945524 -0.324442 0.834001 0.380279 75 48 36\n0.402308 0.145327 0.336704 0.125767 0.980316 0.151982 0.797259 0.378617 51 42 35\n-0.834898 0.138089 -0.955488 -0.471084 0.467147 -0.748192 0.634939 0.045649 85 50 27\n-0.709568 0.170815 -1.007889 -0.465987 0.423109 -0.777032 0.620236 0.065863 81 46 22\n0.778318 0.173710 0.776172 0.269478 0.952757 0.139927 0.569419 0.646009 97 63 40\n-0.701785 0.171308 0.044164 -0.385876 0.882534 0.268685 0.137850 0.605120 56 41 35\n0.718395 0.096611 0.376791 0.482315 0.874722 -0.047060 0.127718 0.893989 68 51 35\n0.682954 0.151918 0.340109 0.818232 0.554552 0.151463 0.129400 0.899700 70 36 15\n0.668429 0.175737 0.470511 0.836146 0.545457 -0.057283 0.123500 0.894500 84 47 23\n0.691915 0.149500 0.567238 0.522111 0.825800 -0.213111 0.125390 0.809598 61 37 23\n0.708914 0.121618 0.442781 0.457167 0.866909 -0.198523 0.125400 0.828700 84 64 39\n0.668429 0.175737 0.470511 0.836146 0.545457 -0.057283 0.120708 0.822348 84 47 23\n-1.094074 0.216046 -0.323392 -0.322642 0.815027 0.481216 0.183566 0.665139 33 23 19\n-1.090056 0.168091 -0.200285 -0.153264 0.961547 0.227790 0.197236 0.681529 67 57 44\n-1.047756 0.232325 -0.248852 -0.586688 0.747490 0.311472 0.181326 0.679728 93 84 65\n0.793524 0.124928 0.211015 0.206977 0.936583 0.282693 0.197634 0.764254 91 69 45\n0.866166 0.136737 0.182730 -0.197577 0.930479 0.308420 0.196014 0.781157 85 54 34\n0.867069 0.169357 -0.011136 -0.146458 0.944334 0.294504 0.178723 0.782138 83 59 43\n-0.013331 0.209440 0.886026 -0.017701 0.793115 0.608783 0.025012 0.716747 83 69 46\n0.801184 0.149455 0.064041 0.314066 0.860042 0.402051 0.176852 0.769356 46 34 19\n0.731982 0.162998 0.130017 0.620167 0.706290 0.341350 0.182361 0.753788 69 43 23\n-1.232764 0.195340 -0.271598 -0.471664 0.880917 -0.037904 0.782688 0.006102 88 66 40\n-0.846200 0.201253 0.003743 -0.061007 0.905759 0.419355 0.106206 0.588695 82 61 39\n-0.933303 0.223478 -0.104850 -0.256447 0.882107 0.395032 0.094191 0.584615 95 82 62\n-0.513944 0.204192 0.258183 -0.086978 0.903165 0.420362 0.234885 0.804733 46 25 26\n-0.632571 0.183328 0.175351 -0.449629 0.773247 0.447096 0.227377 0.828490 63 45 46\n-0.616013 0.168240 0.204544 -0.374493 0.882412 0.284677 0.225359 0.822126 61 43 38\n-0.521546 0.186536 0.300136 -0.148473 0.969420 0.195318 0.441713 0.795020 92 81 65\n-0.433746 0.175409 0.247842 0.088015 0.963469 0.252876 0.447415 0.814595 45 22 14\n-0.513944 0.204192 0.258183 -0.086978 0.903165 0.420362 0.436972 0.801579 46 25 26\n-0.621576 0.206383 0.119238 -0.325388 0.886380 0.329203 0.109074 0.873047 41 25 30\n-0.691581 0.183864 0.098612 -0.512467 0.832026 0.212256 0.113400 0.876900 52 29 23\n-0.632571 0.183328 0.175351 -0.449629 0.773247 0.447096 0.108100 0.881400 63 45 46\n-0.709568 0.170815 -1.007889 -0.465987 0.423109 -0.777032 0.786700 0.733200 81 46 22\n-0.612268 0.204007 -1.057050 -0.349162 0.544145 -0.762841 0.784510 0.718559 87 49 22\n-0.498974 0.197935 0.444427 -0.301950 0.929624 -0.211158 0.872385 0.199821 120 97 75\n-0.519268 0.233805 0.680700 -0.312754 0.941527 0.125187 0.924422 0.204827 114 87 59\n0.765293 0.173729 0.695138 0.392315 0.903836 -0.170629 0.843299 0.473104 99 67 46\n0.708914 0.121618 0.442781 0.457167 0.866909 -0.198523 0.169276 0.844210 84 64 39\n0.668429 0.175737 0.470511 0.836146 0.545457 -0.057283 0.162786 0.849458 84 47 23\n-1.094074 0.216046 -0.323392 -0.322642 0.815027 0.481216 0.124902 0.766802 33 23 19\n-1.168678 0.205311 -0.247417 0.080508 0.995239 0.054842 0.122796 0.752121 90 70 42\n-1.090056 0.168091 -0.200285 -0.153264 0.961547 0.227790 0.129535 0.751103 67 57 44\n0.079991 0.189999 -1.345287 -0.030091 0.053621 -0.998077 0.811698 0.560749 59 24 9\n0.970946 0.172883 -0.991352 0.650899 0.511185 -0.561235 0.730371 0.922402 73 36 13\n1.005844 0.137174 -0.975163 0.777184 0.160680 -0.608386 0.737967 0.913318 57 27 10\n0.221700 0.166503 -1.341617 0.067782 0.078707 -0.994568 0.826709 0.534441 43 19 9\n-1.201458 0.227714 -0.360172 -0.522660 0.736229 0.429823 0.693882 0.860624 41 23 18\n-1.034579 0.214902 -0.647142 -0.894559 0.280526 -0.347911 0.154860 0.602408 87 50 25\n0.164300 0.235168 0.829941 0.297311 0.810724 0.504288 0.040465 0.680362 81 70 58\n-0.474041 0.236672 0.206184 0.290109 0.943419 0.160405 0.433560 0.817634 66 35 28\n-0.591682 0.165641 0.590203 -0.383862 0.911740 -0.146123 0.891918 0.198514 63 38 24\n0.563086 0.171212 0.304077 -0.157964 0.984375 0.077548 0.782989 0.410708 66 49 37\n0.463756 0.147640 0.298479 -0.108798 0.928739 0.354320 0.788861 0.389823 44 35 33\n-0.150686 0.239000 0.804835 -0.179449 0.906430 0.382275 0.036587 0.744247 113 98 74\n0.463756 0.147640 0.298479 -0.108798 0.928739 0.354320 0.284142 0.620122 44 35 33\n0.389700 0.214306 0.235973 0.258034 0.722343 0.641560 0.264273 0.613186 24 13 11\n0.402308 0.145327 0.336704 0.125767 0.980316 0.151982 0.284955 0.604773 51 42 35\n-1.209987 0.186271 -0.499631 -0.832575 0.317576 -0.453810 0.172714 0.796319 49 33 32\n-0.701785 0.171308 0.044164 -0.385876 0.882534 0.268685 0.180353 0.813329 56 41 35\n-0.649850 0.219400 0.067074 -0.400952 0.888638 0.222449 0.190796 0.813588 57 30 30\n0.778318 0.173710 0.776172 0.269478 0.952757 0.139927 0.858937 0.480969 97 63 40\n-0.699562 0.212982 -0.976466 -0.426313 0.710227 -0.560167 0.628006 0.070787 95 59 34\n-0.385824 0.243545 0.447084 -0.103763 0.925962 -0.362987 0.867035 0.222967 135 105 66\n-0.612268 0.204007 -1.057050 -0.349162 0.544145 -0.762841 0.089000 0.898600 87 49 22\n-0.709568 0.170815 -1.007889 -0.465987 0.423109 -0.777032 0.082500 0.892700 81 46 22\n-0.699562 0.212982 -0.976466 -0.426313 0.710227 -0.560167 0.088891 0.892167 95 59 34\n-0.260590 0.195555 0.246811 -0.157323 0.974090 0.162420 0.822773 0.237340 108 98 79\n0.492417 0.201889 0.737380 -0.051241 0.907498 0.416883 0.048870 0.607257 91 66 42\n0.404744 0.183728 -1.315695 0.259041 0.204688 -0.943907 0.404763 0.755982 72 33 10\n0.494727 0.171130 -1.303699 0.222633 0.085635 -0.971129 0.405534 0.738557 63 25 8\n0.782135 0.156223 -1.155835 0.580798 0.261940 -0.770714 0.075164 0.806679 49 18 5\n0.832631 0.128027 -1.136496 0.571123 -0.075320 -0.817377 0.079630 0.811256 45 20 9\n0.731949 0.122116 -1.198558 0.434339 -0.319193 -0.842280 0.065892 0.820768 86 38 17\n1.178929 0.171019 -0.554529 0.732139 0.660665 -0.165624 0.722800 0.827500 78 54 33\n0.264553 0.123821 -1.328862 0.077303 -0.218787 -0.972686 0.460600 0.876500 63 24 8\n0.221700 0.166503 -1.341617 0.067782 0.078707 -0.994568 0.458742 0.890087 43 19 9\n0.251309 0.176436 -1.321700 0.186865 0.163396 -0.968688 0.455242 0.880156 67 30 9\n0.300709 0.174582 -1.332024 0.026582 0.163305 -0.986206 0.408113 0.775292 68 28 9\n0.251309 0.176436 -1.321700 0.186865 0.163396 -0.968688 0.411053 0.783238 67 30 9\n0.731949 0.122116 -1.198558 0.434339 -0.319193 -0.842280 0.863500 0.649500 86 38 17\n0.648312 0.137874 -1.246179 0.311624 -0.127415 -0.941618 0.863500 0.660500 59 20 7\n0.710532 0.175484 -1.197339 0.344951 0.320261 -0.882260 0.859500 0.653100 56 22 7\n-0.649850 0.219400 0.067074 -0.400952 0.888638 0.222449 0.113216 0.866644 57 30 30\n-0.666791 0.212427 0.020278 -0.594958 0.737175 0.320200 0.184007 0.819558 69 45 33\n-0.348110 0.241625 0.703682 -0.090548 0.917508 0.387188 0.051612 0.780912 94 74 47\n-0.217844 0.240568 0.744657 -0.138401 0.956236 0.257698 0.048500 0.755234 92 78 60\n-0.617581 0.178919 0.780268 -0.219642 0.972015 0.082949 0.935226 0.197119 110 79 55\n-0.509926 0.210253 0.763151 -0.115543 0.934294 0.337230 0.928244 0.216476 102 82 57\n-0.519268 0.233805 0.680700 -0.312754 0.941527 0.125187 0.467953 0.797155 114 87 59\n-0.632571 0.183328 0.175351 -0.449629 0.773247 0.447096 0.048700 0.901900 63 45 46\n-0.513944 0.204192 0.258183 -0.086978 0.903165 0.420362 0.043400 0.897300 46 25 26\n-0.621576 0.206383 0.119238 -0.325388 0.886380 0.329203 0.048700 0.893400 41 25 30\n0.221700 0.166503 -1.341617 0.067782 0.078707 -0.994568 0.824400 0.536300 43 19 9\n0.193518 0.201531 -1.327028 0.010620 0.232093 -0.972625 0.815827 0.540725 76 33 11\n1.088062 0.143897 0.423090 0.417585 0.887204 0.196112 0.773092 0.523127 69 35 24\n1.159339 0.141024 0.255026 0.670003 0.700247 0.246406 0.746546 0.521523 95 74 51\n-0.401616 0.161787 0.876604 -0.026124 0.950774 0.308756 0.408300 0.880200 85 68 48\n-0.150686 0.239000 0.804835 -0.179449 0.906430 0.382275 0.408300 0.894400 113 98 74\n-0.217844 0.240568 0.744657 -0.138401 0.956236 0.257698 0.403500 0.888300 92 78 60\n0.731982 0.162998 0.130017 0.620167 0.706290 0.341350 0.757100 0.432600 69 43 23\n0.685529 0.182303 0.226315 0.440748 0.889248 0.122196 0.765824 0.427842 113 91 61\n0.705888 0.152321 0.261685 0.633076 0.742210 0.219825 0.761718 0.437296 80 45 18\n-1.094074 0.216046 -0.323392 -0.322642 0.815027 0.481216 0.769529 0.020578 33 23 19\n-1.201458 0.227714 -0.360172 -0.522660 0.736229 0.429823 0.771223 0.005839 41 23 18\n0.731982 0.162998 0.130017 0.620167 0.706290 0.341350 0.284280 0.687293 69 43 23\n0.801184 0.149455 0.064041 0.314066 0.860042 0.402051 0.282612 0.705446 46 34 19\n0.715603 0.207363 0.111574 0.428938 0.710959 0.557237 0.272323 0.685184 65 50 34\n0.347720 0.217122 0.633135 0.296182 0.903043 -0.311045 0.859008 0.385662 84 51 34\n1.002006 0.165190 0.231211 -0.298166 0.896054 0.328806 0.338669 0.807531 71 29 25\n1.042485 0.208992 0.120180 -0.150182 0.948943 0.277291 0.349976 0.796380 90 43 19\n0.866166 0.136737 0.182730 -0.197577 0.930479 0.308420 0.341274 0.825971 85 54 34\n0.778318 0.173710 0.776172 0.269478 0.952757 0.139927 0.041387 0.554079 97 63 40\n0.637801 0.163540 0.860349 -0.016175 0.968413 0.248726 0.028192 0.580794 93 69 44\n0.783923 0.147038 0.856507 0.231880 0.932646 0.276284 0.032962 0.556264 84 58 35\n1.189849 0.174277 0.012378 0.718863 0.690298 0.081576 0.716034 0.714567 82 56 32\n-0.379923 0.189602 0.241876 -0.152074 0.954772 0.255470 0.446442 0.826389 113 91 81\n-0.456815 0.209156 0.157672 0.176122 0.982574 0.058962 0.440000 0.821600 79 42 26\n-0.612268 0.204007 -1.057050 -0.349162 0.544145 -0.762841 0.608184 0.084592 87 49 22\n-0.511855 0.239369 -1.051168 -0.303049 0.611988 -0.730461 0.605227 0.103617 89 50 23\n-0.506843 0.152840 -1.099147 -0.228126 0.039155 -0.972839 0.594108 0.101220 46 24 10\n0.866166 0.136737 0.182730 -0.197577 0.930479 0.308420 0.220200 0.796900 85 54 34\n0.947913 0.216030 0.041413 -0.317240 0.921842 0.222510 0.205010 0.780517 67 31 26\n0.867069 0.169357 -0.011136 -0.146458 0.944334 0.294504 0.218729 0.775208 83 59 43\n0.685529 0.182303 0.226315 0.440748 0.889248 0.122196 0.284049 0.671747 113 91 61\n-0.075811 0.153499 -1.322539 -0.143376 0.139256 -0.979797 0.216849 0.876341 64 28 11\n-0.027911 0.208823 -1.310425 -0.137700 0.249123 -0.958617 0.213800 0.868800 77 37 13\n0.011567 0.168644 -1.322847 -0.118656 0.066225 -0.990722 0.219855 0.862866 64 27 8\n0.644102 0.219322 0.652722 0.391064 0.919706 -0.034059 0.845410 0.447967 90 51 28\n0.668429 0.175737 0.470511 0.836146 0.545457 -0.057283 0.824452 0.443848 84 47 23\n-0.621576 0.206383 0.119238 -0.325388 0.886380 0.329203 0.341751 0.830468 41 25 30\n-0.513944 0.204192 0.258183 -0.086978 0.903165 0.420362 0.345500 0.849519 46 25 26\n-0.540064 0.223700 0.138255 -0.112186 0.986541 0.118686 0.336206 0.839424 51 29 31\n0.448039 0.181882 -1.294694 0.062380 0.027131 -0.997681 0.405683 0.748857 71 27 9\n-0.469183 0.219162 -0.139313 0.318125 0.741722 -0.590442 0.766095 0.169875 59 44 30\n-0.412722 0.214123 -0.137735 -0.186346 0.887722 -0.420942 0.763004 0.182000 54 36 25\n-0.469024 0.191608 -0.171408 0.350719 0.936125 -0.025361 0.758987 0.168994 37 25 21\n0.947913 0.216030 0.041413 -0.317240 0.921842 0.222510 0.469400 0.683800 67 31 26\n1.042485 0.208992 0.120180 -0.150182 0.948943 0.277291 0.462299 0.661268 90 43 19\n-1.064452 0.234362 -0.480027 -0.316111 -0.318308 -0.893704 0.864000 0.753800 12 5 4\n-1.117037 0.193051 -0.517198 0.141758 0.476669 -0.867550 0.861793 0.762190 18 7 6\n-1.121287 0.237574 -0.501706 0.069887 0.374004 -0.924772 0.860281 0.756117 17 7 6\n-1.062510 0.195247 -0.499473 -0.401471 0.401502 -0.823145 0.469363 0.902103 9 3 3\n-1.117037 0.193051 -0.517198 0.141758 0.476669 -0.867550 0.469400 0.908100 18 7 6\n-1.064452 0.234362 -0.480027 -0.316111 -0.318308 -0.893704 0.466208 0.901870 12 5 4\n-0.527102 0.234258 0.588418 -0.504807 0.854335 -0.123417 0.460600 0.891500 71 30 23\n-0.498974 0.197935 0.444427 -0.301950 0.929624 -0.211158 0.460600 0.899900 120 97 75\n-0.591682 0.165641 0.590203 -0.383862 0.911740 -0.146123 0.454900 0.893400 63 38 24\n-0.074229 0.231323 -1.295506 -0.198340 0.465133 -0.862697 0.799144 0.594439 87 45 18\n0.279647 0.239750 0.325829 0.510788 0.730277 0.453597 0.260134 0.581720 76 59 45\n0.746215 0.164283 -1.210684 0.359844 0.187872 -0.913877 0.296500 0.892200 48 18 7\n0.731949 0.122116 -1.198558 0.434339 -0.319193 -0.842280 0.296404 0.884148 86 38 17\n0.710532 0.175484 -1.197339 0.344951 0.320261 -0.882260 0.301331 0.891586 56 22 7\n0.261050 0.198897 0.489690 0.461135 0.810236 -0.361675 0.837705 0.359095 40 17 13\n0.117313 0.207923 -1.332964 0.086306 0.173009 -0.981109 0.811479 0.554075 65 26 9\n0.483103 0.193778 0.273191 -0.117130 0.679006 0.724693 0.276545 0.626714 45 24 22\n1.170291 0.190252 -0.377717 0.690085 0.723655 -0.007874 0.717519 0.784836 73 46 24\n1.117780 0.203605 -0.635565 0.574175 0.809961 -0.119419 0.174500 0.870200 62 34 15\n1.180091 0.120661 -0.641139 0.975616 0.065096 -0.209571 0.180600 0.865600 78 41 19\n1.158965 0.166880 -0.713248 0.870540 0.415662 -0.263344 0.178370 0.882176 72 53 39\n1.100379 0.176321 -0.786966 0.664205 0.609729 -0.432417 0.495600 0.664600 67 35 15\n1.139203 0.162512 -0.756314 0.814020 0.386883 -0.433180 0.497200 0.657100 74 38 15\n1.121125 0.115562 -0.802410 0.893765 0.011078 -0.448347 0.498879 0.669175 44 21 8\n0.931363 0.173280 -1.040632 0.554430 0.464064 -0.690786 0.731269 0.934288 63 32 9\n0.746215 0.164283 -1.210684 0.359844 0.187872 -0.913877 0.062868 0.810908 48 18 7\n1.139203 0.162512 -0.756314 0.814020 0.386883 -0.433180 0.723400 0.862100 74 38 15\n0.507337 0.131060 0.901781 -0.079775 0.992767 0.089663 0.023516 0.609283 87 64 41\n1.187323 0.150468 0.155115 0.820826 0.515976 0.244850 0.306800 0.903000 71 43 23\n1.108676 0.192209 0.160912 0.256966 0.897732 0.357738 0.302100 0.895100 90 62 39\n1.159339 0.141024 0.255026 0.670003 0.700247 0.246406 0.306800 0.895000 95 74 51\n-0.649850 0.219400 0.067074 -0.400952 0.888638 0.222449 0.138352 0.868690 57 30 30\n-0.621576 0.206383 0.119238 -0.325388 0.886380 0.329203 0.132847 0.865943 41 25 30\n-0.540064 0.223700 0.138255 -0.112186 0.986541 0.118686 0.135300 0.849000 51 29 31\n0.696644 0.204938 0.759466 0.203101 0.951353 0.231544 0.047596 0.567542 70 24 16\n0.563086 0.171212 0.304077 -0.157964 0.984375 0.077548 0.286941 0.642000 66 49 37\n0.668429 0.175737 0.470511 0.836146 0.545457 -0.057283 0.241007 0.871053 84 47 23\n0.682954 0.151918 0.340109 0.818232 0.554552 0.151463 0.241100 0.884800 70 36 15\n0.633056 0.221321 0.379066 0.339305 0.915769 -0.214850 0.237454 0.878808 130 85 41\n0.682954 0.151918 0.340109 0.818232 0.554552 0.151463 0.343700 0.883000 70 36 15\n0.705888 0.152321 0.261685 0.633076 0.742210 0.219825 0.344700 0.877600 80 45 18\n0.633056 0.221321 0.379066 0.339305 0.915769 -0.214850 0.348726 0.879804 130 85 41\n-1.117037 0.193051 -0.517198 0.141758 0.476669 -0.867550 0.156800 0.843354 18 7 6\n-1.172236 0.216223 -0.504276 -0.188421 0.367138 -0.910855 0.152026 0.832614 22 9 7\n-1.121287 0.237574 -0.501706 0.069887 0.374004 -0.924772 0.159902 0.839298 17 7 6\n-1.034579 0.214902 -0.647142 -0.894559 0.280526 -0.347911 0.704126 0.023510 87 50 25\n-1.032133 0.266046 -0.603468 -0.652913 0.679617 -0.334269 0.718236 0.027799 106 74 46\n0.643428 0.184521 0.250699 -0.009552 0.998993 -0.043550 0.285675 0.657225 79 61 37\n0.583442 0.203068 0.223059 0.368419 0.856777 0.360729 0.279720 0.649128 28 18 15\n0.462139 0.216946 0.569870 -0.197638 0.969054 -0.147710 0.842261 0.405299 119 90 58\n0.049515 0.259805 0.842132 0.060854 0.852901 0.518479 0.039833 0.707083 102 83 53\n0.439088 0.100837 -1.303515 0.194464 -0.366314 -0.909909 0.413700 0.902200 65 25 10\n0.404744 0.183728 -1.315695 0.259041 0.204688 -0.943907 0.408407 0.896741 72 33 10\n0.448039 0.181882 -1.294694 0.062380 0.027131 -0.997681 0.413700 0.894700 71 27 9\n0.570017 0.235530 0.451406 -0.373852 0.886166 -0.273659 0.817833 0.419746 76 28 20\n-0.433746 0.175409 0.247842 0.088015 0.963469 0.252876 0.120600 0.902700 45 22 14\n-0.456815 0.209156 0.157672 0.176122 0.982574 0.058962 0.115100 0.897400 79 42 26\n-0.474041 0.236672 0.206184 0.290109 0.943419 0.160405 0.120600 0.896100 66 35 28\n1.108676 0.192209 0.160912 0.256966 0.897732 0.357738 0.484807 0.570570 90 62 39\n1.046270 0.154476 0.300256 -0.086001 0.984222 0.154515 0.481646 0.600956 88 50 30\n1.159339 0.141024 0.255026 0.670003 0.700247 0.246406 0.473518 0.583081 95 74 51\n0.403080 0.213701 0.699357 0.074129 0.973388 0.216712 0.057396 0.626466 88 55 32\n0.268534 0.232946 0.712260 0.183172 0.931303 0.314768 0.056230 0.653547 70 45 30\n-0.348322 0.224348 -0.229604 -0.147618 0.977477 0.150609 0.745130 0.188681 105 94 87\n-0.436449 0.212369 -0.228831 0.196356 0.896664 0.396771 0.750291 0.174968 60 51 49\n0.696644 0.204938 0.759466 0.203101 0.951353 0.231544 0.861715 0.464909 70 24 16\n0.319945 0.210787 0.591678 0.454237 0.834193 -0.312632 0.853573 0.377533 51 32 21\n0.536248 0.230581 0.227865 0.232704 0.846004 0.479659 0.271284 0.640909 44 23 25\n-1.209987 0.186271 -0.499631 -0.832575 0.317576 -0.453810 0.146959 0.828620 49 33 32\n-1.181128 0.274865 -0.488784 -0.470656 0.492569 -0.731986 0.154900 0.825100 37 18 13\n-0.445678 0.210605 -1.102647 -0.332194 0.341716 -0.879116 0.591332 0.114637 59 33 15\n-1.032133 0.266046 -0.603468 -0.652913 0.679617 -0.334269 0.150049 0.614597 106 74 46\n-0.142229 0.236936 0.408920 -0.217689 0.969726 -0.110385 0.846940 0.270884 107 81 49\n0.643428 0.184521 0.250699 -0.009552 0.998993 -0.043550 0.772441 0.421321 79 61 37\n0.648733 0.190745 0.175812 0.227088 0.938902 0.258553 0.764498 0.418942 33 23 16\n0.583442 0.203068 0.223059 0.368419 0.856777 0.360729 0.771769 0.409722 28 18 15\n-0.174970 0.221445 0.210638 -0.121708 0.989288 0.080325 0.813884 0.251169 105 97 71\n-0.513944 0.204192 0.258183 -0.086978 0.903165 0.420362 0.106400 0.879100 46 25 26\n-0.474041 0.236672 0.206184 0.290109 0.943419 0.160405 0.098160 0.875259 66 35 28\n-0.540064 0.223700 0.138255 -0.112186 0.986541 0.118686 0.104534 0.863764 51 29 31\n-1.062510 0.195247 -0.499473 -0.401471 0.401502 -0.823145 0.170331 0.627365 9 3 3\n-1.047316 0.233719 -0.513735 -0.926542 0.375011 0.029389 0.161795 0.628265 36 11 8\n1.199743 0.165610 -0.451474 0.921964 0.384777 -0.043458 0.865600 0.526100 70 43 22\n1.199099 0.144624 -0.543118 0.977050 0.172246 -0.125095 0.865600 0.537300 52 35 24\n1.165268 0.190312 -0.483761 0.602771 0.792261 -0.094668 0.862300 0.528300 75 43 26\n0.813782 0.193895 -1.123047 0.337046 0.503494 -0.795526 0.081060 0.799670 71 34 12\n0.897994 0.179871 -1.050576 0.619648 0.421247 -0.662221 0.453189 0.759294 62 26 8\n0.931363 0.173280 -1.040632 0.554430 0.464064 -0.690786 0.456200 0.762400 63 32 9\n0.255332 0.238673 0.529540 0.483352 0.753166 -0.446181 0.848151 0.359874 32 14 12\n0.867069 0.169357 -0.011136 -0.146458 0.944334 0.294504 0.278942 0.720061 83 59 43\n0.775574 0.216329 0.029312 0.690573 0.644856 0.327433 0.267114 0.705997 56 26 13\n0.685529 0.182303 0.226315 0.440748 0.889248 0.122196 0.348200 0.872900 113 91 61\n-0.027911 0.208823 -1.310425 -0.137700 0.249123 -0.958617 0.803165 0.582955 77 37 13\n0.043581 0.239792 -1.316390 -0.172460 0.471480 -0.864834 0.803715 0.571935 80 38 15\n-1.024713 0.186653 -0.112006 -0.349681 0.887692 0.299478 0.084564 0.577153 89 75 60\n-0.950463 0.263640 -0.186799 -0.286111 0.877773 0.384198 0.079522 0.593744 95 80 59\n0.268029 0.192855 0.423171 0.559160 0.812433 0.165014 0.825076 0.358877 51 34 24\n-0.796743 0.244673 -0.101613 -0.200140 0.855953 0.476669 0.108481 0.608658 94 80 59\n1.042485 0.208992 0.120180 -0.150182 0.948943 0.277291 0.485100 0.584500 90 43 19\n1.002006 0.165190 0.231211 -0.298166 0.896054 0.328806 0.491780 0.595825 71 29 25\n-1.062128 0.254662 -0.343468 -0.362102 0.812891 0.456099 0.169633 0.662610 23 13 13\n-1.171445 0.330796 -0.446071 -0.356090 0.910001 -0.212256 0.711721 0.878294 73 61 66\n-0.812535 0.279460 -0.735973 -0.312265 0.884091 -0.347575 0.682386 0.060521 105 76 58\n0.200041 0.245975 0.487079 0.515946 0.843623 -0.148503 0.843337 0.347394 76 59 39\n-0.728684 0.263429 -0.871033 -0.340068 0.860469 -0.379376 0.652552 0.071529 122 90 59\n-0.422330 0.260127 0.513946 -0.200995 0.963866 -0.174780 0.884680 0.220710 144 114 82\n-0.653812 0.249921 -0.069958 0.095767 0.937895 0.333384 0.793111 0.142005 98 82 65\n-0.666791 0.212427 0.020278 -0.594958 0.737175 0.320200 0.808347 0.142605 69 45 33\n-0.649850 0.219400 0.067074 -0.400952 0.888638 0.222449 0.813787 0.146515 57 30 30\n-0.379923 0.189602 0.241876 -0.152074 0.954772 0.255470 0.459594 0.555635 113 91 81\n-0.260590 0.195555 0.246811 -0.157323 0.974090 0.162420 0.465389 0.588928 108 98 79\n-0.245211 0.244880 0.138544 -0.044649 0.950377 0.307840 0.451445 0.589900 97 59 40\n-0.666791 0.212427 0.020278 -0.594958 0.737175 0.320200 0.136055 0.615036 69 45 33\n-0.741367 0.287444 -0.131185 -0.159581 0.853664 0.495712 0.104557 0.624686 96 87 66\n-0.469024 0.191608 -0.171408 0.350719 0.936125 -0.025361 0.142345 0.671036 37 25 21\n-0.436449 0.212369 -0.228831 0.196356 0.896664 0.396771 0.138964 0.683504 60 51 49\n-0.515008 0.238796 -0.163046 0.772546 0.634938 -0.001038 0.132007 0.664207 35 27 15\n1.202939 0.146778 -0.078682 0.966918 -0.252846 0.032868 0.241100 0.893200 84 40 14\n1.220111 0.169899 -0.116709 0.984375 0.174291 0.024384 0.246789 0.886436 62 41 25\n1.189849 0.174277 0.012378 0.718863 0.690298 0.081576 0.248000 0.893200 82 56 32\n1.201873 0.152065 -0.212727 0.989776 0.131870 -0.054109 0.499400 0.624900 80 41 17\n1.208581 0.139031 -0.315903 0.995025 0.099307 -0.003052 0.495750 0.615784 61 39 20\n1.170291 0.190252 -0.377717 0.690085 0.723655 -0.007874 0.499400 0.608000 73 46 24\n-1.064452 0.234362 -0.480027 -0.316111 -0.318308 -0.893704 0.366600 0.881600 12 5 4\n-1.121287 0.237574 -0.501706 0.069887 0.374004 -0.924772 0.365062 0.876429 17 7 6\n-1.074990 0.242623 -0.502074 -0.102512 -0.347911 -0.931883 0.370321 0.878137 11 4 4\n-1.064452 0.234362 -0.480027 -0.316111 -0.318308 -0.893704 0.165071 0.633488 12 5 4\n1.165268 0.190312 -0.483761 0.602771 0.792261 -0.094668 0.860000 0.603111 75 43 26\n1.199099 0.144624 -0.543118 0.977050 0.172246 -0.125095 0.857900 0.612500 52 35 24\n1.178929 0.171019 -0.554529 0.732139 0.660665 -0.165624 0.855333 0.602228 78 54 33\n1.180091 0.120661 -0.641139 0.975616 0.065096 -0.209571 0.576800 0.475600 78 41 19\n1.117780 0.203605 -0.635565 0.574175 0.809961 -0.119419 0.588371 0.463106 62 34 15\n1.178929 0.171019 -0.554529 0.732139 0.660665 -0.165624 0.596904 0.480013 78 54 33\n1.100379 0.176321 -0.786966 0.664205 0.609729 -0.432417 0.559810 0.450830 67 35 15\n1.121125 0.115562 -0.802410 0.893765 0.011078 -0.448347 0.549900 0.445300 44 21 8\n1.023556 0.190906 -0.895497 0.674398 0.605274 -0.422803 0.544753 0.426838 77 42 19\n1.056279 0.141947 -0.892172 0.809626 0.260872 -0.525742 0.540217 0.434231 54 25 9\n1.056279 0.141947 -0.892172 0.809626 0.260872 -0.525742 0.728770 0.895639 54 25 9\n0.648312 0.137874 -1.246179 0.311624 -0.127415 -0.941618 0.092400 0.895800 59 20 7\n0.662861 0.191972 -1.223447 0.473342 0.303079 -0.827082 0.089000 0.887700 57 18 7\n0.710532 0.175484 -1.197339 0.344951 0.320261 -0.882260 0.092400 0.880600 56 22 7\n1.220111 0.169899 -0.116709 0.984375 0.174291 0.024384 0.716951 0.729174 62 41 25\n1.139203 0.162512 -0.756314 0.814020 0.386883 -0.433180 0.475200 0.678000 74 38 15\n1.158965 0.166880 -0.713248 0.870540 0.415662 -0.263344 0.472900 0.675200 72 53 39\n1.180091 0.120661 -0.641139 0.975616 0.065096 -0.209571 0.475200 0.655600 78 41 19\n-0.540064 0.223700 0.138255 -0.112186 0.986541 0.118686 0.820204 0.173764 51 29 31\n-0.456815 0.209156 0.157672 0.176122 0.982574 0.058962 0.818983 0.191604 79 42 26\n-0.475720 0.230248 0.077561 0.079379 0.986145 0.145634 0.804549 0.180889 133 113 85\n0.633056 0.221321 0.379066 0.339305 0.915769 -0.214850 0.798206 0.428261 130 85 41\n0.643428 0.184521 0.250699 -0.009552 0.998993 -0.043550 0.771920 0.419877 79 61 37\n-0.263144 0.243584 0.468313 -0.023591 0.955718 -0.293313 0.865477 0.250570 143 116 83\n-0.359748 0.215517 0.032187 -0.270547 0.949705 0.157659 0.791593 0.203388 69 57 52\n-0.950463 0.263640 -0.186799 -0.286111 0.877773 0.384198 0.177201 0.694557 95 80 59\n0.739414 0.199062 -1.167566 0.488784 0.305032 -0.817316 0.512205 0.352897 70 31 10\n0.746215 0.164283 -1.210684 0.359844 0.187872 -0.913877 0.502638 0.350975 48 18 7\n0.710532 0.175484 -1.197339 0.344951 0.320261 -0.882260 0.506928 0.345546 56 22 7\n0.549146 0.239998 0.659126 -0.039155 0.985168 0.166875 0.058068 0.593094 117 83 58\n-0.456815 0.209156 0.157672 0.176122 0.982574 0.058962 0.445905 0.552281 79 42 26\n0.648733 0.190745 0.175812 0.227088 0.938902 0.258553 0.277954 0.666965 33 23 16\n0.685529 0.182303 0.226315 0.440748 0.889248 0.122196 0.286338 0.671564 113 91 61\n-0.519268 0.233805 0.680700 -0.312754 0.941527 0.125187 0.056900 0.795200 114 87 59\n-0.280983 0.258678 0.061160 -0.249733 0.945860 0.207282 0.796045 0.215280 121 100 70\n0.644102 0.219322 0.652722 0.391064 0.919706 -0.034059 0.118200 0.798800 90 51 28\n0.651297 0.222162 0.484860 0.817316 0.523362 -0.240944 0.113599 0.819150 82 40 18\n-0.091656 0.255056 0.304485 -0.244514 0.965209 -0.092502 0.828699 0.274308 141 116 86\n-1.201458 0.227714 -0.360172 -0.522660 0.736229 0.429823 0.106882 0.764301 41 23 18\n-1.062128 0.254662 -0.343468 -0.362102 0.812891 0.456099 0.124817 0.781985 23 13 13\n-0.474041 0.236672 0.206184 0.290109 0.943419 0.160405 0.829775 0.191050 66 35 28\n-0.507319 0.223582 -0.056602 -0.117527 0.985961 0.118412 0.784436 0.167843 95 78 67\n-0.452945 0.254653 -0.087825 -0.088931 0.986663 -0.136174 0.785720 0.182608 136 118 86\n-0.348322 0.224348 -0.229604 -0.147618 0.977477 0.150609 0.143730 0.695669 105 94 87\n-0.410615 0.245781 -0.283571 0.206580 0.630329 0.748283 0.132580 0.696633 42 31 27\n1.201873 0.152065 -0.212727 0.989776 0.131870 -0.054109 0.201312 0.796241 80 41 17\n1.179968 0.199704 -0.198697 0.694510 0.717002 -0.059420 0.194466 0.793207 97 67 40\n1.220111 0.169899 -0.116709 0.984375 0.174291 0.024384 0.195300 0.785300 62 41 25\n1.158965 0.166880 -0.713248 0.870540 0.415662 -0.263344 0.568904 0.467288 72 53 39\n1.111282 0.193617 -0.720879 0.500229 0.843196 -0.196844 0.572844 0.457226 99 66 34\n-1.047316 0.233719 -0.513735 -0.926542 0.375011 0.029389 0.874000 0.645700 36 11 8\n-1.064452 0.234362 -0.480027 -0.316111 -0.318308 -0.893704 0.874000 0.649200 12 5 4\n-1.074990 0.242623 -0.502074 -0.102512 -0.347911 -0.931883 0.872500 0.648200 11 4 4\n1.023556 0.190906 -0.895497 0.674398 0.605274 -0.422803 0.724366 0.899211 77 42 19\n0.840064 0.195358 -1.121391 0.422651 0.451552 -0.785760 0.442803 0.753791 84 46 21\n0.832631 0.128027 -1.136496 0.571123 -0.075320 -0.817377 0.861590 0.774903 45 20 9\n0.813782 0.193895 -1.123047 0.337046 0.503494 -0.795526 0.861586 0.784869 71 34 12\n0.840064 0.195358 -1.121391 0.422651 0.451552 -0.785760 0.858400 0.779000 84 46 21\n0.523715 0.200641 -0.291232 0.311869 0.944700 0.101169 0.682725 0.363843 50 37 31\n0.534141 0.207707 -0.246803 0.208106 0.923490 -0.322245 0.690692 0.368053 69 40 26\n0.573559 0.201486 -0.330796 0.264016 0.956450 0.124271 0.672518 0.371874 67 60 46\n-0.515008 0.238796 -0.163046 0.772546 0.634938 -0.001038 0.767850 0.158356 35 27 15\n-1.181128 0.274865 -0.488784 -0.470656 0.492569 -0.731986 0.703559 0.886425 37 18 13\n0.070131 0.244716 0.189649 -0.263283 0.957244 -0.119816 0.797119 0.300220 109 88 68\n0.009873 0.223030 0.102848 -0.201422 0.968841 0.144078 0.785215 0.286440 102 92 84\n-0.069477 0.221850 0.138064 0.017365 0.996826 0.077425 0.794442 0.271641 115 105 93\n1.095603 0.229384 0.099615 0.099307 0.983001 0.154363 0.495040 0.555718 130 96 56\n1.187323 0.150468 0.155115 0.820826 0.515976 0.244850 0.475511 0.562000 71 43 23\n1.189849 0.174277 0.012378 0.718863 0.690298 0.081576 0.481819 0.552677 82 56 32\n-0.284985 0.164946 -1.216263 -0.539293 0.474410 -0.695730 0.138600 0.859700 23 11 6\n-0.290355 0.214963 -1.163581 -0.698752 0.268166 -0.663167 0.145500 0.849000 74 29 9\n-0.227387 0.143749 -1.263102 -0.518357 0.258522 -0.815119 0.140487 0.870830 80 45 20\n0.221700 0.166503 -1.341617 0.067782 0.078707 -0.994568 0.855704 0.697598 43 19 9\n0.193518 0.201531 -1.327028 0.010620 0.232093 -0.972625 0.859200 0.693600 76 33 11\n0.249565 0.223505 -1.314579 0.090243 0.346782 -0.933561 0.858917 0.703256 86 44 17\n0.251309 0.176436 -1.321700 0.186865 0.163396 -0.968688 0.856700 0.706500 67 30 9\n0.300709 0.174582 -1.332024 0.026582 0.163305 -0.986206 0.408347 0.775360 68 28 9\n0.351783 0.224728 -1.302751 0.022187 0.390606 -0.920286 0.400500 0.773200 72 31 10\n0.648733 0.190745 0.175812 0.227088 0.938902 0.258553 0.127286 0.884977 33 23 16\n0.715603 0.207363 0.111574 0.428938 0.710959 0.557237 0.122818 0.891500 65 50 34\n0.660818 0.214146 0.088145 0.146153 0.736442 0.660482 0.122223 0.883849 12 7 7\n-0.516377 0.250827 -0.137745 0.365215 0.928983 0.059816 0.772579 0.165180 107 99 72\n0.775574 0.216329 0.029312 0.690573 0.644856 0.327433 0.725381 0.436966 56 26 13\n0.867069 0.169357 -0.011136 -0.146458 0.944334 0.294504 0.711241 0.450802 83 59 43\n0.789327 0.202322 -0.092956 0.152562 0.985626 0.072298 0.703134 0.429350 55 30 19\n-0.541183 0.280783 -0.988865 -0.307291 0.843867 -0.439802 0.622031 0.102819 113 79 50\n0.371600 0.268970 0.186545 0.272256 0.863948 0.423566 0.247893 0.614285 47 19 12\n-0.174970 0.221445 0.210638 -0.121708 0.989288 0.080325 0.465809 0.595616 105 97 71\n1.199743 0.165610 -0.451474 0.921964 0.384777 -0.043458 0.617913 0.491246 70 43 22\n1.165268 0.190312 -0.483761 0.602771 0.792261 -0.094668 0.610799 0.483272 75 43 26\n1.170291 0.190252 -0.377717 0.690085 0.723655 -0.007874 0.623100 0.491200 73 46 24\n-0.245211 0.244880 0.138544 -0.044649 0.950377 0.307840 0.813928 0.221953 97 59 40\n1.139203 0.162512 -0.756314 0.814020 0.386883 -0.433180 0.562559 0.465095 74 38 15\n-0.027911 0.208823 -1.310425 -0.137700 0.249123 -0.958617 0.804729 0.581965 77 37 13\n-0.516377 0.250827 -0.137745 0.365215 0.928983 0.059816 0.305641 0.883390 107 99 72\n-0.507319 0.223582 -0.056602 -0.117527 0.985961 0.118412 0.306800 0.894700 95 78 67\n-0.452945 0.254653 -0.087825 -0.088931 0.986663 -0.136174 0.302701 0.886892 136 118 86\n0.404744 0.183728 -1.315695 0.259041 0.204688 -0.943907 0.484801 0.894371 72 33 10\n0.351640 0.156603 -1.326921 0.086367 0.009980 -0.996185 0.482490 0.888508 63 24 7\n0.351783 0.224728 -1.302751 0.022187 0.390606 -0.920286 0.486652 0.882713 72 31 10\n-0.516377 0.250827 -0.137745 0.365215 0.928983 0.059816 0.133352 0.661866 107 99 72\n-0.601518 0.258477 -0.133351 0.241951 0.844386 0.477920 0.121264 0.645705 71 62 50\n-0.507319 0.223582 -0.056602 -0.117527 0.985961 0.118412 0.144584 0.653927 95 78 67\n0.782135 0.156223 -1.155835 0.580798 0.261940 -0.770714 0.512500 0.359800 49 18 5\n0.403080 0.213701 0.699357 0.074129 0.973388 0.216712 0.867650 0.400110 88 55 32\n-0.436449 0.212369 -0.228831 0.196356 0.896664 0.396771 0.300119 0.902013 60 51 49\n-0.410615 0.245781 -0.283571 0.206580 0.630329 0.748283 0.300837 0.908650 42 31 27\n-0.452792 0.226213 -0.267869 0.587848 0.717399 0.373791 0.298800 0.905800 37 28 24\n-1.181128 0.274865 -0.488784 -0.470656 0.492569 -0.731986 0.159800 0.825800 37 18 13\n-1.047316 0.233719 -0.513735 -0.926542 0.375011 0.029389 0.162600 0.872100 36 11 8\n-1.074990 0.242623 -0.502074 -0.102512 -0.347911 -0.931883 0.165560 0.871651 11 4 4\n-1.034922 0.265934 -0.489938 -0.337352 0.830775 -0.442671 0.164767 0.878947 8 3 3\n0.648312 0.137874 -1.246179 0.311624 -0.127415 -0.941618 0.172200 0.901500 59 20 7\n0.611716 0.189260 -1.257395 0.399030 0.248207 -0.882687 0.170429 0.905695 64 23 7\n0.662861 0.191972 -1.223447 0.473342 0.303079 -0.827082 0.168500 0.899300 57 18 7\n0.424472 0.223289 -1.295573 0.173803 0.394269 -0.902371 0.399145 0.753596 99 49 18\n-0.601518 0.258477 -0.133351 0.241951 0.844386 0.477920 0.781595 0.143552 71 62 50\n0.817211 0.212557 -0.416801 -0.216956 0.966277 0.138585 0.644423 0.414313 106 80 58\n0.677691 0.209301 -0.410649 0.112796 0.913572 0.390637 0.653083 0.390068 81 59 35\n0.624521 0.184176 -0.352741 0.146886 0.986541 0.071413 0.663398 0.382245 59 42 32\n-0.870285 0.279279 -0.198497 -0.213965 0.891263 0.399762 0.087250 0.611831 92 82 63\n-0.527102 0.234258 0.588418 -0.504807 0.854335 -0.123417 0.900496 0.205094 71 30 23\n1.220111 0.169899 -0.116709 0.984375 0.174291 0.024384 0.675037 0.515565 62 41 25\n1.179968 0.199704 -0.198697 0.694510 0.717002 -0.059420 0.664725 0.502410 97 67 40\n1.107369 0.236273 -0.087602 0.315653 0.941801 0.115482 0.690095 0.494199 118 74 41\n-0.364967 0.242760 -0.298507 0.180944 0.909574 0.373974 0.733599 0.188291 73 67 61\n-0.410615 0.245781 -0.283571 0.206580 0.630329 0.748283 0.739000 0.178700 42 31 27\n-0.240978 0.245926 -0.257060 -0.378460 0.885495 -0.269417 0.738628 0.211721 112 72 50\n0.343841 0.250914 0.690268 0.305734 0.904019 0.298715 0.060420 0.639392 87 55 43\n0.705880 0.231292 -0.228638 -0.078036 0.996796 -0.016297 0.685228 0.404964 140 110 69\n0.549146 0.239998 0.659126 -0.039155 0.985168 0.166875 0.855326 0.432112 117 83 58\n-0.653812 0.249921 -0.069958 0.095767 0.937895 0.333384 0.124125 0.631547 98 82 65\n-0.245211 0.244880 0.138544 -0.044649 0.950377 0.307840 0.138600 0.882300 97 59 40\n-0.174970 0.221445 0.210638 -0.121708 0.989288 0.080325 0.130300 0.878200 105 97 71\n-0.069477 0.221850 0.138064 0.017365 0.996826 0.077425 0.138600 0.870100 115 105 93\n-0.519268 0.233805 0.680700 -0.312754 0.941527 0.125187 0.915234 0.212792 114 87 59\n-0.266460 0.263301 0.673958 -0.023377 0.976348 0.214789 0.059887 0.762941 103 84 59\n-0.074229 0.231323 -1.295506 -0.198340 0.465133 -0.862697 0.538033 0.177681 87 45 18\n-0.153423 0.198348 -1.288302 -0.427717 0.396802 -0.812128 0.541616 0.161996 85 46 21\n-0.122146 0.287799 -1.242308 -0.295053 0.678549 -0.672658 0.554963 0.172454 104 64 33\n-1.034922 0.265934 -0.489938 -0.337352 0.830775 -0.442671 0.156922 0.636525 8 3 3\n0.897994 0.179871 -1.050576 0.619648 0.421247 -0.662221 0.524172 0.392420 62 26 8\n0.936067 0.209922 -0.975297 0.628712 0.547410 -0.552263 0.535439 0.404863 72 31 10\n0.931363 0.173280 -1.040632 0.554430 0.464064 -0.690786 0.525100 0.400400 63 32 9\n0.695813 0.224107 -1.194245 0.474288 0.486129 -0.733940 0.383820 0.889428 72 33 14\n0.710532 0.175484 -1.197339 0.344951 0.320261 -0.882260 0.387252 0.887006 56 22 7\n0.662861 0.191972 -1.223447 0.473342 0.303079 -0.827082 0.389300 0.895200 57 18 7\n0.347720 0.217122 0.633135 0.296182 0.903043 -0.311045 0.068000 0.911300 84 51 34\n0.319945 0.210787 0.591678 0.454237 0.834193 -0.312632 0.065600 0.906000 51 32 21\n0.300189 0.251859 0.632159 0.333110 0.938414 -0.091464 0.068000 0.902300 47 18 12\n0.599452 0.215235 -0.187969 0.206854 0.928159 -0.309336 0.696696 0.385506 38 16 11\n0.573559 0.201486 -0.330796 0.264016 0.956450 0.124271 0.295480 0.601002 67 60 46\n0.494766 0.287470 -0.391196 0.453841 0.849025 0.270486 0.317707 0.615287 85 60 39\n0.523715 0.200641 -0.291232 0.311869 0.944700 0.101169 0.291220 0.613371 50 37 31\n-0.436449 0.212369 -0.228831 0.196356 0.896664 0.396771 0.092400 0.911700 60 51 49\n-0.452792 0.226213 -0.267869 0.587848 0.717399 0.373791 0.089197 0.909122 37 28 24\n-0.465492 0.266394 -0.280051 0.533067 0.117649 0.837825 0.092400 0.906500 10 5 4\n0.970946 0.172883 -0.991352 0.650899 0.511185 -0.561235 0.529562 0.411782 73 36 13\n0.494727 0.171130 -1.303699 0.222633 0.085635 -0.971129 0.866100 0.783200 63 25 8\n0.480388 0.222604 -1.292831 0.198004 0.405103 -0.892544 0.866756 0.777790 67 25 8\n0.538049 0.168107 -1.280952 0.366436 0.039552 -0.929594 0.868900 0.781300 51 17 6\n0.480388 0.222604 -1.292831 0.198004 0.405103 -0.892544 0.397505 0.745095 67 25 8\n0.117313 0.207923 -1.332964 0.086306 0.173009 -0.981109 0.518576 0.212698 65 26 9\n0.079991 0.189999 -1.345287 -0.030091 0.053621 -0.998077 0.518400 0.206800 59 24 9\n0.043581 0.239792 -1.316390 -0.172460 0.471480 -0.864834 0.527118 0.201233 80 38 15\n0.193518 0.201531 -1.327028 0.010620 0.232093 -0.972625 0.392298 0.740502 76 33 11\n0.117313 0.207923 -1.332964 0.086306 0.173009 -0.981109 0.391924 0.728627 65 26 9\n0.117868 0.248206 -1.321642 -0.054720 0.658040 -0.750969 0.395100 0.731900 74 36 14\n1.189849 0.174277 0.012378 0.718863 0.690298 0.081576 0.698652 0.514624 82 56 32\n-0.985780 0.310235 -0.351592 -0.435469 0.887661 0.149541 0.157929 0.665598 96 79 59\n0.720575 0.232916 -0.087531 0.306253 0.707205 -0.637196 0.711661 0.415876 47 21 17\n0.700453 0.207362 -0.144108 0.108219 0.988861 -0.102084 0.699697 0.408545 38 17 15\n-1.121287 0.237574 -0.501706 0.069887 0.374004 -0.924772 0.366700 0.869800 17 7 6\n-1.052522 0.286022 -0.487872 0.151952 0.696921 -0.700827 0.372400 0.873900 12 5 4\n-0.197539 0.236923 -0.332328 -0.371532 0.926450 -0.060091 0.717609 0.216244 90 74 63\n0.700453 0.207362 -0.144108 0.108219 0.988861 -0.102084 0.424200 0.849300 38 17 15\n0.789327 0.202322 -0.092956 0.152562 0.985626 0.072298 0.424575 0.832227 55 30 19\n0.705880 0.231292 -0.228638 -0.078036 0.996796 -0.016297 0.431798 0.849050 140 110 69\n0.813862 0.234394 -0.191168 -0.129612 0.986267 0.102298 0.430848 0.830235 122 97 69\n-0.452945 0.254653 -0.087825 -0.088931 0.986663 -0.136174 0.776308 0.177816 136 118 86\n0.831594 0.229760 -0.277947 -0.122929 0.985046 -0.120518 0.670690 0.426546 111 57 39\n0.300189 0.251859 0.632159 0.333110 0.938414 -0.091464 0.861330 0.373855 47 18 12\n0.970946 0.172883 -0.991352 0.650899 0.511185 -0.561235 0.527300 0.404300 73 36 13\n0.191750 0.273453 0.356342 0.308267 0.931608 0.192419 0.255135 0.568234 100 75 54\n0.200041 0.245975 0.487079 0.515946 0.843623 -0.148503 0.266419 0.559278 76 59 39\n0.448039 0.181882 -1.294694 0.062380 0.027131 -0.997681 0.873400 0.878300 71 27 9\n0.404744 0.183728 -1.315695 0.259041 0.204688 -0.943907 0.875300 0.875000 72 33 10\n0.424472 0.223289 -1.295573 0.173803 0.394269 -0.902371 0.875300 0.880600 99 49 18\n0.782135 0.156223 -1.155835 0.580798 0.261940 -0.770714 0.073863 0.807744 49 18 5\n0.739414 0.199062 -1.167566 0.488784 0.305032 -0.817316 0.070600 0.802100 70 31 10\n0.742069 0.230815 -1.163795 0.476333 0.533616 -0.698813 0.068860 0.797904 80 33 10\n0.813782 0.193895 -1.123047 0.337046 0.503494 -0.795526 0.077520 0.797488 71 34 12\n0.554122 0.244773 0.173477 0.320994 0.874691 0.363079 0.262627 0.650070 25 15 14\n0.583442 0.203068 0.223059 0.368419 0.856777 0.360729 0.276874 0.653966 28 18 15\n0.612725 0.261135 0.471215 0.183386 0.969024 -0.165349 0.818854 0.430064 77 35 27\n0.668429 0.175737 0.470511 0.836146 0.545457 -0.057283 0.804820 0.436787 84 47 23\n0.615780 0.276553 0.049517 0.062868 0.881924 0.467147 0.251653 0.672727 34 21 16\n1.201873 0.152065 -0.212727 0.989776 0.131870 -0.054109 0.648100 0.498300 80 41 17\n1.170291 0.190252 -0.377717 0.690085 0.723655 -0.007874 0.628523 0.490627 73 46 24\n0.888576 0.226647 -0.362012 -0.190283 0.981567 -0.017121 0.654182 0.431829 70 39 31\n0.125980 0.270247 0.746443 0.115665 0.983551 0.138676 0.049300 0.673300 89 71 56\n0.566294 0.240463 -0.415288 0.408185 0.865627 0.289895 0.313734 0.598259 103 82 66\n0.624521 0.184176 -0.352741 0.146886 0.986541 0.071413 0.295616 0.587179 59 42 32\n0.651297 0.222162 0.484860 0.817316 0.523362 -0.240944 0.814474 0.438042 82 40 18\n0.300189 0.251859 0.632159 0.333110 0.938414 -0.091464 0.867344 0.376998 47 18 12\n0.343841 0.250914 0.690268 0.305734 0.904019 0.298715 0.872339 0.387776 87 55 43\n0.480388 0.222604 -1.292831 0.198004 0.405103 -0.892544 0.113162 0.884533 67 25 8\n0.611716 0.189260 -1.257395 0.399030 0.248207 -0.882687 0.113400 0.893000 64 23 7\n0.538049 0.168107 -1.280952 0.366436 0.039552 -0.929594 0.108161 0.888230 51 17 6\n-0.452945 0.254653 -0.087825 -0.088931 0.986663 -0.136174 0.403657 0.799473 136 118 86\n-0.359748 0.215517 0.032187 -0.270547 0.949705 0.157659 0.413760 0.824037 69 57 52\n-0.372936 0.269480 -0.074135 -0.323313 0.946074 -0.018860 0.397872 0.817290 123 109 87\n0.249565 0.223505 -1.314579 0.090243 0.346782 -0.933561 0.403409 0.786941 86 44 17\n-0.372936 0.269480 -0.074135 -0.323313 0.946074 -0.018860 0.775985 0.193869 123 109 87\n-0.528127 0.270835 -0.197755 0.541185 0.708426 0.452986 0.122567 0.668718 15 9 8\n-0.465492 0.266394 -0.280051 0.533067 0.117649 0.837825 0.124205 0.687244 10 5 4\n0.404744 0.183728 -1.315695 0.259041 0.204688 -0.943907 0.044785 0.889124 72 33 10\n0.375950 0.240806 -1.300643 0.060579 0.490127 -0.869503 0.048000 0.886200 74 32 11\n0.424472 0.223289 -1.295573 0.173803 0.394269 -0.902371 0.048000 0.893400 99 49 18\n0.660818 0.214146 0.088145 0.146153 0.736442 0.660482 0.265685 0.677408 12 7 7\n0.934513 0.244537 -0.107183 -0.167241 0.966124 0.196448 0.204496 0.749758 135 110 77\n0.499562 0.262666 -0.211843 -0.336619 0.527024 -0.780328 0.705011 0.363611 64 29 19\n1.042485 0.208992 0.120180 -0.150182 0.948943 0.277291 0.865300 0.837700 90 43 19\n1.108676 0.192209 0.160912 0.256966 0.897732 0.357738 0.868100 0.832200 90 62 39\n1.095603 0.229384 0.099615 0.099307 0.983001 0.154363 0.867953 0.839983 130 96 56\n-0.217258 0.273947 0.585060 -0.006836 0.999451 -0.032380 0.886494 0.267041 139 117 84\n-0.051419 0.234051 -0.170886 0.261208 0.958800 -0.111637 0.740066 0.254350 105 93 84\n0.020136 0.244160 -0.093433 -0.219275 0.961272 -0.166814 0.749868 0.273959 110 99 96\n0.089154 0.254246 -0.200418 -0.565416 0.819514 0.093112 0.728268 0.280578 80 74 70\n-0.075334 0.229328 -0.252808 0.287118 0.951048 0.114139 0.725945 0.244233 73 61 58\n0.991526 0.241376 -0.842572 0.495834 0.838862 -0.224555 0.560342 0.424001 110 68 35\n0.611716 0.189260 -1.257395 0.399030 0.248207 -0.882687 0.503792 0.317979 64 23 7\n0.598369 0.233639 -1.230337 0.318796 0.554491 -0.768700 0.512160 0.318693 73 28 8\n0.662861 0.191972 -1.223447 0.473342 0.303079 -0.827082 0.507114 0.328840 57 18 7\n0.351783 0.224728 -1.302751 0.022187 0.390606 -0.920286 0.046049 0.878440 72 31 10\n-0.364967 0.242760 -0.298507 0.180944 0.909574 0.373974 0.135638 0.705586 73 67 61\n-0.364028 0.275478 -0.337053 0.628040 0.548387 0.552080 0.127810 0.710480 16 7 6\n-1.163146 0.304363 -0.393202 -0.303964 0.740898 0.598865 0.103038 0.784290 34 19 19\n0.268534 0.232946 0.712260 0.183172 0.931303 0.314768 0.878054 0.372226 70 45 30\n0.247633 0.246264 0.638170 0.130222 0.906583 0.401379 0.869525 0.366261 29 14 12\n1.042485 0.208992 0.120180 -0.150182 0.948943 0.277291 0.726420 0.496386 90 43 19\n1.095603 0.229384 0.099615 0.099307 0.983001 0.154363 0.722654 0.504733 130 96 56\n1.087330 0.219993 0.035671 0.152318 0.987518 0.039247 0.711835 0.499208 122 68 37\n0.677691 0.209301 -0.410649 0.112796 0.913572 0.390637 0.301954 0.579167 81 59 35\n0.675551 0.263051 -0.533724 0.166204 0.952696 0.254341 0.328186 0.570657 122 101 67\n0.612725 0.261135 0.471215 0.183386 0.969024 -0.165349 0.029000 0.897900 77 35 27\n0.644102 0.219322 0.652722 0.391064 0.919706 -0.034059 0.032462 0.889774 90 51 28\n0.651297 0.222162 0.484860 0.817316 0.523362 -0.240944 0.035200 0.897900 82 40 18\n0.480388 0.222604 -1.292831 0.198004 0.405103 -0.892544 0.507340 0.292069 67 25 8\n0.300709 0.174582 -1.332024 0.026582 0.163305 -0.986206 0.511500 0.253900 68 28 9\n0.249565 0.223505 -1.314579 0.090243 0.346782 -0.933561 0.515595 0.246067 86 44 17\n0.251689 0.280245 -1.289144 0.058718 0.651967 -0.755943 0.525458 0.247460 95 46 18\n-0.120698 0.272142 0.618384 -0.086673 0.996124 -0.012787 0.888127 0.289443 136 114 86\n0.912549 0.236639 -0.983978 0.576403 0.680563 -0.452254 0.539565 0.399506 98 58 26\n-0.452792 0.226213 -0.267869 0.587848 0.717399 0.373791 0.131715 0.685899 37 28 24\n-0.046715 0.262698 -0.013836 0.214331 0.975738 0.044343 0.768291 0.264159 131 118 89\n0.476479 0.261310 -0.178231 -0.168859 0.914853 -0.366741 0.711497 0.359105 45 20 14\n0.125980 0.270247 0.746443 0.115665 0.983551 0.138676 0.896462 0.347240 89 71 56\n-0.150686 0.239000 0.804835 -0.179449 0.906430 0.382275 0.913207 0.297094 113 98 74\n-0.039374 0.276658 0.770695 -0.095981 0.970153 0.222541 0.909470 0.315388 117 100 81\n-0.217844 0.240568 0.744657 -0.138401 0.956236 0.257698 0.911488 0.276833 92 78 60\n-0.266460 0.263301 0.673958 -0.023377 0.976348 0.214789 0.905203 0.263048 103 84 59\n0.035695 0.269898 -0.014202 -0.300394 0.953185 0.033876 0.292222 0.813394 122 113 97\n0.009873 0.223030 0.102848 -0.201422 0.968841 0.144078 0.289349 0.798024 102 92 84\n0.070131 0.244716 0.189649 -0.263283 0.957244 -0.119816 0.301846 0.786194 109 88 68\n-0.900064 0.300867 -0.627459 -0.282907 0.901975 -0.326090 0.713667 0.050483 114 80 53\n-0.266460 0.263301 0.673958 -0.023377 0.976348 0.214789 0.038000 0.888700 103 84 59\n-0.519268 0.233805 0.680700 -0.312754 0.941527 0.125187 0.043200 0.898200 114 87 59\n-0.348110 0.241625 0.703682 -0.090548 0.917508 0.387188 0.037600 0.898200 94 74 47\n1.102620 0.244277 -0.357514 0.361095 0.931089 -0.051546 0.642142 0.478866 122 84 49\n-0.528127 0.270835 -0.197755 0.541185 0.708426 0.452986 0.154500 0.881300 15 9 8\n-0.516377 0.250827 -0.137745 0.365215 0.928983 0.059816 0.154397 0.891047 107 99 72\n-0.515008 0.238796 -0.163046 0.772546 0.634938 -0.001038 0.151383 0.890254 35 27 15\n-0.359748 0.215517 0.032187 -0.270547 0.949705 0.157659 0.098700 0.807806 69 57 52\n-0.280983 0.258678 0.061160 -0.249733 0.945860 0.207282 0.110226 0.808508 121 100 70\n-0.372936 0.269480 -0.074135 -0.323313 0.946074 -0.018860 0.106700 0.822600 123 109 87\n-0.041549 0.272723 0.559945 -0.131596 0.987274 -0.088992 0.866548 0.299016 141 119 85\n0.549146 0.239998 0.659126 -0.039155 0.985168 0.166875 0.145600 0.885000 117 83 58\n0.644102 0.219322 0.652722 0.391064 0.919706 -0.034059 0.145600 0.894800 90 51 28\n0.612725 0.261135 0.471215 0.183386 0.969024 -0.165349 0.139800 0.886900 77 35 27\n0.023664 0.275758 0.310915 -0.135472 0.983703 -0.118168 0.821683 0.296329 148 118 83\n0.049515 0.259805 0.842132 0.060854 0.852901 0.518479 0.073800 0.821000 102 83 53\n0.164300 0.235168 0.829941 0.297311 0.810724 0.504288 0.073800 0.838700 81 70 58\n0.125980 0.270247 0.746443 0.115665 0.983551 0.138676 0.064039 0.828881 89 71 56\n-0.197539 0.236923 -0.332328 -0.371532 0.926450 -0.060091 0.702048 0.207259 90 74 63\n-0.279476 0.253862 -0.406149 0.361919 0.903073 0.231178 0.710967 0.190947 53 35 23\n0.840064 0.195358 -1.121391 0.422651 0.451552 -0.785760 0.515394 0.375432 84 46 21\n0.816623 0.236856 -1.075358 0.401563 0.749657 -0.526048 0.528877 0.374675 94 51 26\n0.035695 0.269898 -0.014202 -0.300394 0.953185 0.033876 0.765745 0.279890 122 113 97\n0.117868 0.248206 -1.321642 -0.054720 0.658040 -0.750969 0.300128 0.851879 74 36 14\n0.117313 0.207923 -1.332964 0.086306 0.173009 -0.981109 0.304557 0.854300 65 26 9\n0.043581 0.239792 -1.316390 -0.172460 0.471480 -0.864834 0.302225 0.863536 80 38 15\n0.117868 0.248206 -1.321642 -0.054720 0.658040 -0.750969 0.803720 0.550398 74 36 14\n0.163214 0.258121 -1.311437 0.079470 0.550737 -0.830866 0.807602 0.544096 85 42 17\n0.775426 0.237964 -0.551502 0.074007 0.977905 0.195379 0.625940 0.397828 112 91 71\n0.947913 0.216030 0.041413 -0.317240 0.921842 0.222510 0.720168 0.471364 67 31 26\n1.018485 0.244355 -0.087541 0.020722 0.989746 0.141118 0.695605 0.478885 94 59 28\n0.934513 0.244537 -0.107183 -0.167241 0.966124 0.196448 0.696396 0.458356 135 110 77\n0.253326 0.278884 0.600516 0.358562 0.930998 0.068178 0.863928 0.364670 66 37 33\n1.071280 0.238585 -0.550430 0.309976 0.948027 -0.071444 0.608257 0.458384 132 102 64\n-0.277870 0.300272 -0.099743 -0.270760 0.961455 -0.047426 0.768655 0.213102 131 107 80\n0.934513 0.244537 -0.107183 -0.167241 0.966124 0.196448 0.474200 0.823700 135 110 77\n0.789327 0.202322 -0.092956 0.152562 0.985626 0.072298 0.457947 0.816072 55 30 19\n0.867069 0.169357 -0.011136 -0.146458 0.944334 0.294504 0.472572 0.808628 83 59 43\n-0.279476 0.253862 -0.406149 0.361919 0.903073 0.231178 0.132240 0.732262 53 35 23\n0.351783 0.224728 -1.302751 0.022187 0.390606 -0.920286 0.511777 0.263309 72 31 10\n-0.039374 0.276658 0.770695 -0.095981 0.970153 0.222541 0.048943 0.722591 117 100 81\n-0.122146 0.287799 -1.242308 -0.295053 0.678549 -0.672658 0.789300 0.621300 104 64 33\n0.752620 0.281382 -1.065857 0.371319 0.853694 -0.365032 0.536893 0.361523 107 64 33\n0.813782 0.193895 -1.123047 0.337046 0.503494 -0.795526 0.518401 0.370154 71 34 12\n0.742069 0.230815 -1.163795 0.476333 0.533616 -0.698813 0.515968 0.353190 80 33 10\n-1.163146 0.304363 -0.393202 -0.303964 0.740898 0.598865 0.710261 0.867400 34 19 19\n-1.034922 0.265934 -0.489938 -0.337352 0.830775 -0.442671 0.231700 0.907100 8 3 3\n-1.074990 0.242623 -0.502074 -0.102512 -0.347911 -0.931883 0.227100 0.907100 11 4 4\n-1.052522 0.286022 -0.487872 0.151952 0.696921 -0.700827 0.229817 0.902256 12 5 4\n-0.075334 0.229328 -0.252808 0.287118 0.951048 0.114139 0.304326 0.738479 73 61 58\n-0.087274 0.268872 -0.319747 0.086367 0.905484 0.415479 0.318190 0.738606 109 95 63\n-0.134025 0.279876 -0.285395 0.325968 0.941099 -0.089724 0.313600 0.746200 121 97 63\n0.150904 0.275926 0.640363 0.136082 0.981597 0.133824 0.876043 0.345231 109 96 71\n-0.629355 0.320151 -0.197994 0.173467 0.847652 0.501358 0.104712 0.654651 78 61 54\n-0.319299 0.299729 -0.543169 0.470931 0.857143 0.208533 0.694775 0.179203 97 90 73\n-0.247735 0.254884 -0.485058 0.040315 0.993164 0.109409 0.696511 0.193907 92 78 61\n-0.245558 0.247446 -0.555310 -0.087191 0.948607 0.304178 0.683691 0.190129 81 74 63\n1.055550 0.231993 -0.646256 0.334269 0.938169 -0.089969 0.586913 0.446969 114 72 39\n0.570017 0.235530 0.451406 -0.373852 0.886166 -0.273659 0.859900 0.801900 76 28 20\n0.549146 0.239998 0.659126 -0.039155 0.985168 0.166875 0.859900 0.812400 117 83 58\n0.612725 0.261135 0.471215 0.183386 0.969024 -0.165349 0.855300 0.807600 77 35 27\n0.936067 0.209922 -0.975297 0.628712 0.547410 -0.552263 0.499437 0.716991 72 31 10\n0.897994 0.179871 -1.050576 0.619648 0.421247 -0.662221 0.499700 0.728200 62 26 8\n0.912549 0.236639 -0.983978 0.576403 0.680563 -0.452254 0.496049 0.714849 98 58 26\n0.478688 0.262404 -1.265472 0.248573 0.606403 -0.755272 0.514372 0.293369 81 38 13\n-0.419279 0.274080 -1.069348 -0.373608 0.685049 -0.625355 0.600391 0.122029 109 67 39\n0.742069 0.230815 -1.163795 0.476333 0.533616 -0.698813 0.630600 0.906500 80 33 10\n0.739414 0.199062 -1.167566 0.488784 0.305032 -0.817316 0.633100 0.904600 70 31 10\n0.695813 0.224107 -1.194245 0.474288 0.486129 -0.733940 0.633100 0.912800 72 33 14\n0.695813 0.224107 -1.194245 0.474288 0.486129 -0.733940 0.512009 0.341561 72 33 14\n0.009873 0.223030 0.102848 -0.201422 0.968841 0.144078 0.467769 0.640741 102 92 84\n-0.132686 0.296274 -0.025704 0.150090 0.974395 0.167364 0.435324 0.628326 143 118 80\n-0.069477 0.221850 0.138064 0.017365 0.996826 0.077425 0.466791 0.627190 115 105 93\n-0.046715 0.262698 -0.013836 0.214331 0.975738 0.044343 0.454000 0.645500 131 118 89\n0.035695 0.269898 -0.014202 -0.300394 0.953185 0.033876 0.455900 0.657500 122 113 97\n0.196585 0.289094 0.196850 -0.158238 0.985870 0.054567 0.793747 0.326595 129 113 89\n-1.003150 0.290454 -0.419064 -0.453871 0.890103 0.041047 0.129649 0.796957 33 15 13\n-1.089362 0.311734 -0.433456 0.145665 0.986969 -0.068239 0.115731 0.797451 52 24 19\n0.049515 0.259805 0.842132 0.060854 0.852901 0.518479 0.917204 0.334551 102 83 53\n-0.010402 0.286792 0.662335 -0.038820 0.998779 0.029542 0.890175 0.315244 129 100 71\n0.813862 0.234394 -0.191168 -0.129612 0.986267 0.102298 0.687101 0.429169 122 97 69\n-1.171445 0.330796 -0.446071 -0.356090 0.910001 -0.212256 0.497554 0.744147 73 61 66\n-1.121287 0.237574 -0.501706 0.069887 0.374004 -0.924772 0.478826 0.753088 17 7 6\n-1.181128 0.274865 -0.488784 -0.470656 0.492569 -0.731986 0.486315 0.740020 37 18 13\n-1.003150 0.290454 -0.419064 -0.453871 0.890103 0.041047 0.157384 0.652372 33 15 13\n-0.993439 0.304896 -0.501367 -0.435774 0.893948 -0.104556 0.146888 0.637195 108 87 62\n0.662861 0.191972 -1.223447 0.473342 0.303079 -0.827082 0.860670 0.704921 57 18 7\n0.598369 0.233639 -1.230337 0.318796 0.554491 -0.768700 0.859200 0.698700 73 28 8\n0.634413 0.255285 -1.206951 0.329203 0.670339 -0.664998 0.862611 0.697410 93 52 23\n0.721366 0.289751 0.035954 0.433027 0.843867 0.316752 0.253452 0.695198 65 47 31\n0.428148 0.268389 -0.265219 0.355632 0.934141 0.029481 0.697398 0.345030 95 66 47\n-0.420749 0.299899 -0.281426 0.538621 0.222602 0.812586 0.471199 0.649241 15 8 6\n-0.465492 0.266394 -0.280051 0.533067 0.117649 0.837825 0.475085 0.645994 10 5 4\n-0.410615 0.245781 -0.283571 0.206580 0.630329 0.748283 0.470900 0.655600 42 31 27\n-0.420749 0.299899 -0.281426 0.538621 0.222602 0.812586 0.123776 0.696612 15 8 6\n0.789327 0.202322 -0.092956 0.152562 0.985626 0.072298 0.695173 0.434858 55 30 19\n-1.089362 0.311734 -0.433456 0.145665 0.986969 -0.068239 0.494248 0.762642 52 24 19\n-1.052522 0.286022 -0.487872 0.151952 0.696921 -0.700827 0.482540 0.766114 12 5 4\n0.996537 0.259023 -0.238849 -0.034211 0.999390 -0.000519 0.667299 0.456159 135 104 71\n0.491536 0.276985 0.118059 0.124851 0.975005 0.183691 0.251365 0.643803 38 19 20\n1.087851 0.251344 -0.202244 0.269143 0.962432 0.035157 0.673998 0.482597 124 91 54\n-0.134025 0.279876 -0.285395 0.325968 0.941099 -0.089724 0.725927 0.230220 121 97 63\n0.662861 0.191972 -1.223447 0.473342 0.303079 -0.827082 0.506874 0.335937 57 18 7\n0.634413 0.255285 -1.206951 0.329203 0.670339 -0.664998 0.516462 0.328844 93 52 23\n0.163214 0.258121 -1.311437 0.079470 0.550737 -0.830866 0.524304 0.226013 85 42 17\n0.193518 0.201531 -1.327028 0.010620 0.232093 -0.972625 0.517109 0.231329 76 33 11\n0.050045 0.306841 -0.368457 -0.214515 0.916013 0.338939 0.480800 0.723100 65 39 26\n0.089154 0.254246 -0.200418 -0.565416 0.819514 0.093112 0.478517 0.704460 80 74 70\n0.075982 0.277971 -0.276866 -0.613849 0.682913 0.395917 0.484542 0.720287 20 10 8\n-0.153343 0.274399 -0.330503 -0.302988 0.952757 -0.020631 0.324722 0.801199 116 92 67\n-0.197539 0.236923 -0.332328 -0.371532 0.926450 -0.060091 0.334219 0.800517 90 74 63\n-0.240978 0.245926 -0.257060 -0.378460 0.885495 -0.269417 0.329800 0.811100 112 72 50\n0.089154 0.254246 -0.200418 -0.565416 0.819514 0.093112 0.298500 0.710500 80 74 70\n0.050045 0.306841 -0.368457 -0.214515 0.916013 0.338939 0.326789 0.704834 65 39 26\n-0.600964 0.307750 -0.842830 -0.250191 0.925565 -0.284036 0.655871 0.101742 120 86 56\n0.150904 0.275926 0.640363 0.136082 0.981597 0.133824 0.184403 0.824826 109 96 71\n0.247633 0.246264 0.638170 0.130222 0.906583 0.401379 0.183597 0.840639 29 14 12\n0.253326 0.278884 0.600516 0.358562 0.930998 0.068178 0.174036 0.838541 66 37 33\n0.300189 0.251859 0.632159 0.333110 0.938414 -0.091464 0.177523 0.847392 47 18 12\n-0.046715 0.262698 -0.013836 0.214331 0.975738 0.044343 0.447580 0.640392 131 118 89\n-0.153839 0.266658 -0.627783 -0.424451 0.847774 -0.317942 0.352100 0.910600 24 13 8\n-0.184792 0.275612 -0.670478 0.087374 0.848598 0.521744 0.355200 0.907900 49 37 30\n-0.192358 0.260645 -0.606408 -0.096103 0.788171 -0.607868 0.355200 0.913300 109 58 29\n-0.304543 0.279506 -1.135046 -0.457625 0.498886 -0.735954 0.583494 0.137772 74 42 19\n-1.003150 0.290454 -0.419064 -0.453871 0.890103 0.041047 0.102900 0.893600 33 15 13\n-1.034922 0.265934 -0.489938 -0.337352 0.830775 -0.442671 0.101952 0.899127 8 3 3\n-1.052522 0.286022 -0.487872 0.151952 0.696921 -0.700827 0.098326 0.900754 12 5 4\n0.128040 0.282923 0.517027 0.187780 0.981597 -0.033876 0.260400 0.550100 103 62 31\n0.627415 0.281317 -0.090322 0.361003 0.817255 -0.449141 0.718647 0.399961 43 18 15\n0.428148 0.268389 -0.265219 0.355632 0.934141 0.029481 0.301305 0.635324 95 66 47\n0.424798 0.291992 -0.329335 0.270089 0.899625 0.343089 0.313223 0.633688 114 103 78\n0.775574 0.216329 0.029312 0.690573 0.644856 0.327433 0.497977 0.857493 56 26 13\n0.789327 0.202322 -0.092956 0.152562 0.985626 0.072298 0.499557 0.872616 55 30 19\n0.735257 0.264267 -0.056458 0.497513 0.786950 -0.364910 0.492800 0.868300 59 34 29\n-0.503158 0.305168 -0.237864 0.589679 0.306742 0.747093 0.116750 0.679274 14 5 5\n-0.134933 0.298538 -0.191372 0.378399 0.919492 -0.106388 0.744215 0.234548 141 104 67\n0.108382 0.277751 -0.181597 -0.658559 0.750389 0.056276 0.741226 0.286881 55 36 28\n-0.153343 0.274399 -0.330503 -0.302988 0.952757 -0.020631 0.719066 0.222322 116 92 67\n-0.213582 0.310271 -0.202468 -0.286264 0.927458 -0.240455 0.747925 0.219027 125 88 50\n-0.027911 0.208823 -1.310425 -0.137700 0.249123 -0.958617 0.527326 0.190449 77 37 13\n-0.277870 0.300272 -0.099743 -0.270760 0.961455 -0.047426 0.110600 0.830800 131 107 80\n-0.226758 0.275945 -0.632062 0.401349 0.895993 0.189886 0.195800 0.907900 61 51 42\n-0.192358 0.260645 -0.606408 -0.096103 0.788171 -0.607868 0.192100 0.908800 109 58 29\n-0.184792 0.275612 -0.670478 0.087374 0.848598 0.521744 0.195923 0.901101 49 37 30\n0.677691 0.209301 -0.410649 0.112796 0.913572 0.390637 0.309863 0.562338 81 59 35\n0.775426 0.237964 -0.551502 0.074007 0.977905 0.195379 0.323393 0.551569 112 91 71\n-1.003150 0.290454 -0.419064 -0.453871 0.890103 0.041047 0.492326 0.779008 33 15 13\n0.117429 0.283379 0.320865 -0.016785 0.999603 0.021943 0.822328 0.322844 123 91 60\n-0.993439 0.304896 -0.501367 -0.435774 0.893948 -0.104556 0.737083 0.041522 108 87 62\n-1.051043 0.261971 -0.541634 -0.884762 0.465926 -0.008850 0.733900 0.032400 88 65 47\n-0.087274 0.268872 -0.319747 0.086367 0.905484 0.415479 0.718171 0.233383 109 95 63\n0.078250 0.288593 0.571211 0.016449 0.999817 0.006989 0.869131 0.327135 110 68 31\n0.964091 0.250286 -0.503082 -0.011048 0.999695 0.020783 0.624731 0.439612 130 101 66\n0.844863 0.250182 -0.656084 0.059877 0.980621 0.186377 0.603359 0.407359 95 67 35\n0.735257 0.264267 -0.056458 0.497513 0.786950 -0.364910 0.719298 0.420758 59 34 29\n-0.741685 0.351637 -0.260619 -0.273110 0.839900 0.468947 0.083065 0.642200 58 41 36\n-0.985780 0.310235 -0.351592 -0.435469 0.887661 0.149541 0.067637 0.619592 96 79 59\n-0.280983 0.258678 0.061160 -0.249733 0.945860 0.207282 0.284385 0.889111 121 100 70\n-0.245211 0.244880 0.138544 -0.044649 0.950377 0.307840 0.277900 0.879600 97 59 40\n-0.277870 0.300272 -0.099743 -0.270760 0.961455 -0.047426 0.285400 0.880900 131 107 80\n0.128040 0.282923 0.517027 0.187780 0.981597 -0.033876 0.855189 0.335197 103 62 31\n-0.247735 0.254884 -0.485058 0.040315 0.993164 0.109409 0.331047 0.765462 92 78 61\n-0.194481 0.297322 -0.547149 -0.405713 0.905362 0.125156 0.324693 0.758778 116 94 64\n-0.245558 0.247446 -0.555310 -0.087191 0.948607 0.304178 0.335646 0.754680 81 74 63\n-0.252062 0.282207 -0.592069 0.088137 0.977905 0.189489 0.330372 0.746380 51 37 25\n-0.240978 0.245926 -0.257060 -0.378460 0.885495 -0.269417 0.340625 0.853197 112 72 50\n-0.277870 0.300272 -0.099743 -0.270760 0.961455 -0.047426 0.342850 0.868530 131 107 80\n-0.213582 0.310271 -0.202468 -0.286264 0.927458 -0.240455 0.335736 0.862419 125 88 50\n0.424472 0.223289 -1.295573 0.173803 0.394269 -0.902371 0.509307 0.281336 99 49 18\n0.683942 0.292217 -1.095793 0.278542 0.888699 -0.364116 0.534904 0.343356 113 68 34\n0.721366 0.289751 0.035954 0.433027 0.843867 0.316752 0.490800 0.861700 65 47 31\n-0.192358 0.260645 -0.606408 -0.096103 0.788171 -0.607868 0.669204 0.197897 109 58 29\n-0.226758 0.275945 -0.632062 0.401349 0.895993 0.189886 0.669785 0.191960 61 51 42\n-0.218497 0.287057 -0.594399 -0.117466 0.931425 -0.344401 0.675483 0.192933 68 44 28\n-0.247735 0.254884 -0.485058 0.040315 0.993164 0.109409 0.128523 0.741893 92 78 61\n-0.353337 0.311322 -0.393053 0.647664 0.710471 0.275124 0.118701 0.723159 73 64 53\n-0.184792 0.275612 -0.670478 0.087374 0.848598 0.521744 0.342400 0.728900 49 37 30\n-0.153839 0.266658 -0.627783 -0.424451 0.847774 -0.317942 0.338988 0.725516 24 13 8\n-0.139615 0.299699 -0.694126 0.031190 0.905789 0.422529 0.348941 0.720655 63 46 34\n-0.074047 0.284141 -0.784173 0.338725 0.933622 0.116550 0.635070 0.211247 92 79 61\n-0.014082 0.265542 -0.701645 -0.170965 0.823969 -0.540208 0.642975 0.227521 27 9 6\n0.028572 0.273473 -0.762094 -0.077517 0.987091 0.140080 0.631972 0.233747 65 49 37\n0.675551 0.263051 -0.533724 0.166204 0.952696 0.254341 0.635099 0.377172 122 101 67\n0.571631 0.266960 -0.565454 0.146214 0.986938 0.067415 0.634875 0.354718 129 109 76\n0.566294 0.240463 -0.415288 0.408185 0.865627 0.289895 0.650800 0.363500 103 82 66\n0.932811 0.253936 -0.672805 0.086825 0.991333 0.098514 0.594812 0.423458 133 107 75\n0.836117 0.273805 -0.987941 0.368938 0.866970 -0.334941 0.545823 0.383944 115 77 39\n-0.319299 0.299729 -0.543169 0.470931 0.857143 0.208533 0.347896 0.763121 97 90 73\n-0.252062 0.282207 -0.592069 0.088137 0.977905 0.189489 0.345230 0.747472 51 37 25\n-0.252062 0.282207 -0.592069 0.088137 0.977905 0.189489 0.675408 0.186958 51 37 25\n-0.428891 0.334453 -0.300467 0.507889 0.683859 0.523789 0.114856 0.699742 47 27 23\n0.191750 0.273453 0.356342 0.308267 0.931608 0.192419 0.814781 0.338288 100 75 54\n-0.107302 0.293191 -0.676055 -0.135838 0.972076 -0.191198 0.342300 0.717800 114 86 60\n-0.107302 0.293191 -0.676055 -0.135838 0.972076 -0.191198 0.655382 0.211066 114 86 60\n-1.171445 0.330796 -0.446071 -0.356090 0.910001 -0.212256 0.098560 0.792535 73 61 66\n0.038758 0.279079 -0.723526 -0.352428 0.726829 -0.589465 0.637633 0.237041 23 7 5\n-0.875202 0.349063 -0.434191 -0.367443 0.930021 -0.005310 0.743480 0.067497 103 89 69\n0.975624 0.257446 -0.772058 0.341594 0.939512 -0.024689 0.574269 0.426898 125 94 59\n-0.756659 0.327325 -0.638908 -0.295297 0.882351 -0.366344 0.700914 0.079614 108 78 47\n-0.245211 0.244880 0.138544 -0.044649 0.950377 0.307840 0.795440 0.233400 97 59 40\n-0.132686 0.296274 -0.025704 0.150090 0.974395 0.167364 0.773475 0.245750 143 118 80\n-0.520011 0.341412 -0.251159 0.183203 0.723960 0.665029 0.109594 0.678393 42 22 22\n-0.503158 0.305168 -0.237864 0.589679 0.306742 0.747093 0.473184 0.636202 14 5 5\n0.229510 0.268222 -0.657398 0.033174 0.998383 -0.046113 0.639084 0.280713 80 65 51\n0.235612 0.269279 -0.601873 0.113773 0.935942 -0.333171 0.648581 0.285530 45 27 19\n0.308962 0.291678 -0.602733 -0.093692 0.957152 -0.273995 0.646118 0.300314 100 79 62\n0.491536 0.276985 0.118059 0.124851 0.975005 0.183691 0.869900 0.682600 38 19 20\n0.494571 0.275178 -0.005888 -0.114872 0.932524 0.342326 0.869900 0.691000 21 10 10\n0.487384 0.269094 0.044160 -0.250893 0.967864 -0.014863 0.867100 0.689300 46 28 18\n0.411201 0.291416 -0.758086 0.163854 0.981719 -0.096683 0.611200 0.311126 127 102 75\n0.539587 0.269179 -0.790955 0.042268 0.996673 -0.069430 0.596302 0.330526 125 103 73\n0.426161 0.262890 -0.894963 -0.047578 0.998840 0.006470 0.583571 0.306043 106 86 65\n0.117868 0.248206 -1.321642 -0.054720 0.658040 -0.750969 0.523041 0.216074 74 36 14\n-0.153839 0.266658 -0.627783 -0.424451 0.847774 -0.317942 0.869800 0.771500 24 13 8\n-0.192358 0.260645 -0.606408 -0.096103 0.788171 -0.607868 0.866903 0.767179 109 58 29\n-0.218497 0.287057 -0.594399 -0.117466 0.931425 -0.344401 0.869800 0.763000 68 44 28\n0.310217 0.297862 0.170838 0.182745 0.960662 0.209021 0.236869 0.608094 122 96 59\n0.197101 0.314397 0.077405 -0.136418 0.980651 0.140294 0.775222 0.322515 123 107 83\n0.035695 0.269898 -0.014202 -0.300394 0.953185 0.033876 0.782600 0.304000 122 113 97\n0.877357 0.281390 -0.915128 0.317759 0.933195 -0.167730 0.557287 0.396359 130 94 55\n0.115049 0.307258 -0.048522 -0.371441 0.928404 0.009095 0.757760 0.297336 128 115 87\n0.566389 0.274080 -1.206770 0.306955 0.770806 -0.558214 0.522064 0.314060 99 60 33\n0.108382 0.277751 -0.181597 -0.658559 0.750389 0.056276 0.485079 0.697915 55 36 28\n0.387687 0.298753 0.066626 0.179144 0.978118 0.105594 0.763880 0.357582 126 98 59\n0.371600 0.268970 0.186545 0.272256 0.863948 0.423566 0.779803 0.363766 47 19 12\n0.491536 0.276985 0.118059 0.124851 0.975005 0.183691 0.763184 0.383789 38 19 20\n0.375950 0.240806 -1.300643 0.060579 0.490127 -0.869503 0.171693 0.883041 74 32 11\n0.351783 0.224728 -1.302751 0.022187 0.390606 -0.920286 0.168602 0.877034 72 31 10\n0.341801 0.304481 -1.254784 0.085757 0.757958 -0.646596 0.173400 0.872200 111 65 34\n0.638567 0.266196 -0.853847 -0.153783 0.980041 0.125828 0.581840 0.350670 65 34 25\n0.447261 0.288212 -1.253464 0.179235 0.731254 -0.658071 0.520902 0.287268 98 52 23\n0.022375 0.328778 -0.420415 -0.114628 0.969054 0.218574 0.332980 0.716021 134 118 88\n-0.153343 0.274399 -0.330503 -0.302988 0.952757 -0.020631 0.325722 0.745217 116 92 67\n0.660787 0.286083 -0.654085 0.007782 0.998108 0.060884 0.273293 0.809048 126 89 57\n0.775426 0.237964 -0.551502 0.074007 0.977905 0.195379 0.264616 0.808144 112 91 71\n0.844863 0.250182 -0.656084 0.059877 0.980621 0.186377 0.266789 0.786080 95 67 35\n-0.353337 0.311322 -0.393053 0.647664 0.710471 0.275124 0.717343 0.177843 73 64 53\n-0.372791 0.318568 -0.525054 0.588031 0.801874 0.105808 0.702598 0.166457 60 56 46\n0.310217 0.297862 0.170838 0.182745 0.960662 0.209021 0.174900 0.900600 122 96 59\n0.117429 0.283379 0.320865 -0.016785 0.999603 0.021943 0.176500 0.892300 123 91 60\n0.191750 0.273453 0.356342 0.308267 0.931608 0.192419 0.180600 0.900600 100 75 54\n0.487384 0.269094 0.044160 -0.250893 0.967864 -0.014863 0.749947 0.377189 46 28 18\n0.494571 0.275178 -0.005888 -0.114872 0.932524 0.342326 0.740978 0.375770 21 10 10\n0.451925 0.287252 -0.052735 -0.082583 0.992126 0.093936 0.735834 0.364193 65 34 29\n-0.127975 0.321063 -0.615106 -0.378826 0.886837 -0.264534 0.670408 0.210053 74 39 35\n-0.153839 0.266658 -0.627783 -0.424451 0.847774 -0.317942 0.668600 0.203500 24 13 8\n-0.107302 0.293191 -0.676055 -0.135838 0.972076 -0.191198 0.461983 0.880655 114 86 60\n-0.153839 0.266658 -0.627783 -0.424451 0.847774 -0.317942 0.466042 0.877023 24 13 8\n-0.127975 0.321063 -0.615106 -0.378826 0.886837 -0.264534 0.466806 0.886666 74 39 35\n0.387687 0.298753 0.066626 0.179144 0.978118 0.105594 0.237905 0.622910 126 98 59\n0.375950 0.240806 -1.300643 0.060579 0.490127 -0.869503 0.514111 0.269812 74 32 11\n0.341801 0.304481 -1.254784 0.085757 0.757958 -0.646596 0.527118 0.267252 111 65 34\n-0.269530 0.324348 -1.108993 -0.299051 0.843440 -0.446242 0.586715 0.150334 116 77 44\n-0.304543 0.279506 -1.135046 -0.457625 0.498886 -0.735954 0.577415 0.147692 74 42 19\n0.302113 0.315102 -0.193703 0.182592 0.940611 -0.286081 0.719766 0.324293 121 89 46\n-0.789535 0.363545 -0.346966 -0.382611 0.867946 0.316599 0.068381 0.632630 100 91 72\n0.660787 0.286083 -0.654085 0.007782 0.998108 0.060884 0.618068 0.369817 126 89 57\n0.310217 0.297862 0.170838 0.182745 0.960662 0.209021 0.781949 0.348542 122 96 59\n-0.985780 0.310235 -0.351592 -0.435469 0.887661 0.149541 0.762658 0.050908 96 79 59\n0.676051 0.277802 -0.694299 -0.212104 0.957274 -0.196478 0.607170 0.369025 113 84 59\n-0.076207 0.318853 -0.665404 -0.302042 0.724876 -0.619098 0.652646 0.219688 60 24 14\n0.210682 0.327103 -0.533867 0.050508 0.919431 -0.389935 0.665360 0.284986 33 12 9\n0.615780 0.276553 0.049517 0.062868 0.881924 0.467147 0.744047 0.399358 34 21 16\n0.932811 0.253936 -0.672805 0.086825 0.991333 0.098514 0.270809 0.770080 133 107 75\n0.901323 0.282405 -0.783608 0.210456 0.974944 0.071810 0.280761 0.771952 136 100 64\n0.164667 0.271761 -0.698197 0.271615 0.949522 -0.156896 0.634985 0.263880 36 22 14\n0.177417 0.309493 -0.615943 0.362865 0.892178 -0.268868 0.651386 0.270956 39 15 14\n0.320870 0.303568 -0.807211 0.030946 0.991455 -0.126530 0.608146 0.293028 126 97 70\n0.397480 0.256348 -0.921431 -0.119724 0.987884 0.098422 0.582055 0.298351 74 57 44\n0.095600 0.287932 -0.742185 0.042299 0.945708 -0.322184 0.631902 0.246834 35 19 11\n0.135895 0.295064 -0.827114 -0.004639 0.996612 0.081851 0.617632 0.247330 133 115 86\n0.206173 0.284909 -0.976587 0.090609 0.980438 0.174566 0.584402 0.255014 100 81 57\n0.232699 0.289137 -0.853342 0.090304 0.972167 -0.216132 0.603773 0.270648 141 118 87\n0.287604 0.254305 -0.928783 0.108402 0.992126 0.062563 0.585997 0.274890 72 59 44\n0.106975 0.310204 -1.269622 -0.009339 0.752312 -0.658711 0.538355 0.216795 111 67 34\n0.426161 0.262890 -0.894963 -0.047578 0.998840 0.006470 0.404938 0.601389 106 86 65\n0.638567 0.266196 -0.853847 -0.153783 0.980041 0.125828 0.407599 0.570480 65 34 25\n0.489910 0.330463 -1.031080 0.005890 0.979492 0.201239 0.425051 0.602482 106 72 49\n0.726115 0.291869 -0.724010 -0.032716 0.993652 0.107517 0.280653 0.801488 120 93 64\n0.563945 0.307858 -0.091801 0.264321 0.914335 -0.306742 0.723462 0.384097 45 22 20\n-0.194481 0.297322 -0.547149 -0.405713 0.905362 0.125156 0.684643 0.202906 116 94 64\n-0.252062 0.282207 -0.592069 0.088137 0.977905 0.189489 0.678856 0.188966 51 37 25\n-0.341736 0.332735 -1.025892 -0.265938 0.911222 -0.314463 0.611068 0.140198 123 91 60\n0.901323 0.282405 -0.783608 0.210456 0.974944 0.071810 0.580377 0.407849 136 100 64\n0.028572 0.273473 -0.762094 -0.077517 0.987091 0.140080 0.624797 0.228170 65 49 37\n0.135895 0.295064 -0.827114 -0.004639 0.996612 0.081851 0.615300 0.251069 133 115 86\n-0.153343 0.274399 -0.330503 -0.302988 0.952757 -0.020631 0.709966 0.229730 116 92 67\n0.022375 0.328778 -0.420415 -0.114628 0.969054 0.218574 0.696588 0.251357 134 118 88\n0.078216 0.334649 -0.277881 -0.594226 0.786035 0.170171 0.493566 0.718368 72 38 35\n0.050045 0.306841 -0.368457 -0.214515 0.916013 0.338939 0.493150 0.738010 65 39 26\n0.288459 0.270845 -0.260408 0.207984 0.966521 -0.150121 0.707744 0.315828 33 17 14\n0.179288 0.329579 -0.171664 -0.190008 0.981353 -0.028016 0.733770 0.301470 131 109 73\n0.108382 0.277751 -0.181597 -0.658559 0.750389 0.056276 0.733900 0.287300 55 36 28\n0.237718 0.331856 -0.409230 0.048311 0.983215 0.175787 0.330695 0.659977 93 73 48\n0.288459 0.270845 -0.260408 0.207984 0.966521 -0.150121 0.308029 0.664333 33 17 14\n-0.127754 0.325624 -0.774432 0.398206 0.896573 0.193701 0.643023 0.203397 116 96 62\n0.571631 0.266960 -0.565454 0.146214 0.986938 0.067415 0.326758 0.590125 129 109 76\n0.470786 0.315837 -0.519912 0.292306 0.954924 -0.051576 0.334500 0.604800 136 118 88\n0.051988 0.305317 -0.978092 0.127537 0.984069 0.123600 0.597223 0.225875 128 110 82\n-0.076736 0.296159 -0.884334 0.355144 0.917661 0.178137 0.617303 0.203601 87 74 54\n0.451925 0.287252 -0.052735 -0.082583 0.992126 0.093936 0.496823 0.846985 65 34 29\n0.494571 0.275178 -0.005888 -0.114872 0.932524 0.342326 0.499500 0.854400 21 10 10\n0.507546 0.319979 -0.044746 -0.195379 0.918699 0.343211 0.491400 0.850200 41 18 19\n0.470786 0.315837 -0.519912 0.292306 0.954924 -0.051576 0.648960 0.334733 136 118 88\n0.428306 0.292396 -0.673054 0.107547 0.992737 -0.053804 0.629965 0.319685 135 115 90\n-0.644774 0.369050 -0.661841 -0.189001 0.956847 -0.220588 0.694260 0.095645 114 77 46\n0.721366 0.289751 0.035954 0.433027 0.843867 0.316752 0.735215 0.423492 65 47 31\n0.397480 0.256348 -0.921431 -0.119724 0.987884 0.098422 0.401297 0.608546 74 57 44\n0.675157 0.285931 -0.904887 -0.134068 0.949736 0.282846 0.420283 0.560175 101 77 53\n0.308962 0.291678 -0.602733 -0.093692 0.957152 -0.273995 0.288700 0.895900 100 79 62\n0.210682 0.327103 -0.533867 0.050508 0.919431 -0.389935 0.287604 0.905296 33 12 9\n0.249338 0.323379 -0.562789 -0.359386 0.578784 -0.731986 0.285100 0.900100 65 36 30\n0.100834 0.326255 -0.702583 0.292032 0.871914 -0.393017 0.640836 0.252413 74 40 32\n0.726115 0.291869 -0.724010 -0.032716 0.993652 0.107517 0.596655 0.380825 120 93 64\n-0.226758 0.275945 -0.632062 0.401349 0.895993 0.189886 0.345576 0.738259 61 51 42\n0.600753 0.312995 -0.018580 0.073824 0.986023 0.149327 0.236503 0.678785 71 47 46\n0.494571 0.275178 -0.005888 -0.114872 0.932524 0.342326 0.234111 0.657859 21 10 10\n0.326989 0.322211 -0.117874 0.181951 0.982086 -0.048616 0.731719 0.334509 135 106 65\n0.287604 0.254305 -0.928783 0.108402 0.992126 0.062563 0.396658 0.631674 72 59 44\n0.362148 0.318062 -1.036517 -0.057924 0.938444 0.340495 0.423007 0.623026 115 90 63\n-0.572224 0.335709 -0.252190 0.091372 0.804071 0.587451 0.104500 0.669959 31 17 19\n0.676051 0.277802 -0.694299 -0.212104 0.957274 -0.196478 0.281500 0.811000 113 84 59\n0.038758 0.279079 -0.723526 -0.352428 0.726829 -0.589465 0.279141 0.835532 23 7 5\n-0.014082 0.265542 -0.701645 -0.170965 0.823969 -0.540208 0.277950 0.828417 27 9 6\n-0.076207 0.318853 -0.665404 -0.302042 0.724876 -0.619098 0.284760 0.818077 60 24 14\n0.208981 0.317308 -0.332280 0.177618 0.975646 0.128605 0.248900 0.905400 42 20 19\n0.209844 0.314082 -0.257453 0.258980 0.960936 -0.097385 0.252400 0.902600 46 23 17\n0.288459 0.270845 -0.260408 0.207984 0.966521 -0.150121 0.252400 0.910100 33 17 14\n0.208981 0.317308 -0.332280 0.177618 0.975646 0.128605 0.317032 0.671987 42 20 19\n0.494766 0.287470 -0.391196 0.453841 0.849025 0.270486 0.672377 0.349713 85 60 39\n0.566294 0.240463 -0.415288 0.408185 0.865627 0.289895 0.655100 0.354100 103 82 66\n0.071254 0.339335 -1.217127 -0.066378 0.894681 -0.441725 0.550941 0.212913 123 74 39\n0.227771 0.349757 -1.189736 0.021546 0.983520 -0.179449 0.550489 0.244416 126 87 53\n-0.127754 0.325624 -0.774432 0.398206 0.896573 0.193701 0.638278 0.198726 116 96 62\n0.206173 0.284909 -0.976587 0.090609 0.980438 0.174566 0.401213 0.648732 100 81 57\n0.476479 0.261310 -0.178231 -0.168859 0.914853 -0.366741 0.499226 0.829041 45 20 14\n0.488023 0.321154 -0.103515 -0.346324 0.908048 -0.235511 0.490434 0.836593 67 34 29\n0.499562 0.262666 -0.211843 -0.336619 0.527024 -0.780328 0.494000 0.826800 64 29 19\n0.488023 0.321154 -0.103515 -0.346324 0.908048 -0.235511 0.727584 0.368040 67 34 29\n-0.184792 0.275612 -0.670478 0.087374 0.848598 0.521744 0.345777 0.727343 49 37 30\n-0.260005 0.340885 -0.707682 0.293985 0.912290 0.285043 0.365307 0.734130 117 98 67\n0.600753 0.312995 -0.018580 0.073824 0.986023 0.149327 0.735186 0.398167 71 47 46\n0.777869 0.294584 -0.888563 0.050600 0.997864 0.040712 0.570417 0.374302 130 96 64\n-0.107302 0.293191 -0.676055 -0.135838 0.972076 -0.191198 0.344735 0.708693 114 86 60\n-0.127754 0.325624 -0.774432 0.398206 0.896573 0.193701 0.359077 0.704276 116 96 62\n0.118273 0.302861 -1.044426 0.074740 0.971892 0.223212 0.578071 0.231268 60 26 19\n0.552062 0.304015 -1.166942 0.392010 0.846065 -0.361187 0.529949 0.314288 98 57 28\n0.581497 0.313467 -0.991832 0.075014 0.988189 0.133549 0.428618 0.576257 116 86 53\n-0.534510 0.354356 -0.724460 -0.045534 0.959960 -0.276345 0.675905 0.120447 114 86 53\n-0.465417 0.343937 -0.849587 -0.193640 0.962401 -0.190344 0.646906 0.129325 125 103 68\n0.149914 0.323741 -0.216452 -0.187780 0.965178 0.182043 0.493800 0.699800 61 30 17\n0.179288 0.329579 -0.171664 -0.190008 0.981353 -0.028016 0.493619 0.690226 131 109 73\n0.023326 0.320067 -1.047722 0.250984 0.947295 0.199042 0.585538 0.213448 55 26 13\n-0.076207 0.318853 -0.665404 -0.302042 0.724876 -0.619098 0.657905 0.218673 60 24 14\n-0.409370 0.365300 -0.397006 0.527146 0.810266 0.255989 0.104294 0.716036 49 28 27\n0.675157 0.285931 -0.904887 -0.134068 0.949736 0.282846 0.571408 0.356175 101 77 53\n0.016825 0.335925 -0.698449 -0.172185 0.824610 -0.538804 0.286400 0.831200 59 19 10\n-0.741685 0.351637 -0.260619 -0.273110 0.839900 0.468947 0.076000 0.634100 58 41 36\n-0.789535 0.363545 -0.346966 -0.382611 0.867946 0.316599 0.766188 0.082409 100 91 72\n-0.875202 0.349063 -0.434191 -0.367443 0.930021 -0.005310 0.750163 0.070862 103 89 69\n0.095600 0.287932 -0.742185 0.042299 0.945708 -0.322184 0.280906 0.846577 35 19 11\n0.385006 0.328401 -0.433209 0.139592 0.978790 0.149815 0.330426 0.640738 118 105 77\n-0.393098 0.359686 -0.599078 0.433515 0.900540 0.032044 0.369126 0.770004 103 89 58\n-0.372791 0.318568 -0.525054 0.588031 0.801874 0.105808 0.356347 0.775777 60 56 46\n0.507546 0.319979 -0.044746 -0.195379 0.918699 0.343211 0.226436 0.663702 41 18 19\n0.118273 0.302861 -1.044426 0.074740 0.971892 0.223212 0.404800 0.669141 60 26 19\n0.051988 0.305317 -0.978092 0.127537 0.984069 0.123600 0.283892 0.732279 128 110 82\n-0.072339 0.349566 -1.037559 0.189764 0.976531 0.101688 0.284215 0.744331 80 49 26\n-0.076736 0.296159 -0.884334 0.355144 0.917661 0.178137 0.263146 0.747738 87 74 54\n0.028510 0.328707 -0.579600 -0.013337 0.999756 -0.016327 0.668074 0.243209 63 39 38\n0.676921 0.312370 -1.027991 0.149937 0.984924 -0.085910 0.550020 0.348338 130 88 53\n0.571606 0.316253 -1.104194 0.199683 0.963317 -0.179205 0.542890 0.321840 119 79 48\n0.209844 0.314082 -0.257453 0.258980 0.960936 -0.097385 0.715327 0.301006 46 23 17\n0.385006 0.328401 -0.433209 0.139592 0.978790 0.149815 0.674076 0.325653 118 105 77\n0.356927 0.331301 -0.521814 0.098270 0.966521 -0.236946 0.661589 0.314397 68 35 33\n-0.693066 0.397869 -0.327928 -0.070803 0.925260 0.372631 0.075861 0.662416 31 19 16\n0.208981 0.317308 -0.332280 0.177618 0.975646 0.128605 0.702041 0.296093 42 20 19\n0.050045 0.306841 -0.368457 -0.214515 0.916013 0.338939 0.703731 0.265281 65 39 26\n0.078216 0.334649 -0.277881 -0.594226 0.786035 0.170171 0.719785 0.273936 72 38 35\n0.208981 0.317308 -0.332280 0.177618 0.975646 0.128605 0.326245 0.688484 42 20 19\n0.149914 0.323741 -0.216452 -0.187780 0.965178 0.182043 0.726853 0.291311 61 30 17\n0.078216 0.334649 -0.277881 -0.594226 0.786035 0.170171 0.077930 0.849162 72 38 35\n0.108382 0.277751 -0.181597 -0.658559 0.750389 0.056276 0.082100 0.865573 55 36 28\n0.149914 0.323741 -0.216452 -0.187780 0.965178 0.182043 0.074861 0.864279 61 30 17\n-0.232157 0.355801 -0.808400 0.146886 0.981780 0.120426 0.371426 0.719658 114 87 63\n0.016825 0.335925 -0.698449 -0.172185 0.824610 -0.538804 0.648961 0.233991 59 19 10\n-0.072339 0.349566 -1.037559 0.189764 0.976531 0.101688 0.590251 0.194603 80 49 26\n-0.131678 0.347461 -0.914567 0.331858 0.929502 0.160741 0.270547 0.760811 108 82 54\n0.123350 0.343818 -0.513413 0.008637 0.998047 -0.061434 0.676033 0.268064 62 37 38\n0.777869 0.294584 -0.888563 0.050600 0.997864 0.040712 0.432171 0.551287 130 96 64\n0.507546 0.319979 -0.044746 -0.195379 0.918699 0.343211 0.736428 0.376410 41 18 19\n0.237718 0.331856 -0.409230 0.048311 0.983215 0.175787 0.330425 0.674318 93 73 48\n0.249338 0.323379 -0.562789 -0.359386 0.578784 -0.731986 0.658756 0.291030 65 36 30\n-0.798787 0.386606 -0.476762 -0.402600 0.894192 -0.195685 0.736981 0.083294 95 71 50\n0.399243 0.341065 -1.164299 0.119541 0.979675 -0.160894 0.542546 0.286958 124 80 48\n0.581497 0.313467 -0.991832 0.075014 0.988189 0.133549 0.560983 0.331170 116 86 53\n-0.131678 0.347461 -0.914567 0.331858 0.929502 0.160741 0.618802 0.191317 108 82 54\n-0.256287 0.357751 -0.983671 -0.075442 0.991424 -0.106632 0.612603 0.159293 125 99 65\n-0.734488 0.374290 -0.284850 -0.398083 0.800226 0.448500 0.078259 0.647008 61 36 32\n-0.566808 0.380349 -0.679168 -0.075137 0.958556 -0.274697 0.687041 0.116936 129 93 53\n0.224297 0.339169 -0.499069 0.021455 0.996155 -0.084567 0.674040 0.292477 67 36 35\n0.237718 0.331856 -0.409230 0.048311 0.983215 0.175787 0.685548 0.298212 93 73 48\n0.333384 0.348408 -1.177770 0.070223 0.983276 -0.167882 0.545533 0.268627 132 100 66\n-0.072225 0.349422 -1.157967 -0.109867 0.953642 -0.280099 0.573064 0.187404 128 92 59\n0.227771 0.349757 -1.189736 0.021546 0.983520 -0.179449 0.428303 0.650312 126 87 53\n0.489910 0.330463 -1.031080 0.005890 0.979492 0.201239 0.557640 0.307304 106 72 49\n-0.353337 0.311322 -0.393053 0.647664 0.710471 0.275124 0.108200 0.721700 73 64 53\n-0.437425 0.402851 -0.489940 0.559465 0.822504 0.102206 0.088057 0.722664 52 32 30\n-0.437425 0.402851 -0.489940 0.559465 0.822504 0.102206 0.714639 0.160093 52 32 30\n-0.741685 0.351637 -0.260619 -0.273110 0.839900 0.468947 0.220342 0.798109 58 41 36\n-0.758806 0.399664 -0.392801 -0.343822 0.907620 0.240730 0.220744 0.824810 27 10 8\n-0.789535 0.363545 -0.346966 -0.382611 0.867946 0.316599 0.215609 0.813196 100 91 72\n-0.090298 0.361296 -1.001113 0.596057 0.785638 0.165624 0.286576 0.752335 118 86 49\n-0.734488 0.374290 -0.284850 -0.398083 0.800226 0.448500 0.223900 0.801600 61 36 32\n0.055015 0.352227 -1.177007 0.025208 0.998535 -0.047792 0.418860 0.679741 119 86 62\n0.023326 0.320067 -1.047722 0.250984 0.947295 0.199042 0.402334 0.688280 55 26 13\n0.362148 0.318062 -1.036517 -0.057924 0.938444 0.340495 0.564200 0.284859 115 90 63\n-0.232157 0.355801 -0.808400 0.146886 0.981780 0.120426 0.642554 0.178419 114 87 63\n-0.339468 0.362740 -0.790320 0.015564 0.999847 0.001862 0.651524 0.155597 128 108 79\n-0.260005 0.340885 -0.707682 0.293985 0.912290 0.285043 0.663602 0.175419 117 98 67\n-0.593368 0.360085 -0.576064 -0.194678 0.912320 -0.360210 0.706031 0.118217 24 10 8\n-0.711686 0.379146 -0.513658 -0.145054 0.882107 -0.448134 0.725725 0.097172 26 13 9\n-0.585327 0.435080 -0.408014 0.058596 0.968291 0.242836 0.077451 0.687051 46 30 19\n-0.393098 0.359686 -0.599078 0.433515 0.900540 0.032044 0.690452 0.157534 103 89 58\n-0.875202 0.349063 -0.434191 -0.367443 0.930021 -0.005310 0.125207 0.838644 103 89 69\n-0.789535 0.363545 -0.346966 -0.382611 0.867946 0.316599 0.121100 0.858200 100 91 72\n-0.758806 0.399664 -0.392801 -0.343822 0.907620 0.240730 0.116800 0.850100 27 10 8\n-0.437425 0.402851 -0.489940 0.559465 0.822504 0.102206 0.365517 0.785119 52 32 30\n-0.504547 0.380293 -0.621617 0.002899 0.918973 -0.394238 0.696105 0.132434 114 97 81\n-0.445291 0.362840 -0.640370 0.112217 0.986175 -0.121891 0.682672 0.143613 96 73 49\n0.055015 0.352227 -1.177007 0.025208 0.998535 -0.047792 0.562450 0.214497 119 86 62\n-0.072339 0.349566 -1.037559 0.189764 0.976531 0.101688 0.399935 0.709108 80 49 26\n-0.758806 0.399664 -0.392801 -0.343822 0.907620 0.240730 0.217909 0.891687 27 10 8\n-0.798787 0.386606 -0.476762 -0.402600 0.894192 -0.195685 0.214000 0.883200 95 71 50\n-0.875202 0.349063 -0.434191 -0.367443 0.930021 -0.005310 0.220200 0.885900 103 89 69\n-0.090298 0.361296 -1.001113 0.596057 0.785638 0.165624 0.600765 0.193831 118 86 49\n0.362148 0.318062 -1.036517 -0.057924 0.938444 0.340495 0.561346 0.265625 115 90 63\n-0.522032 0.431251 -0.472088 0.246315 0.956725 0.154729 0.076693 0.705468 56 41 34\n-0.536290 0.435797 -0.544606 -0.110263 0.927427 -0.357341 0.162600 0.898400 63 41 30\n-0.593368 0.360085 -0.576064 -0.194678 0.912320 -0.360210 0.164722 0.891998 24 10 8\n-0.620316 0.429427 -0.520087 -0.247353 0.858486 -0.449202 0.168043 0.898008 43 23 21\n-0.465936 0.423816 -0.576863 0.293893 0.875393 -0.383770 0.704021 0.144484 46 24 24\n-0.758806 0.399664 -0.392801 -0.343822 0.907620 0.240730 0.276000 0.894800 27 10 8\n-0.734488 0.374290 -0.284850 -0.398083 0.800226 0.448500 0.270200 0.890300 61 36 32\n-0.693066 0.397869 -0.327928 -0.070803 0.925260 0.372631 0.272646 0.885832 31 19 16\n-0.536290 0.435797 -0.544606 -0.110263 0.927427 -0.357341 0.714710 0.129811 63 41 30\n-0.753427 0.423490 -0.458261 -0.306864 0.945189 -0.111423 0.741509 0.093562 94 62 43\n-0.620316 0.429427 -0.520087 -0.247353 0.858486 -0.449202 0.723143 0.115843 43 23 21\n-0.753427 0.423490 -0.458261 -0.306864 0.945189 -0.111423 0.223900 0.837800 94 62 43\n-0.798787 0.386606 -0.476762 -0.402600 0.894192 -0.195685 0.216719 0.838650 95 71 50\n-0.593368 0.360085 -0.576064 -0.194678 0.912320 -0.360210 0.718033 0.112365 24 10 8\n-0.758806 0.399664 -0.392801 -0.343822 0.907620 0.240730 0.746917 0.104745 27 10 8\n-0.437425 0.402851 -0.489940 0.559465 0.822504 0.102206 0.710980 0.153725 52 32 30\n-0.693066 0.397869 -0.327928 -0.070803 0.925260 0.372631 0.753840 0.113656 31 19 16\n-0.585327 0.435080 -0.408014 0.058596 0.968291 0.242836 0.737247 0.128348 46 30 19\n-0.522032 0.431251 -0.472088 0.246315 0.956725 0.154729 0.723283 0.138018 56 41 34\n3 0 1 2\n3 2 1 3\n3 4 5 6\n3 4 7 5\n3 8 9 10\n3 11 1 12\n3 13 14 15\n3 16 17 18\n3 3 1 11\n3 19 12 1\n3 20 21 22\n3 23 24 25\n3 26 18 27\n3 28 29 30\n3 31 32 33\n3 34 35 36\n3 37 27 38\n3 39 40 19\n3 41 42 40\n3 43 44 45\n3 27 18 46\n3 47 48 49\n3 44 34 45\n3 50 11 12\n3 51 19 40\n3 52 53 54\n3 55 56 57\n3 58 59 60\n3 61 58 60\n3 62 63 64\n3 65 34 66\n3 44 66 34\n3 60 67 61\n3 68 69 70\n3 71 72 73\n3 74 75 76\n3 51 40 77\n3 60 59 78\n3 79 80 81\n3 82 38 83\n3 38 27 83\n3 84 85 86\n3 51 87 19\n3 88 19 87\n3 12 19 88\n3 89 90 68\n3 70 91 92\n3 91 93 92\n3 17 94 95\n3 96 97 98\n3 66 99 65\n3 100 101 102\n3 42 77 40\n3 103 63 104\n3 105 106 107\n3 108 11 109\n3 110 52 111\n3 112 113 114\n3 115 116 117\n3 118 38 82\n3 12 119 50\n3 11 50 109\n3 120 121 122\n3 123 12 124\n3 63 103 64\n3 62 125 126\n3 85 84 92\n3 68 127 69\n3 127 68 90\n3 128 129 130\n3 131 132 133\n3 85 92 93\n3 134 135 136\n3 137 138 139\n3 140 141 142\n3 143 144 145\n3 146 147 148\n3 149 112 114\n3 150 87 151\n3 152 153 99\n3 153 154 99\n3 91 155 93\n3 99 156 65\n3 46 17 157\n3 95 158 17\n3 83 27 46\n3 159 86 160\n3 161 162 163\n3 164 165 166\n3 110 111 167\n3 48 47 168\n3 169 170 171\n3 172 173 174\n3 88 87 150\n3 118 175 176\n3 82 177 178\n3 124 12 88\n3 83 46 179\n3 125 62 64\n3 62 136 135\n3 70 69 91\n3 180 181 99\n3 182 183 184\n3 185 159 160\n3 88 186 187\n3 188 189 190\n3 191 192 193\n3 194 195 196\n3 197 198 199\n3 200 201 202\n3 203 134 204\n3 205 206 207\n3 208 209 210\n3 157 17 158\n3 85 160 86\n3 211 212 213\n3 89 208 214\n3 69 215 91\n3 216 163 217\n3 215 218 91\n3 219 220 221\n3 82 178 118\n3 178 83 179\n3 136 62 126\n3 222 223 224\n3 225 226 227\n3 192 228 193\n3 229 230 231\n3 232 233 234\n3 88 187 124\n3 187 186 235\n3 69 127 236\n3 89 237 90\n3 155 91 218\n3 154 238 99\n3 208 239 214\n3 103 104 240\n3 241 242 185\n3 124 187 243\n3 134 136 244\n3 236 215 69\n3 127 245 236\n3 89 214 246\n3 236 245 247\n3 46 248 179\n3 155 218 249\n3 250 134 244\n3 251 252 253\n3 218 215 254\n3 255 256 257\n3 258 144 143\n3 127 90 237\n3 245 127 237\n3 249 218 259\n3 260 261 262\n3 263 264 265\n3 266 48 168\n3 199 267 197\n3 268 269 209\n3 109 50 270\n3 249 271 272\n3 273 274 275\n3 247 245 276\n3 209 269 210\n3 210 239 208\n3 237 89 246\n3 245 237 276\n3 277 236 247\n3 204 134 250\n3 93 155 278\n3 279 280 281\n3 254 215 277\n3 215 236 277\n3 247 276 282\n3 210 283 239\n3 284 285 286\n3 210 269 283\n3 278 160 85\n3 237 251 276\n3 218 254 259\n3 262 287 288\n3 154 289 238\n3 160 290 185\n3 175 118 291\n3 251 292 293\n3 93 278 85\n3 294 203 295\n3 280 279 296\n3 297 253 252\n3 298 299 300\n3 224 223 301\n3 302 303 304\n3 243 187 235\n3 305 306 307\n3 287 268 288\n3 214 239 283\n3 237 292 251\n3 155 249 278\n3 308 309 220\n3 249 259 271\n3 118 310 291\n3 214 283 246\n3 311 312 313\n3 246 292 237\n3 314 50 124\n3 292 246 283\n3 315 316 317\n3 318 273 275\n3 268 287 319\n3 284 104 285\n3 278 249 320\n3 259 254 277\n3 321 103 322\n3 271 259 323\n3 247 282 277\n3 324 272 271\n3 201 309 308\n3 314 124 243\n3 213 325 211\n3 326 327 328\n3 329 175 291\n3 330 331 332\n3 333 220 219\n3 302 304 334\n3 335 336 337\n3 338 339 340\n3 252 341 297\n3 320 342 278\n3 342 160 278\n3 299 298 343\n3 341 344 297\n3 282 297 344\n3 319 345 283\n3 342 320 346\n3 345 347 283\n3 348 349 350\n3 160 342 290\n3 347 351 292\n3 292 351 293\n3 287 352 319\n3 346 272 353\n3 251 341 252\n3 290 346 354\n3 341 293 355\n3 319 269 268\n3 269 319 283\n3 277 282 344\n3 202 201 308\n3 356 357 358\n3 359 360 285\n3 261 287 262\n3 353 272 324\n3 321 64 103\n3 125 64 321\n3 342 346 290\n3 293 351 355\n3 161 361 362\n3 363 270 50\n3 271 323 324\n3 341 251 293\n3 286 285 364\n3 283 347 292\n3 343 241 185\n3 50 314 363\n3 365 366 367\n3 368 316 366\n3 369 370 299\n3 371 372 373\n3 202 227 200\n3 374 104 284\n3 353 324 375\n3 136 126 244\n3 376 266 168\n3 345 377 347\n3 378 344 341\n3 379 261 260\n3 298 241 343\n3 380 381 382\n3 277 383 259\n3 384 385 386\n3 305 387 388\n3 389 390 391\n3 345 319 377\n3 383 323 259\n3 308 220 392\n3 383 378 393\n3 277 344 383\n3 261 394 287\n3 377 352 395\n3 378 383 344\n3 204 295 203\n3 324 323 375\n3 396 158 95\n3 397 398 399\n3 290 343 185\n3 395 352 400\n3 316 368 317\n3 401 402 403\n3 179 248 404\n3 290 354 405\n3 346 353 354\n3 323 383 406\n3 250 244 407\n3 341 408 378\n3 351 347 409\n3 383 393 406\n3 261 379 410\n3 319 352 377\n3 287 394 352\n3 400 352 394\n3 382 381 411\n3 225 227 412\n3 302 334 413\n3 170 169 414\n3 305 307 415\n3 416 417 314\n3 418 270 363\n3 419 420 421\n3 394 261 410\n3 341 355 408\n3 364 285 360\n3 422 423 424\n3 158 396 425\n3 290 405 426\n3 376 168 427\n3 347 377 409\n3 428 429 430\n3 323 406 375\n3 355 351 431\n3 378 432 393\n3 433 434 435\n3 355 436 408\n3 353 437 354\n3 343 290 426\n3 438 375 406\n3 422 409 377\n3 422 377 439\n3 440 441 442\n3 443 444 445\n3 446 394 410\n3 431 436 355\n3 447 431 424\n3 448 449 379\n3 414 169 450\n3 302 413 307\n3 362 451 452\n3 353 453 454\n3 227 202 455\n3 408 456 378\n3 457 458 459\n3 431 351 409\n3 322 103 240\n3 460 400 394\n3 461 361 163\n3 368 366 462\n3 204 250 407\n3 422 439 463\n3 410 379 446\n3 394 446 460\n3 423 422 463\n3 464 433 435\n3 454 465 353\n3 424 431 409\n3 353 438 453\n3 438 353 375\n3 466 467 468\n3 469 470 471\n3 412 227 472\n3 406 393 473\n3 427 168 474\n3 406 475 438\n3 456 408 436\n3 395 476 439\n3 377 395 439\n3 413 477 307\n3 363 314 478\n3 363 478 479\n3 479 480 363\n3 456 481 378\n3 364 360 482\n3 483 284 286\n3 484 284 483\n3 457 459 485\n3 431 447 436\n3 486 485 459\n3 436 487 456\n3 379 449 446\n3 436 447 487\n3 437 353 465\n3 488 489 490\n3 491 476 395\n3 395 400 491\n3 295 492 294\n3 359 433 464\n3 393 432 493\n3 400 460 491\n3 404 248 494\n3 437 465 495\n3 496 125 321\n3 417 478 314\n3 497 460 446\n3 460 497 491\n3 413 498 499\n3 500 501 502\n3 503 305 415\n3 504 505 506\n3 414 450 507\n3 481 432 378\n3 299 508 369\n3 509 291 510\n3 358 357 511\n3 446 449 512\n3 322 496 321\n3 513 446 512\n3 424 514 447\n3 475 515 438\n3 516 517 518\n3 393 519 473\n3 476 520 439\n3 446 513 497\n3 407 244 521\n3 520 463 439\n3 481 456 487\n3 522 426 495\n3 359 464 523\n3 406 473 475\n3 448 524 512\n3 525 526 322\n3 487 527 481\n3 369 508 528\n3 476 491 529\n3 529 530 531\n3 519 393 493\n3 126 125 496\n3 520 476 529\n3 532 533 534\n3 535 536 537\n3 538 539 497\n3 126 540 244\n3 158 425 541\n3 424 423 514\n3 542 362 361\n3 543 386 385\n3 524 448 544\n3 384 224 385\n3 227 545 472\n3 546 547 548\n3 549 359 523\n3 550 538 497\n3 448 512 449\n3 423 463 551\n3 539 491 497\n3 551 514 423\n3 552 519 493\n3 539 538 553\n3 529 531 520\n3 554 515 475\n3 529 539 530\n3 555 556 557\n3 558 475 473\n3 495 465 522\n3 475 558 554\n3 542 361 559\n3 428 430 560\n3 522 343 426\n3 561 294 492\n3 453 438 562\n3 550 497 513\n3 512 524 563\n3 514 487 447\n3 432 481 493\n3 392 564 308\n3 286 364 482\n3 404 565 566\n3 465 567 522\n3 520 551 463\n3 551 520 568\n3 491 539 529\n3 299 343 508\n3 508 343 522\n3 530 569 531\n3 570 571 572\n3 516 573 517\n3 513 512 550\n3 517 573 574\n3 435 434 317\n3 461 547 575\n3 464 435 576\n3 558 577 554\n3 578 525 484\n3 579 580 581\n3 558 473 519\n3 486 582 583\n3 584 585 586\n3 587 538 550\n3 202 308 564\n3 522 567 588\n3 541 425 589\n3 590 591 592\n3 515 562 438\n3 520 531 568\n3 564 455 202\n3 552 558 519\n3 593 291 509\n3 514 594 487\n3 563 595 512\n3 569 530 596\n3 568 531 569\n3 502 597 598\n3 599 600 601\n3 574 602 517\n3 603 517 604\n3 572 571 605\n3 567 454 453\n3 563 524 606\n3 291 593 450\n3 607 608 609\n3 610 611 612\n3 613 614 615\n3 158 616 248\n3 512 595 550\n3 482 360 523\n3 594 527 487\n3 286 482 617\n3 552 481 527\n3 609 608 618\n3 574 619 602\n3 620 333 621\n3 479 478 622\n3 333 620 392\n3 567 453 562\n3 515 554 623\n3 577 624 554\n3 461 559 361\n3 554 624 570\n3 538 587 553\n3 570 625 554\n3 626 530 539\n3 623 554 625\n3 627 528 508\n3 494 248 616\n3 628 627 588\n3 629 590 592\n3 630 628 588\n3 631 632 605\n3 493 481 552\n3 633 634 635\n3 587 550 636\n3 551 637 514\n3 558 552 577\n3 204 407 295\n3 515 623 562\n3 638 294 561\n3 591 639 592\n3 224 640 385\n3 641 637 642\n3 606 643 563\n3 551 644 637\n3 595 643 636\n3 568 569 644\n3 469 471 645\n3 646 552 527\n3 632 572 605\n3 514 641 594\n3 530 626 596\n3 564 392 647\n3 500 648 417\n3 596 626 649\n3 517 602 604\n3 508 522 588\n3 650 492 295\n3 566 565 651\n3 508 588 627\n3 570 652 625\n3 514 637 641\n3 653 632 654\n3 563 643 595\n3 527 594 646\n3 623 655 562\n3 644 551 568\n3 158 541 616\n3 455 564 656\n3 657 570 572\n3 598 597 658\n3 598 659 502\n3 417 660 478\n3 661 569 596\n3 622 662 480\n3 663 664 665\n3 666 667 668\n3 662 669 480\n3 507 450 593\n3 623 670 671\n3 567 672 588\n3 509 566 651\n3 636 550 595\n3 594 641 646\n3 553 626 539\n3 673 642 637\n3 572 632 657\n3 649 661 596\n3 623 625 670\n3 648 660 417\n3 674 675 676\n3 451 362 542\n3 407 677 295\n3 567 562 678\n3 653 657 632\n3 671 655 623\n3 679 680 681\n3 571 682 605\n3 569 661 644\n3 683 684 685\n3 643 686 636\n3 687 688 689\n3 654 632 631\n3 637 644 673\n3 690 691 692\n3 552 693 577\n3 525 694 526\n3 592 669 695\n3 496 526 694\n3 552 646 693\n3 570 657 652\n3 626 696 649\n3 625 697 670\n3 654 698 653\n3 699 451 700\n3 478 660 701\n3 702 703 704\n3 705 706 707\n3 708 709 710\n3 627 601 528\n3 587 636 686\n3 654 711 698\n3 639 669 592\n3 577 682 624\n3 626 553 587\n3 593 712 507\n3 647 392 620\n3 545 713 472\n3 664 496 714\n3 698 711 715\n3 673 716 717\n3 718 652 657\n3 627 628 601\n3 718 625 652\n3 682 577 693\n3 718 697 625\n3 696 626 587\n3 643 606 719\n3 718 657 720\n3 721 649 696\n3 641 642 722\n3 722 642 673\n3 567 678 672\n3 723 724 725\n3 656 564 647\n3 649 721 726\n3 644 661 727\n3 631 728 654\n3 727 673 644\n3 654 728 711\n3 562 655 678\n3 729 730 731\n3 646 641 722\n3 732 733 734\n3 735 736 737\n3 484 483 738\n3 548 739 740\n3 741 735 737\n3 727 661 742\n3 673 727 716\n3 620 621 743\n3 653 698 657\n3 588 672 630\n3 631 744 728\n3 745 643 746\n3 747 698 715\n3 728 744 748\n3 749 744 717\n3 750 751 752\n3 670 753 754\n3 638 561 755\n3 755 756 638\n3 697 718 753\n3 757 693 646\n3 758 759 760\n3 761 744 749\n3 592 762 629\n3 761 749 763\n3 722 757 646\n3 601 764 599\n3 757 765 682\n3 746 719 766\n3 727 767 716\n3 671 670 754\n3 717 722 673\n3 630 768 769\n3 761 748 744\n3 671 770 655\n3 746 643 719\n3 693 757 682\n3 713 656 771\n3 717 716 772\n3 682 765 631\n3 659 500 502\n3 773 715 711\n3 774 773 711\n3 775 773 776\n3 749 717 772\n3 777 778 700\n3 741 779 735\n3 587 686 696\n3 780 286 617\n3 694 525 578\n3 781 782 783\n3 726 661 649\n3 784 701 660\n3 767 772 716\n3 785 786 787\n3 757 722 765\n3 744 765 722\n3 662 695 669\n3 788 767 727\n3 661 726 742\n3 719 606 789\n3 790 742 726\n3 769 768 791\n3 771 656 647\n3 792 764 793\n3 744 631 765\n3 794 795 796\n3 720 657 747\n3 657 698 747\n3 660 797 784\n3 561 492 798\n3 721 799 726\n3 722 717 744\n3 789 766 719\n3 718 800 753\n3 793 764 601\n3 718 720 800\n3 801 802 745\n3 768 630 672\n3 803 464 576\n3 786 785 804\n3 714 496 694\n3 805 806 807\n3 713 808 472\n3 472 808 809\n3 810 811 812\n3 813 814 815\n3 816 817 818\n3 819 820 821\n3 761 763 822\n3 643 823 686\n3 650 295 677\n3 601 628 630\n3 820 824 821\n3 643 745 823\n3 317 825 435\n3 826 827 828\n3 701 784 829\n3 790 726 799\n3 830 753 800\n3 830 754 753\n3 788 742 790\n3 831 790 799\n3 763 772 832\n3 763 749 772\n3 746 801 745\n3 766 801 746\n3 686 823 833\n3 834 820 835\n3 601 630 793\n3 836 772 767\n3 837 822 838\n3 839 802 840\n3 790 831 788\n3 800 720 841\n3 727 742 788\n3 523 464 842\n3 678 768 672\n3 483 286 780\n3 678 655 770\n3 819 821 843\n3 843 844 819\n3 671 754 845\n3 755 561 846\n3 766 789 847\n3 848 819 849\n3 819 844 849\n3 847 789 850\n3 802 823 745\n3 851 852 853\n3 578 484 738\n3 806 805 854\n3 805 855 854\n3 827 826 856\n3 857 758 760\n3 686 833 696\n3 696 833 721\n3 858 589 859\n3 604 602 860\n3 721 833 799\n3 769 793 630\n3 791 793 769\n3 861 862 863\n3 762 592 864\n3 838 865 837\n3 662 866 695\n3 747 867 720\n3 662 701 868\n3 836 767 788\n3 792 793 869\n3 829 868 701\n3 870 834 824\n3 871 872 873\n3 874 785 787\n3 482 523 842\n3 801 840 802\n3 763 832 875\n3 876 877 878\n3 839 833 823\n3 678 770 768\n3 820 819 879\n3 770 671 845\n3 880 834 881\n3 835 881 834\n3 882 883 841\n3 882 884 885\n3 838 763 875\n3 822 763 838\n3 879 886 881\n3 887 715 773\n3 674 676 888\n3 695 864 592\n3 715 867 747\n3 662 868 824\n3 848 849 889\n3 800 841 830\n3 482 780 617\n3 780 890 483\n3 832 772 836\n3 830 841 883\n3 882 841 891\n3 866 834 892\n3 880 881 893\n3 880 892 834\n3 866 824 834\n3 824 868 821\n3 868 843 821\n3 885 880 894\n3 885 892 880\n3 870 820 834\n3 768 770 791\n3 770 895 791\n3 835 879 881\n3 820 879 835\n3 896 897 898\n3 839 823 802\n3 738 483 890\n3 899 900 901\n3 548 740 902\n3 903 904 905\n3 843 906 844\n3 907 788 831\n3 908 909 910\n3 766 847 911\n3 912 909 908\n3 788 907 913\n3 913 836 788\n3 832 836 914\n3 915 916 917\n3 918 919 920\n3 883 882 885\n3 921 859 589\n3 866 864 695\n3 892 885 884\n3 868 829 843\n3 884 864 892\n3 922 777 700\n3 542 700 451\n3 866 662 824\n3 770 845 923\n3 924 845 754\n3 780 482 842\n3 849 909 912\n3 759 756 760\n3 889 849 903\n3 849 912 903\n3 831 799 925\n3 894 880 893\n3 754 830 924\n3 926 849 844\n3 927 928 929\n3 904 930 905\n3 801 766 911\n3 819 886 879\n3 884 882 891\n3 791 895 931\n3 932 933 934\n3 861 863 935\n3 829 784 936\n3 798 492 650\n3 889 937 848\n3 895 770 923\n3 938 939 940\n3 941 942 943\n3 901 900 944\n3 945 713 771\n3 598 946 947\n3 831 925 907\n3 895 923 931\n3 903 905 889\n3 924 923 845\n3 806 854 874\n3 883 885 948\n3 869 793 949\n3 950 791 931\n3 904 912 930\n3 914 875 832\n3 926 910 849\n3 886 819 848\n3 894 948 885\n3 951 952 953\n3 791 950 793\n3 954 955 956\n3 957 958 959\n3 960 830 883\n3 830 960 924\n3 905 930 961\n3 886 893 881\n3 841 720 867\n3 962 963 964\n3 867 715 887\n3 833 925 799\n3 846 561 798\n3 905 937 889\n3 965 966 967\n3 965 967 968\n3 864 866 892\n3 865 838 875\n3 659 598 969\n3 970 837 865\n3 971 972 973\n3 974 848 937\n3 801 911 975\n3 839 840 976\n3 829 936 843\n3 977 843 936\n3 978 979 980\n3 974 886 848\n3 981 982 937\n3 937 905 981\n3 876 983 847\n3 984 985 986\n3 987 665 988\n3 989 898 897\n3 990 991 992\n3 694 578 993\n3 994 995 996\n3 994 996 997\n3 983 911 847\n3 804 785 998\n3 999 1000 1001\n3 801 975 840\n3 1002 997 996\n3 836 913 914\n3 1003 914 913\n3 1004 977 936\n3 1005 1006 1007\n3 1008 981 961\n3 874 854 785\n3 700 542 1009\n3 740 1010 902\n3 980 1011 1012\n3 1013 1014 1015\n3 1016 1017 934\n3 915 1018 916\n3 891 841 867\n3 947 1019 598\n3 598 1019 969\n3 948 960 883\n3 1020 966 965\n3 960 948 924\n3 867 887 891\n3 1021 924 948\n3 937 982 974\n3 967 959 958\n3 930 1022 994\n3 894 1023 948\n3 961 994 1024\n3 981 905 961\n3 1025 893 886\n3 738 993 578\n3 925 1026 907\n3 1027 784 797\n3 936 784 1027\n3 957 959 981\n3 1028 930 912\n3 1029 674 1030\n3 1031 912 908\n3 875 1032 865\n3 912 1031 1028\n3 604 860 1033\n3 994 1034 995\n3 840 975 1035\n3 843 977 906\n3 1028 1036 1037\n3 891 864 884\n3 961 1024 1008\n3 1038 974 982\n3 1039 783 782\n3 797 660 1040\n3 1041 981 959\n3 923 924 931\n3 949 793 950\n3 994 961 930\n3 996 1042 1043\n3 1044 949 1045\n3 856 826 1046\n3 1047 1048 1049\n3 758 857 951\n3 1024 994 1002\n3 1050 1051 1052\n3 1002 994 997\n3 1046 1011 856\n3 1053 1054 1055\n3 1056 733 1057\n3 741 1058 779\n3 1059 1060 1061\n3 1062 925 833\n3 833 839 1063\n3 1035 976 840\n3 1026 913 907\n3 1035 1064 1065\n3 977 1004 1066\n3 878 877 1067\n3 957 1008 1024\n3 1030 674 888\n3 1030 1068 1029\n3 875 914 1032\n3 1002 996 1043\n3 1069 1002 1043\n3 1041 982 981\n3 1026 925 1070\n3 1023 894 893\n3 1071 954 956\n3 1072 991 1073\n3 934 1074 865\n3 1075 1069 1076\n3 926 844 906\n3 981 1008 957\n3 908 910 926\n3 1077 1078 1079\n3 969 1080 659\n3 1037 994 1022\n3 1081 797 1040\n3 797 1081 1027\n3 1061 1060 886\n3 891 887 864\n3 1037 1082 1034\n3 930 1028 1022\n3 859 921 1083\n3 1022 1028 1037\n3 1084 1052 1051\n3 976 1063 839\n3 958 957 1085\n3 925 1062 1086\n3 914 1003 1032\n3 604 1033 1087\n3 977 1066 906\n3 1085 957 1075\n3 1088 906 1066\n3 995 1089 996\n3 957 1024 1069\n3 1024 1002 1069\n3 1061 974 1038\n3 1021 948 1090\n3 925 1086 1070\n3 1091 1092 1093\n3 926 1094 908\n3 1089 1095 1096\n3 1095 1089 1097\n3 1038 982 1041\n3 1023 893 1098\n3 957 1069 1075\n3 1025 1098 893\n3 1069 1043 1042\n3 1099 1100 1101\n3 958 1085 967\n3 970 1074 934\n3 994 1037 1034\n3 1042 996 1096\n3 931 924 1045\n3 1089 995 1034\n3 1102 902 1010\n3 996 1089 1096\n3 1003 1103 1032\n3 1061 886 974\n3 924 1104 1045\n3 1105 1106 1107\n3 913 1026 1108\n3 780 842 1109\n3 913 1108 1003\n3 1038 1059 1061\n3 1075 1076 1110\n3 1082 1037 1036\n3 1092 1111 1093\n3 1082 1112 1034\n3 756 755 760\n3 1113 1114 1115\n3 1016 934 1116\n3 906 1117 926\n3 1118 938 940\n3 1119 694 1120\n3 911 1121 975\n3 1122 975 1121\n3 950 1045 949\n3 1123 983 878\n3 1031 1036 1028\n3 1076 1069 1124\n3 1069 1042 1124\n3 1125 1063 976\n3 1031 1126 1036\n3 833 1063 1062\n3 1059 1127 1060\n3 1103 1003 1108\n3 975 1122 1035\n3 1128 1082 1036\n3 1117 906 1088\n3 976 1035 1125\n3 1129 1063 1125\n3 1065 1064 1130\n3 1021 1104 924\n3 1131 1065 1132\n3 846 1133 755\n3 948 1023 1090\n3 1093 1111 1134\n3 1089 1034 1135\n3 969 1136 1080\n3 888 1137 1138\n3 1034 1112 1135\n3 1121 911 983\n3 1139 1140 828\n3 1031 908 1094\n3 1141 1142 1143\n3 1144 1145 1146\n3 1147 1093 1134\n3 1032 1148 865\n3 1065 1149 1132\n3 1038 1150 1059\n3 878 1067 1123\n3 1041 1151 1038\n3 1152 1153 1154\n3 968 967 1085\n3 950 931 1045\n3 1086 1155 1070\n3 1076 1124 1156\n3 1156 1157 1158\n3 1117 1093 1147\n3 1136 969 1019\n3 1070 1159 1026\n3 1159 1108 1026\n3 1108 1159 1160\n3 1090 1023 1161\n3 1082 1128 1112\n3 1011 1046 1012\n3 860 1162 1163\n3 951 857 1164\n3 1165 1108 1160\n3 755 1133 760\n3 1060 1166 1167\n3 1110 1076 1156\n3 1094 1168 1031\n3 1085 1169 1170\n3 1171 1158 1157\n3 1085 1075 1172\n3 1173 1174 1175\n3 1148 934 865\n3 1019 1116 934\n3 1176 1137 987\n3 983 1123 1121\n3 1090 1177 1021\n3 1031 1168 1126\n3 1021 1178 1104\n3 1103 1108 1165\n3 1038 1179 1150\n3 1180 1181 1182\n3 1183 1184 1185\n3 1160 1159 1186\n3 826 1187 1046\n3 1165 1032 1103\n3 798 650 1188\n3 1036 1189 1128\n3 760 1164 857\n3 1190 1191 1192\n3 1098 1161 1023\n3 1193 1148 1194\n3 926 1147 1094\n3 1195 1098 1025\n3 1070 1196 1159\n3 1195 1025 1167\n3 936 1027 1081\n3 1085 1170 968\n3 1088 1091 1117\n3 1172 1169 1085\n3 1059 1150 1127\n3 1197 1135 1112\n3 1198 1199 1196\n3 860 1163 1033\n3 1080 1200 1040\n3 1032 1165 1148\n3 1045 1104 1201\n3 1202 1179 968\n3 1203 1131 1132\n3 936 1081 1204\n3 1123 1067 1205\n3 1204 1066 1004\n3 1206 1207 1088\n3 738 1208 1209\n3 1148 1193 934\n3 1210 1211 1212\n3 1207 1213 1088\n3 1214 1215 1216\n3 1045 1201 1044\n3 1044 1201 1217\n3 1156 1158 1110\n3 1218 1217 1219\n3 1088 1213 1091\n3 1141 1220 1142\n3 1147 926 1117\n3 1221 1222 1189\n3 1223 934 1193\n3 1019 934 1223\n3 1206 1088 1066\n3 1177 1178 1021\n3 1129 1224 1063\n3 978 980 1012\n3 1126 1221 1189\n3 1126 1189 1036\n3 1200 1225 1226\n3 1227 1228 922\n3 1229 1230 1231\n3 542 1232 1009\n3 1233 1234 1235\n3 1236 1237 1238\n3 1169 1172 1158\n3 1104 1178 1201\n3 1179 1202 1150\n3 1170 1239 1240\n3 846 798 1188\n3 1134 1094 1147\n3 890 1208 738\n3 1168 1094 1134\n3 1241 1242 1243\n3 1222 1244 1245\n3 1160 1186 1165\n3 1189 1222 1245\n3 1168 1246 1126\n3 1134 1111 1247\n3 1248 1249 1250\n3 1080 1251 1200\n3 1161 1098 1252\n3 1040 1200 1081\n3 1189 1253 1128\n3 1254 1255 1256\n3 1170 1240 1257\n3 1258 1259 1260\n3 1170 1257 968\n3 1201 1178 1261\n3 1262 1098 1195\n3 1110 1158 1172\n3 1263 1102 1010\n3 1149 1264 1132\n3 1265 1122 1121\n3 1224 1266 1198\n3 1063 1224 1062\n3 1081 1226 1204\n3 1206 1066 1204\n3 1267 1268 1269\n3 1270 1271 1272\n3 1121 1123 1265\n3 1165 1273 1274\n3 1247 1111 1275\n3 1274 1194 1165\n3 1194 1148 1165\n3 1276 922 700\n3 1202 968 1257\n3 1277 1226 1225\n3 1169 1158 1239\n3 1098 1262 1252\n3 1176 987 988\n3 1206 1204 1226\n3 1125 1203 1129\n3 740 978 1278\n3 1279 1243 1280\n3 1281 1282 1068\n3 1068 1030 1281\n3 1202 1283 1150\n3 1128 1253 1197\n3 1284 1285 1286\n3 1193 1286 1223\n3 1130 1265 1287\n3 1288 1119 1120\n3 1289 1087 1033\n3 1239 1257 1240\n3 1133 846 1290\n3 1012 1046 1291\n3 1158 1292 1239\n3 1062 1198 1155\n3 1062 1224 1198\n3 1293 1294 1295\n3 1296 1244 1222\n3 1297 1165 1186\n3 1081 1200 1226\n3 1273 1284 1274\n3 1198 1266 1199\n3 1202 1033 1298\n3 1257 1033 1202\n3 1284 1286 1274\n3 1244 1299 1245\n3 1194 1286 1193\n3 1300 1301 1302\n3 1266 1303 1304\n3 1265 1123 1205\n3 1201 1261 1305\n3 1201 1305 1217\n3 1196 1199 1159\n3 978 1306 1278\n3 1217 1305 1219\n3 1119 1307 988\n3 1186 1159 1308\n3 1309 1197 1253\n3 1310 1168 1134\n3 1012 1306 978\n3 1311 1253 1312\n3 1136 1251 1080\n3 1168 1313 1246\n3 1202 1298 1283\n3 1128 1197 1112\n3 1314 1315 1316\n3 1129 1317 1224\n3 1200 1251 1225\n3 1194 1274 1286\n3 1266 1304 1199\n3 1318 1286 1285\n3 1318 1223 1286\n3 1319 1320 1321\n3 1266 1317 1303\n3 1322 1323 1324\n3 1322 1325 1323\n3 1177 1261 1178\n3 1191 1326 1192\n3 1239 1292 1327\n3 1223 1328 1019\n3 1195 1167 1329\n3 1136 1019 1330\n3 1166 1329 1167\n3 1329 1166 1331\n3 1332 1333 1334\n3 1308 1297 1186\n3 1163 1298 1033\n3 1203 1317 1129\n3 1335 1336 1337\n3 1304 1159 1199\n3 1265 1205 1287\n3 1227 922 1338\n3 1159 1304 1308\n3 1339 1340 1341\n3 1313 1168 1310\n3 1342 1343 1344\n3 1277 1206 1226\n3 1033 1257 1239\n3 1325 1345 1323\n3 1346 1333 1332\n3 1251 1347 1225\n3 1348 1349 1350\n3 1266 1224 1317\n3 922 1276 1338\n3 1261 1351 1305\n3 1009 1276 700\n3 1333 1205 1334\n3 1352 1335 1337\n3 1353 1354 1355\n3 1136 1330 1251\n3 1220 1141 1356\n3 1161 1261 1090\n3 1357 1252 1358\n3 1359 1360 1361\n3 1275 1362 1247\n3 1312 1189 1245\n3 1189 1312 1253\n3 1247 1363 1134\n3 1090 1261 1177\n3 1289 1239 1327\n3 1364 1365 1323\n3 1137 1176 1138\n3 888 1366 1030\n3 1328 1223 1318\n3 1019 1328 1330\n3 1273 1367 1368\n3 1033 1239 1289\n3 1369 1132 1264\n3 1347 1277 1225\n3 1370 1371 1372\n3 1207 1206 1277\n3 1373 1207 1277\n3 1304 1303 1374\n3 1261 1337 1351\n3 1252 1262 1358\n3 1207 1375 1376\n3 1377 1378 1379\n3 1361 1360 1380\n3 1268 1381 1269\n3 1382 1297 1308\n3 1281 1030 1366\n3 1358 1262 1383\n3 1287 1333 1149\n3 1297 1382 1367\n3 1264 1149 1384\n3 1313 1385 1246\n3 1386 1387 1388\n3 1318 1389 1328\n3 1273 1297 1367\n3 1273 1368 1284\n3 1390 1391 1392\n3 1393 1394 1395\n3 1317 1132 1369\n3 1369 1303 1317\n3 1369 1396 1303\n3 1397 1398 1369\n3 1278 1010 740\n3 1232 901 1399\n3 1329 1331 1400\n3 1358 1325 1357\n3 1251 1330 1347\n3 1401 1010 1278\n3 1284 1368 1285\n3 1304 1402 1308\n3 1403 1404 1405\n3 1227 1338 1406\n3 1396 1369 1398\n3 1261 1161 1357\n3 1308 1402 1382\n3 901 1263 1407\n3 1010 1407 1263\n3 1195 1329 1262\n3 1408 1374 1303\n3 1383 1262 1329\n3 1408 1409 1374\n3 1374 1409 1410\n3 1337 1357 1325\n3 1352 1337 1325\n3 1134 1363 1310\n3 1325 1358 1345\n3 1382 1411 1367\n3 1412 1313 1310\n3 1367 1413 1368\n3 1357 1337 1261\n3 888 1138 1366\n3 1323 1345 1383\n3 1245 1299 1414\n3 1328 1415 1330\n3 1245 1414 1312\n3 1207 1373 1375\n3 1400 1383 1329\n3 1303 1396 1408\n3 1397 1369 1416\n3 1287 1205 1333\n3 1417 1330 1418\n3 1149 1333 1384\n3 1419 1420 1421\n3 1358 1383 1345\n3 1422 1398 1397\n3 1373 1423 1380\n3 1285 1424 1318\n3 1425 1380 1423\n3 1232 1399 1426\n3 1417 1347 1330\n3 1331 1283 1400\n3 1427 1428 1429\n3 1400 1283 1163\n3 1415 1430 1330\n3 1423 1373 1347\n3 1277 1347 1373\n3 1333 1346 1384\n3 1431 1432 1433\n3 1434 1435 1436\n3 1417 1437 1438\n3 1439 1323 1383\n3 1440 1441 1442\n3 1443 1276 1009\n3 1444 1138 1176\n3 1445 1446 1447\n3 1448 1449 1450\n3 1009 1232 1426\n3 1318 1424 1389\n3 1405 1451 1403\n3 1363 1452 1310\n3 1453 1412 1454\n3 1328 1389 1415\n3 1296 1453 1299\n3 1382 1455 1411\n3 1368 1413 1424\n3 1456 1457 1458\n3 1383 1400 1439\n3 1418 1330 1430\n3 1382 1402 1455\n3 1285 1368 1424\n3 1362 1275 1459\n3 1460 1461 1462\n3 1399 1463 1426\n3 1412 1453 1313\n3 1313 1453 1464\n3 1347 1417 1465\n3 1466 1361 1459\n3 1369 1264 1384\n3 1411 1455 1367\n3 1407 1010 1401\n3 1467 1468 1434\n3 1414 1299 1469\n3 1389 1424 1415\n3 1439 1400 1470\n3 1346 1471 1384\n3 1472 1473 1474\n3 1361 1425 1475\n3 1476 1477 1478\n3 1479 1480 1481\n3 1453 1454 1469\n3 1362 1459 1363\n3 1469 1299 1453\n3 1482 1397 1416\n3 1346 1483 1484\n3 1396 1398 1408\n3 1413 1367 1485\n3 1424 1486 1415\n3 1487 1488 1489\n3 1409 1490 1410\n3 1491 1492 1493\n3 1417 1438 1465\n3 1494 1495 1437\n3 1397 1482 1422\n3 1438 1437 1495\n3 1346 1484 1496\n3 1347 1465 1423\n3 1460 1497 1487\n3 1498 1499 1500\n3 1455 1485 1367\n3 1501 1502 1503\n3 1424 1413 1486\n3 1416 1471 1482\n3 1430 1415 1504\n3 1488 1505 1506\n3 1507 1508 1509\n3 1510 1511 1512\n3 1513 1490 1408\n3 1413 1485 1486\n3 1228 1468 1467\n3 1009 1426 1514\n3 1515 1516 1517\n3 1518 1519 1520\n3 1521 1522 1523\n3 1524 1525 1526\n3 1422 1482 1527\n3 1528 1485 1529\n3 1530 1505 1488\n3 1485 1528 1531\n3 1532 1533 1534\n3 1487 1497 1488\n3 1436 1535 1477\n3 1465 1438 1536\n3 1490 1485 1455\n3 1463 1407 1401\n3 1497 1462 1482\n3 1489 1488 1506\n3 1537 1538 1539\n3 1540 1541 1542\n3 1543 1539 1538\n3 1536 1438 1495\n3 1514 1426 1544\n3 1462 1497 1460\n3 1430 1504 1486\n3 1488 1497 1545\n3 1531 1486 1485\n3 1363 1454 1452\n3 1535 1436 1435\n3 1228 1227 1546\n3 1435 1434 1468\n3 1512 1511 1547\n3 1548 1549 1550\n3 1551 1552 1553\n3 1471 1346 1496\n3 1478 1477 1535\n3 1430 1554 1418\n3 1555 1496 1556\n3 1513 1422 1490\n3 1490 1529 1485\n3 1557 1558 1559\n3 1560 1500 1499\n3 1536 1495 1465\n3 1490 1422 1561\n3 1505 1562 1563\n3 1482 1471 1496\n3 1454 1363 1564\n3 1521 1523 1565\n3 1566 1506 1505\n3 1567 1568 1569\n3 1570 1571 1572\n3 1494 1418 1554\n3 1528 1529 1573\n3 1423 1475 1425\n3 1574 1575 1576\n3 1577 1573 1578\n3 1579 1580 1486\n3 1581 1469 1454\n3 1363 1459 1564\n3 1430 1486 1580\n3 1511 1582 1547\n3 1529 1583 1506\n3 1468 1228 1546\n3 1584 1482 1496\n3 1554 1430 1580\n3 1585 1586 1587\n3 1276 1588 1589\n3 1578 1573 1529\n3 1590 1591 1494\n3 1592 1593 1594\n3 1595 1566 1563\n3 1528 1573 1531\n3 1577 1596 1573\n3 1490 1561 1597\n3 1598 1599 1600\n3 1597 1529 1490\n3 1531 1573 1579\n3 1579 1486 1531\n3 1601 1602 1603\n3 1555 1584 1496\n3 1604 1605 1606\n3 1475 1564 1459\n3 1495 1494 1591\n3 1488 1545 1530\n3 1482 1584 1497\n3 1554 1590 1494\n3 1529 1506 1578\n3 1590 1554 1580\n3 1607 1608 1609\n3 1591 1610 1611\n3 1596 1612 1613\n3 1614 1615 1616\n3 1573 1596 1579\n3 1590 1580 1579\n3 1545 1497 1584\n3 1610 1590 1579\n3 1546 1227 1406\n3 1463 1617 1544\n3 1454 1564 1581\n3 1463 1544 1426\n3 1562 1618 1563\n3 1619 1475 1465\n3 1620 1585 1587\n3 1564 1475 1619\n3 1495 1591 1611\n3 1610 1613 1621\n3 1423 1465 1475\n3 1530 1622 1505\n3 1596 1613 1610\n3 1535 1623 1478\n3 1495 1611 1624\n3 1625 1613 1595\n3 1625 1626 1613\n3 1627 1628 1629\n3 1596 1610 1579\n3 1618 1505 1622\n3 1630 1564 1619\n3 1578 1566 1577\n3 1631 1632 1633\n3 1621 1611 1610\n3 1555 1634 1635\n3 1636 1611 1621\n3 1636 1624 1611\n3 1595 1563 1625\n3 1563 1618 1625\n3 1495 1624 1637\n3 1545 1555 1635\n3 1584 1555 1545\n3 1495 1637 1465\n3 1638 1639 1640\n3 1641 1642 1643\n3 1644 1645 1646\n3 1435 1647 1535\n3 1545 1635 1530\n3 1624 1645 1644\n3 1641 1643 1544\n3 1465 1637 1619\n3 1626 1625 1621\n3 1530 1635 1622\n3 1621 1625 1636\n3 1624 1636 1645\n3 1636 1648 1645\n3 1618 1622 1649\n3 1650 1651 1652\n3 1625 1648 1636\n3 1622 1635 1649\n3 1618 1649 1625\n3 1649 1635 1653\n3 1649 1653 1654\n3 1645 1648 1655\n3 1537 1539 1656\n3 1654 1648 1649\n3 1648 1657 1655\n3 1625 1649 1648\n3 1658 1624 1644\n3 1659 1660 1661\n3 1624 1658 1637\n3 1630 1619 1662\n3 1662 1619 1658\n3 1658 1619 1637\n3 1663 1664 1665\n3 1666 1663 1665\n3 1667 1668 1669\n3 1670 1671 1672\n3 1673 1674 1675\n3 1676 1677 1678\n3 1679 1680 1681\n3 1682 1676 1683\n3 1684 1685 1686\n3 1687 789 606\n3 1672 1671 1688\n3 1434 1436 1689\n3 1682 1683 1690\n3 1691 1692 1693\n3 1694 1695 1696\n3 1683 1694 1696\n3 209 1697 268\n3 1669 1698 1667\n3 1695 1691 1696\n3 1699 1700 1701\n3 1702 1703 1704\n3 1705 1688 1671\n3 1677 1676 1682\n3 850 789 1706\n3 1683 1696 1690\n3 1707 1708 1709\n3 1710 1711 1712\n3 1685 1713 1714\n3 1696 1691 1693\n3 288 268 1697\n3 1714 1686 1685\n3 1670 1672 1715\n3 209 208 1716\n3 1693 1692 1684\n3 1717 1705 1718\n3 1688 1705 1717\n3 1702 1704 1715\n3 1703 1702 1719\n3 1709 1720 1707\n3 1721 1722 1723\n3 1718 1724 1725\n3 68 1726 89\n3 1725 1724 1708\n3 1727 1728 1729\n3 1730 1434 1689\n3 1709 1731 1732\n3 1720 1709 1732\n3 1715 1672 1733\n3 1713 1719 1734\n3 1735 1736 1737\n3 1738 1721 1723\n3 1707 1739 1708\n3 1740 1741 1742\n3 1743 1744 1745\n3 1684 1746 1693\n3 1713 1734 1714\n3 1228 1467 1747\n3 1672 1688 1748\n3 1702 1749 1750\n3 1751 1702 1715\n3 1752 1753 1754\n3 1677 1682 1755\n3 1750 1719 1702\n3 1467 1434 1730\n3 1756 1757 1758\n3 1758 1757 1677\n3 1735 1737 1759\n3 1698 1669 1760\n3 1745 1761 1743\n3 1762 1763 1764\n3 1765 1766 1767\n3 1677 1755 1758\n3 1690 1696 1768\n3 1769 1686 1714\n3 1760 1669 1770\n3 1686 1746 1684\n3 1738 1723 1771\n3 1733 1672 1748\n3 1707 1772 1739\n3 1725 1739 1772\n3 1773 1774 1775\n3 1776 1777 1778\n3 1779 1780 1781\n3 1743 1761 1782\n3 1777 1783 1778\n3 1767 1766 1784\n3 1718 1725 1785\n3 1688 1717 1786\n3 1787 1714 1734\n3 1768 1696 1693\n3 1717 1718 1785\n3 1750 1788 1719\n3 1789 1790 1791\n3 1792 1793 1778\n3 1794 1779 1795\n3 1746 1686 1769\n3 1734 1719 1788\n3 1751 1749 1702\n3 1769 1714 1787\n3 1793 1776 1778\n3 1796 1797 1798\n3 1682 1690 1755\n3 1799 1800 1801\n3 1802 1803 1698\n3 1792 1794 1804\n3 1730 1805 1467\n3 1755 1690 1806\n3 1801 1807 1799\n3 1804 1794 1808\n3 1745 1809 1810\n3 1795 1779 1811\n3 1811 1779 1781\n3 1785 1725 1772\n3 1792 1804 1793\n3 1748 1688 1812\n3 1751 1715 1733\n3 1688 1786 1812\n3 1799 1813 1780\n3 1813 1799 1807\n3 1814 1815 1816\n3 1817 1818 1819\n3 98 1800 1799\n3 98 97 1820\n3 198 197 1821\n3 1758 1755 1822\n3 1772 1720 1823\n3 1467 1805 1747\n3 1794 1824 1808\n3 1802 1698 1825\n3 1812 1826 1748\n3 1733 1748 1826\n3 1827 1820 97\n3 1828 97 1829\n3 1823 1720 1830\n3 1831 1832 1809\n3 1782 1761 1810\n3 1785 1786 1717\n3 1833 1834 1835\n3 1809 1832 1836\n3 1785 1772 1837\n3 1746 1769 1838\n3 1723 1783 1839\n3 1228 1747 1840\n3 1751 1750 1749\n3 97 1828 1841\n3 1828 1829 1842\n3 1830 1843 1823\n3 1824 1794 1795\n3 1813 1781 1780\n3 1836 1771 1723\n3 1690 1768 1806\n3 1827 97 1841\n3 189 1844 1842\n3 1812 1785 1837\n3 1751 1733 1826\n3 1734 1788 1845\n3 1785 1812 1786\n3 1846 1782 1810\n3 1783 1777 1839\n3 1787 1734 1845\n3 1847 1848 1849\n3 339 1850 1851\n3 338 1850 339\n3 1852 1849 1848\n3 922 1228 777\n3 1788 1750 1853\n3 1854 1855 1856\n3 1804 1808 1857\n3 1777 1776 1858\n3 1837 1772 1823\n3 1828 1842 1844\n3 1859 189 188\n3 1840 777 1228\n3 1860 1861 1862\n3 1863 1864 1855\n3 1781 1813 1865\n3 434 433 1866\n3 1865 1813 1807\n3 1693 1746 1867\n3 1868 1803 1869\n3 1861 1870 1862\n3 1751 1826 1871\n3 1858 1839 1777\n3 1795 1811 1781\n3 1838 1867 1746\n3 1768 1693 1867\n3 1861 1860 1872\n3 1801 1800 98\n3 433 359 1873\n3 1874 1875 1876\n3 1877 1878 1879\n3 285 1880 359\n3 1844 189 1859\n3 1859 188 1881\n3 1882 1883 1850\n3 1793 1804 1857\n3 1750 1751 1871\n3 1768 1867 1806\n3 1884 1885 1872\n3 1872 1886 1861\n3 1881 339 1851\n3 1863 1887 1864\n3 1888 740 739\n3 1850 1883 1889\n3 1807 1801 1890\n3 1889 1851 1850\n3 1891 1892 1755\n3 1822 1755 1892\n3 1787 1845 1893\n3 1793 1858 1776\n3 1723 1839 1836\n3 1861 1886 1870\n3 978 740 1888\n3 1894 1837 1823\n3 1895 1885 1884\n3 1869 1803 1802\n3 98 1896 1801\n3 1846 1810 1897\n3 1898 1897 1810\n3 1820 1896 98\n3 1891 1755 1806\n3 1828 1844 1899\n3 1836 1898 1809\n3 1900 1885 1895\n3 1901 1902 1903\n3 1872 1904 1884\n3 1827 1841 1905\n3 1844 1859 1899\n3 1810 1809 1898\n3 1841 1828 1899\n3 1889 1883 1906\n3 1907 1870 1908\n3 1909 1910 1911\n3 1912 777 1840\n3 1862 1870 1907\n3 1795 1808 1824\n3 1825 1913 1914\n3 1897 1915 1846\n3 1916 1917 1918\n3 1919 1917 1916\n3 1781 1920 1795\n3 1904 1921 1884\n3 1922 1923 1924\n3 1787 1893 1769\n3 1750 1871 1853\n3 1925 1788 1853\n3 1926 1927 1928\n3 1838 1769 1893\n3 1893 1929 1838\n3 1896 1820 1827\n3 1930 1931 1932\n3 1841 1899 1905\n3 1822 1933 1758\n3 1934 1758 1933\n3 1825 1914 1935\n3 1883 1936 1906\n3 1807 1890 1865\n3 1937 1938 1939\n3 1924 1923 1940\n3 1885 1900 1941\n3 980 979 1942\n3 1943 1808 1920\n3 1808 1795 1920\n3 1944 1823 1945\n3 1839 1946 1836\n3 1858 1946 1839\n3 1886 1872 1941\n3 1812 1947 1826\n3 1937 1948 1938\n3 1793 1857 1949\n3 1885 1941 1872\n3 1870 1950 1908\n3 1872 1951 1904\n3 1952 1853 1871\n3 1904 1953 1921\n3 1806 1867 1891\n3 1954 1955 1956\n3 1836 1946 1957\n3 1958 1959 1837\n3 1960 1961 1962\n3 1963 1964 1965\n3 1966 1950 1870\n3 1890 1801 1967\n3 1968 1951 1872\n3 1896 1827 1905\n3 1908 1969 1907\n3 1865 1920 1781\n3 1970 1971 1972\n3 1973 1974 1975\n3 1858 1793 1976\n3 1867 1838 1929\n3 1977 777 1978\n3 1943 1857 1808\n3 1979 1980 1981\n3 1982 1983 1984\n3 1921 1953 1985\n3 1986 1987 1988\n3 1938 1989 1939\n3 1990 1939 1989\n3 1836 1991 1898\n3 1992 1993 1980\n3 1994 1995 1996\n3 1997 1998 1999\n3 1802 1825 1935\n3 1890 1967 1865\n3 1946 1858 1976\n3 1793 1949 1976\n3 979 978 1888\n3 2000 1870 1886\n3 2001 2002 2003\n3 1889 2004 1851\n3 2005 2000 1886\n3 2006 2007 2008\n3 1886 1941 2005\n3 1949 1857 1943\n3 1970 2009 1971\n3 1933 1822 1892\n3 2010 2011 2012\n3 1968 2013 1951\n3 2014 1826 1947\n3 2005 1941 1900\n3 2015 2005 1900\n3 285 104 2016\n3 1955 2017 1956\n3 2018 2019 2020\n3 1896 1967 1801\n3 2021 1865 1967\n3 1867 2022 1891\n3 1897 1898 2023\n3 1859 1881 2024\n3 1881 1851 2025\n3 1906 1936 2026\n3 2027 2028 2029\n3 2030 2031 2032\n3 1948 2033 1938\n3 2034 2007 2006\n3 1980 1993 1981\n3 2006 2035 2034\n3 2021 1920 1865\n3 1967 1896 2036\n3 2037 1905 1899\n3 2038 1969 2039\n3 2040 2039 1950\n3 1950 2039 1969\n3 2005 2015 1971\n3 1972 1971 2041\n3 2042 2043 2044\n3 1889 1906 2004\n3 2011 2006 2012\n3 1969 1908 1950\n3 1943 1920 2021\n3 2011 2045 2006\n3 2046 2047 2048\n3 2012 2006 2008\n3 2049 1907 1969\n3 2050 1981 2051\n3 1979 1981 2050\n3 2052 2053 2054\n3 1862 2055 1951\n3 2056 1986 2005\n3 1938 2033 1989\n3 778 777 1977\n3 1977 451 699\n3 2035 2057 2058\n3 2059 2005 1971\n3 2046 2060 2047\n3 1989 2061 1990\n3 2035 2006 2057\n3 2028 2062 2063\n3 2047 2035 2048\n3 2035 2047 2064\n3 1899 2024 2037\n3 1971 2015 2041\n3 2034 2035 2064\n3 2065 2048 2066\n3 2045 2057 2006\n3 2048 2065 2046\n3 2067 2033 1948\n3 2025 1851 2004\n3 1907 2049 2068\n3 2008 2069 2012\n3 2044 2043 1988\n3 2046 2070 2071\n3 2048 2058 2066\n3 2072 1904 2073\n3 1904 2072 1953\n3 2074 1011 980\n3 2075 1956 2017\n3 2016 104 2076\n3 2048 2035 2058\n3 2077 2078 2079\n3 2080 2081 2033\n3 2060 2046 2071\n3 2005 1986 2000\n3 2082 2069 2008\n3 2083 2015 1900\n3 2084 2085 2086\n3 1906 2026 2029\n3 1969 2038 2049\n3 2071 2070 2087\n3 2088 2077 2079\n3 2089 2090 2091\n3 2087 2070 2092\n3 2093 2094 2095\n3 2096 2046 2065\n3 2097 1887 1863\n3 2025 2024 1881\n3 1935 1914 2098\n3 1916 1918 2099\n3 2000 1966 1870\n3 1888 739 2100\n3 1951 2055 2073\n3 2039 2040 2101\n3 1966 2102 2040\n3 1950 1966 2040\n3 2069 2043 2012\n3 2103 2084 2104\n3 2096 2089 2046\n3 1965 2105 1963\n3 2106 2107 2108\n3 2078 2109 2079\n3 2069 2082 2039\n3 2110 2093 2095\n3 2073 1904 1951\n3 2111 2112 2019\n3 2113 2114 2115\n3 1966 1988 2043\n3 1966 2043 2102\n3 2067 2116 2117\n3 2087 2077 2118\n3 2012 2043 2042\n3 2119 2120 2121\n3 1988 1966 1986\n3 1986 1966 2000\n3 856 1011 2122\n3 2069 2039 2101\n3 2123 2124 2125\n3 2126 2109 2090\n3 2127 1864 2128\n3 2046 2091 2070\n3 1935 2129 1802\n3 2130 2081 2131\n3 2132 2133 2041\n3 2070 2091 2092\n3 451 1977 452\n3 2082 2038 2039\n3 2091 2078 2092\n3 2033 2081 1989\n3 2102 2101 2040\n3 2086 2134 2135\n3 979 1888 1942\n3 2122 1011 2074\n3 2117 2080 2033\n3 2067 2117 2033\n3 2089 2091 2046\n3 2136 2135 2134\n3 2109 2126 2137\n3 2138 2139 2140\n3 2112 2020 2019\n3 2080 2131 2081\n3 2082 2008 2141\n3 2081 2142 1989\n3 1864 1887 2097\n3 2128 1864 2097\n3 2143 2144 2145\n3 2081 2130 2146\n3 1916 2099 2147\n3 2109 2091 2090\n3 2041 2015 2132\n3 2078 2091 2109\n3 1891 2022 2148\n3 2074 980 1942\n3 759 758 2149\n3 2150 940 939\n3 2095 2094 2151\n3 2152 2153 2154\n3 2132 2015 2151\n3 1935 2098 2155\n3 1802 2129 1869\n3 2055 2068 2073\n3 1891 2148 1892\n3 2072 2073 2068\n3 2156 2131 2080\n3 2157 2104 2158\n3 2028 1906 2029\n3 2159 2160 2161\n3 2162 2072 2163\n3 2164 2109 2137\n3 2165 2166 2167\n3 2079 2109 2164\n3 2168 2169 2170\n3 2171 2172 2173\n3 2072 2174 2163\n3 2175 2176 2177\n3 2178 2177 2176\n3 2163 2174 2179\n3 2174 2180 2179\n3 2179 2180 2181\n3 1992 2182 1993\n3 2183 104 63\n3 951 2149 758\n3 951 953 2184\n3 759 2185 756\n3 2186 2187 2188\n3 2097 1863 2189\n3 2190 2191 2192\n3 2191 2190 2193\n3 2194 1916 2195\n3 2025 2196 2024\n3 2197 2075 2017\n3 2198 2199 2200\n3 2201 2202 2203\n3 2068 2174 2072\n3 2204 2205 2206\n3 2207 2208 2209\n3 2084 2086 2210\n3 2207 2211 2212\n3 2094 2213 2132\n3 1956 2214 2215\n3 2216 2217 2218\n3 2219 2220 2221\n3 2222 2223 2224\n3 2225 2226 452\n3 2068 2227 2174\n3 2082 2228 2038\n3 2117 2229 2080\n3 2230 2160 2231\n3 2209 2211 2207\n3 1963 2206 2205\n3 2232 2233 2234\n3 2074 2235 2122\n3 2236 2184 953\n3 2149 951 2237\n3 827 856 2238\n3 1892 2148 2239\n3 2129 1935 2240\n3 2136 2140 2241\n3 2221 2220 2242\n3 2227 2068 2243\n3 2244 2245 2193\n3 2084 2246 2104\n3 2247 2248 2249\n3 2061 1989 2142\n3 2100 1942 1888\n3 2135 2210 2086\n3 2250 2189 1863\n3 2251 2020 2252\n3 2190 2244 2193\n3 2080 2253 2156\n3 1916 2254 2195\n3 2174 2227 2255\n3 2256 2257 2258\n3 2259 2181 2180\n3 2140 2139 2260\n3 2132 2151 2094\n3 874 787 2261\n3 806 874 2262\n3 2262 807 806\n3 2263 2264 2265\n3 294 638 2266\n3 2267 2268 2269\n3 2270 804 2271\n3 786 804 2270\n3 2272 2273 2274\n3 2249 2248 2177\n3 2222 2275 2223\n3 2251 2252 2276\n3 2229 2253 2080\n3 2277 2104 2278\n3 2084 2210 2246\n3 362 452 2226\n3 2228 2279 2280\n3 2172 2281 2173\n3 2155 2240 1935\n3 2282 2283 2284\n3 2285 856 2286\n3 2287 2061 2142\n3 2135 2136 2241\n3 2288 2061 2287\n3 2289 2290 2291\n3 2292 2293 2294\n3 2213 2094 2295\n3 2296 2213 2295\n3 2297 2298 2299\n3 2192 2300 2190\n3 2301 2302 2303\n3 2304 2305 2306\n3 2307 2183 63\n3 2308 2309 2220\n3 2310 2311 2312\n3 2313 2314 2315\n3 2299 2316 2297\n3 2317 2318 2319\n3 2117 2320 2229\n3 2117 2116 2320\n3 2321 2320 2116\n3 2261 787 786\n3 2322 2323 2324\n3 2262 874 2325\n3 2326 2327 2328\n3 2329 1993 2330\n3 2331 2332 2333\n3 2334 2335 2336\n3 2337 2338 2339\n3 1942 2100 2340\n3 2175 2177 2341\n3 2342 2343 2344\n3 2192 2191 2345\n3 2180 2174 2255\n3 856 2122 2346\n3 2248 2247 2347\n3 134 203 2348\n3 2349 2350 2351\n3 2352 2353 2354\n3 2236 953 2355\n3 2263 2265 2356\n3 756 2357 638\n3 2358 2260 2139\n3 2359 2360 2361\n3 2362 2363 2364\n3 2304 2365 2305\n3 2347 2247 2366\n3 2367 2368 2369\n3 2370 2371 2372\n3 2373 2374 2375\n3 2099 2376 2377\n3 2378 2379 2366\n3 2190 2300 2380\n3 2210 2135 2381\n3 2382 2383 2384\n3 2385 2244 2190\n3 2386 2387 2388\n3 2389 2390 2391\n3 2140 2392 2393\n3 2328 2394 2395\n3 2396 2253 2229\n3 2397 2300 2192\n3 2398 2366 2379\n3 2374 2399 2400\n3 2312 2311 2401\n3 2240 2155 2402\n3 2307 63 62\n3 2104 2277 2158\n3 2180 2403 2259\n3 2404 2405 2406\n3 2259 2403 2407\n3 2405 2404 2293\n3 2140 2260 2392\n3 2408 2409 2410\n3 2155 2411 2412\n3 2413 2414 2415\n3 2122 2235 2346\n3 2416 2264 2263\n3 2417 2418 2150\n3 2150 939 2417\n3 2419 2192 2345\n3 2298 2420 2421\n3 2372 2371 2422\n3 1942 2340 2423\n3 2235 2074 2424\n3 2425 2215 2426\n3 2427 2345 2191\n3 2197 2428 2075\n3 2428 2215 2214\n3 2429 2430 2390\n3 2328 2327 2394\n3 2206 2431 2204\n3 1933 1892 2432\n3 2099 2433 2147\n3 2320 2396 2229\n3 2434 2345 2427\n3 1916 2147 2254\n3 2435 2254 2147\n3 2255 2227 2436\n3 2190 2380 2385\n3 2437 2438 2439\n3 2440 2441 2442\n3 2197 2443 2444\n3 2429 2390 2389\n3 2445 2446 2447\n3 2448 2449 2450\n3 2451 2452 2453\n3 2454 2455 2456\n3 2412 2411 2457\n3 2458 2459 2460\n3 2461 2462 2463\n3 2464 2465 2466\n3 2465 2467 2466\n3 2468 2184 2236\n3 2469 2470 2471\n3 62 135 2472\n3 2473 2474 2475\n3 2476 2477 2478\n3 2305 2365 2358\n3 2244 2479 2480\n3 2481 2180 2255\n3 2482 2478 2477\n3 2483 2206 1963\n3 2439 2476 2478\n3 2241 2140 2393\n3 2484 2485 2486\n3 2358 2365 2487\n3 2293 2480 2479\n3 2488 2440 2442\n3 2299 2489 2490\n3 2158 2277 2491\n3 2477 2492 2482\n3 2493 2203 2494\n3 2407 2403 2495\n3 2496 2232 2497\n3 2476 2498 2477\n3 2499 2478 2500\n3 2248 2347 2398\n3 2437 2439 2478\n3 2482 2500 2478\n3 2446 2501 2502\n3 2503 2504 2505\n3 2346 2286 856\n3 2462 2506 2507\n3 2508 2509 2510\n3 2511 2468 2236\n3 2417 939 2512\n3 2513 2514 2515\n3 2516 2517 2518\n3 2519 2326 2328\n3 2299 2298 2421\n3 1933 2432 2520\n3 2481 2403 2180\n3 2521 2522 2523\n3 2385 2479 2244\n3 2524 2525 2526\n3 2260 2358 2487\n3 2527 2528 2529\n3 2437 2478 2499\n3 2530 2531 2532\n3 2533 2530 2532\n3 786 2534 2535\n3 2536 2537 2538\n3 2519 2539 2326\n3 2540 2541 2542\n3 2543 2254 2435\n3 2524 2389 2525\n3 2177 2248 2544\n3 2545 2442 2441\n3 2546 2547 2548\n3 2477 2549 2492\n3 2260 2487 2392\n3 2550 2464 2507\n3 2197 2444 2428\n3 2424 2074 2551\n3 2552 2553 2554\n3 2555 2556 2557\n3 2558 2559 2560\n3 2561 2485 2484\n3 2300 2562 2380\n3 2563 2564 2565\n3 2507 2506 2550\n3 2375 2374 2566\n3 2567 2568 2569\n3 2570 2571 2572\n3 2573 2262 2325\n3 2499 2574 2437\n3 2575 2576 2577\n3 2215 2428 2578\n3 2227 2579 2436\n3 2580 2581 2582\n3 2347 2366 2398\n3 2381 2135 2241\n3 2394 2583 2584\n3 2583 2394 2585\n3 2393 2392 2586\n3 2518 2517 2587\n3 2099 2377 2433\n3 2419 2397 2192\n3 2320 2588 2396\n3 2407 2495 2523\n3 2444 2443 2589\n3 2254 2543 2310\n3 2215 2578 2426\n3 2590 2591 2592\n3 2579 2593 2436\n3 2277 2278 2594\n3 2595 2596 2597\n3 2598 2155 2412\n3 2599 2600 2601\n3 2602 2603 2604\n3 2605 2606 2607\n3 2587 2517 2608\n3 2609 2610 2611\n3 2612 2613 2614\n3 2466 2615 2600\n3 2616 2617 2618\n3 2573 2619 2262\n3 2620 2621 2622\n3 2623 2624 2625\n3 2582 2626 2580\n3 2206 2627 2431\n3 2628 2542 2629\n3 2456 2630 2631\n3 2632 2583 2585\n3 2633 2634 2635\n3 2635 2634 2636\n3 2587 2577 2518\n3 2608 2629 2587\n3 2326 2539 2637\n3 2577 2638 2575\n3 2326 2637 2327\n3 2639 2397 2419\n3 2600 2640 2601\n3 2641 2642 2175\n3 2643 2644 2645\n3 2646 2647 2648\n3 2649 2646 2648\n3 2436 2481 2255\n3 2650 2398 2651\n3 2652 2653 2479\n3 2489 2654 2651\n3 2655 2656 2581\n3 2657 2575 2638\n3 2588 2385 2380\n3 2658 2241 2393\n3 2610 2609 2659\n3 2659 2609 2660\n3 2661 2653 2652\n3 2662 2663 2300\n3 2664 2665 2666\n3 2341 2177 2544\n3 2667 2668 2669\n3 2534 2271 2670\n3 2327 2637 2671\n3 2672 2447 2446\n3 2672 2446 2673\n3 2674 2675 2676\n3 2300 2663 2562\n3 2489 2677 2654\n3 2314 2678 2315\n3 2679 2608 2517\n3 2433 2435 2147\n3 2680 2681 2682\n3 2562 2588 2380\n3 2403 2481 2683\n3 2684 2685 2686\n3 2684 2686 2687\n3 2466 2688 2464\n3 2428 2444 2578\n3 2638 2577 2587\n3 2689 2690 2691\n3 2394 2327 2585\n3 2675 2674 2692\n3 2311 2310 2543\n3 2502 2693 2694\n3 2695 2496 2497\n3 1892 2239 2432\n3 2696 2663 2662\n3 2662 2697 2696\n3 2698 2699 2700\n3 2463 2462 2547\n3 2626 2700 2699\n3 2700 2626 2582\n3 2660 2701 2659\n3 2702 2659 2701\n3 2703 2704 2705\n3 2689 2706 2690\n3 2707 2708 2709\n3 739 216 217\n3 2341 2641 2175\n3 2683 2710 2403\n3 2466 2600 2711\n3 2712 2502 2673\n3 2713 2685 2684\n3 2517 2714 2679\n3 2715 2696 2697\n3 2716 2717 2718\n3 2628 2629 2608\n3 2718 2683 2719\n3 2720 2721 2722\n3 2377 2723 2433\n3 2724 2725 2726\n3 2547 2727 2656\n3 2593 2719 2683\n3 2436 2593 2683\n3 2434 2419 2345\n3 2436 2683 2481\n3 2728 2729 2730\n3 2731 2732 2733\n3 2688 2507 2464\n3 2403 2734 2495\n3 2735 2736 2737\n3 2738 2523 2495\n3 2739 2740 2741\n3 2742 2743 2583\n3 2385 2652 2479\n3 2599 2744 2711\n3 2711 2744 2745\n3 2713 2746 2685\n3 2747 2748 2749\n3 2581 2656 2727\n3 2750 2751 2286\n3 2517 2516 2714\n3 2734 2403 2710\n3 2718 2717 2710\n3 2523 2738 2521\n3 2710 2683 2718\n3 2576 2575 2752\n3 2753 2754 2755\n3 2756 2639 2419\n3 2462 2757 2547\n3 2758 2327 2671\n3 2759 2760 2761\n3 2762 2694 2693\n3 2763 2707 2709\n3 2246 2210 2381\n3 2246 2381 2764\n3 2544 2248 2398\n3 739 2765 2100\n3 2766 2767 2768\n3 2432 2239 2769\n3 2770 2771 2772\n3 2753 2698 2754\n3 2773 2774 2775\n3 2715 2697 2776\n3 2559 2558 2777\n3 2778 2779 2780\n3 2781 2462 2507\n3 2327 2758 2585\n3 2782 2783 2784\n3 2785 2786 2787\n3 2483 2627 2206\n3 2788 2690 2706\n3 2311 2789 2401\n3 2743 2742 2779\n3 2767 2745 2744\n3 2654 2650 2651\n3 2790 2791 2792\n3 2484 2486 2793\n3 2794 2795 2796\n3 2797 2794 2798\n3 2738 2799 2521\n3 2781 2757 2462\n3 2497 2800 2801\n3 2717 2802 2803\n3 2804 2638 2587\n3 2805 2806 2807\n3 2598 2808 2809\n3 2810 2811 2812\n3 2813 2654 2299\n3 2802 2776 2803\n3 2814 2714 2516\n3 2815 2816 2817\n3 2818 2502 2694\n3 2442 2796 2795\n3 2434 2756 2419\n3 2727 2547 2757\n3 2715 2776 2802\n3 2819 2755 2804\n3 2495 2734 2738\n3 2806 2820 2821\n3 2657 2638 2822\n3 2398 2650 2823\n3 2598 2809 2155\n3 2582 2581 2824\n3 2654 2823 2650\n3 2687 2825 2684\n3 2793 2826 2827\n3 2677 2299 2654\n3 2828 2708 2829\n3 2830 2831 2832\n3 2575 2657 2752\n3 2767 2766 2745\n3 2833 2834 2835\n3 2698 2700 2582\n3 2773 2836 2837\n3 2698 2582 2754\n3 2433 2838 2435\n3 2839 2840 2841\n3 2840 2842 2841\n3 2794 2843 2795\n3 2695 2497 2801\n3 2431 2627 2808\n3 2844 2845 2846\n3 2543 2789 2311\n3 2847 2401 2789\n3 2848 2849 2850\n3 2781 2507 2688\n3 2803 2734 2710\n3 2641 2851 2642\n3 2852 2608 2679\n3 2853 2611 2854\n3 2855 2856 2857\n3 2858 2672 2673\n3 2859 2684 2825\n3 2860 2686 2685\n3 2861 2585 2862\n3 2765 739 217\n3 2622 2863 2595\n3 2732 2864 2733\n3 2865 2866 2867\n3 2868 2869 2702\n3 2638 2804 2822\n3 2717 2803 2710\n3 2823 2544 2398\n3 2821 2820 2870\n3 2871 2738 2734\n3 2872 2377 2873\n3 2825 2874 2861\n3 2803 2875 2734\n3 2774 2773 2837\n3 2824 2581 2727\n3 2299 2421 2813\n3 2871 2734 2875\n3 2777 2558 2672\n3 2876 2877 2752\n3 2542 2628 2878\n3 2879 2578 2444\n3 2578 2880 2426\n3 2881 2882 2883\n3 2776 2756 2884\n3 2611 2610 2854\n3 2875 2776 2884\n3 2885 2886 2887\n3 2888 2887 2886\n3 2828 2709 2708\n3 2889 2890 2891\n3 2434 2884 2756\n3 2892 2788 2706\n3 2799 2738 2871\n3 2793 2893 2768\n3 2804 2755 2822\n3 2894 2855 2857\n3 2895 2896 2897\n3 2628 2608 2852\n3 2762 2898 2899\n3 2900 2901 2902\n3 2822 2876 2657\n3 2876 2752 2657\n3 2903 2904 2905\n3 2341 2544 2641\n3 2906 2907 2908\n3 2627 2809 2808\n3 2825 2861 2862\n3 2781 2909 2757\n3 2884 2871 2875\n3 2711 2688 2466\n3 2711 2745 2910\n3 2911 2887 2912\n3 2582 2824 2754\n3 2878 2628 2852\n3 2913 2897 2896\n3 2818 2694 2914\n3 2762 2899 2694\n3 2884 2915 2871\n3 2902 2901 2916\n3 2803 2776 2875\n3 2917 2904 2903\n3 2695 2801 2918\n3 2904 2919 2905\n3 2909 2876 2757\n3 2377 2920 2723\n3 2755 2754 2822\n3 2754 2824 2822\n3 2834 2833 2886\n3 2885 2834 2886\n3 2876 2727 2757\n3 2781 2688 2921\n3 2838 2433 2922\n3 2758 2923 2924\n3 2672 2858 2925\n3 2816 2815 2926\n3 2927 2928 2929\n3 2930 2931 2932\n3 2933 2934 2935\n3 2877 2876 2909\n3 2435 2838 2543\n3 2936 2622 2828\n3 2937 2938 2939\n3 2781 2921 2909\n3 2544 2940 2641\n3 2924 2713 2859\n3 2713 2684 2859\n3 2824 2727 2822\n3 2521 2941 2942\n3 2711 2943 2688\n3 2944 2942 2941\n3 2820 2806 2805\n3 2860 2685 2944\n3 2945 2690 2788\n3 2832 2831 2946\n3 2947 2948 2949\n3 2950 2951 2952\n3 2953 2935 2934\n3 2892 2954 2788\n3 2837 2955 2774\n3 2876 2822 2727\n3 2955 2956 2774\n3 2957 2958 2959\n3 2960 2778 2961\n3 2960 2779 2778\n3 2962 2963 2964\n3 2965 2966 2967\n3 2799 2941 2521\n3 2968 2969 2897\n3 2970 2971 2972\n3 2940 2544 2973\n3 2947 2949 2965\n3 2793 2827 2893\n3 2892 2974 2975\n3 2976 2847 2789\n3 2893 2766 2768\n3 2872 2920 2377\n3 2597 2977 2976\n3 2944 2685 2746\n3 2714 2814 2978\n3 2578 2979 2880\n3 2752 2980 2906\n3 2871 2981 2799\n3 2907 2980 2934\n3 2872 2982 2920\n3 2980 2983 2934\n3 2723 2922 2433\n3 2904 2917 2984\n3 2929 2928 2985\n3 2966 2949 2986\n3 2959 2987 2988\n3 2989 2990 2927\n3 2991 2935 2992\n3 2993 2989 2994\n3 2995 2996 2997\n3 2919 2993 2905\n3 2827 2690 2945\n3 2622 2595 2998\n3 2999 3000 3001\n3 2983 2953 2934\n3 2957 2959 3002\n3 2852 2679 3003\n3 3004 2897 3005\n3 2968 2897 3004\n3 2789 2543 3006\n3 2965 2967 2947\n3 2992 2997 2991\n3 2688 2943 3007\n3 2943 2711 2910\n3 2998 2595 2597\n3 2758 2924 2862\n3 2903 3008 3009\n3 2975 2954 2892\n3 2862 2859 2825\n3 3004 3010 3011\n3 2832 3012 3013\n3 3014 2978 2814\n3 2944 3015 3016\n3 2799 2981 2941\n3 2854 3017 3018\n3 2990 2928 2927\n3 2909 2921 3007\n3 3009 2989 2927\n3 2996 2991 2997\n3 2903 3019 2917\n3 3020 3021 2659\n3 3022 3023 2903\n3 3024 3025 3026\n3 3027 2907 3028\n3 2991 2933 2935\n3 2922 3029 2838\n3 3008 2993 3009\n3 2929 2991 2927\n3 3028 2907 2934\n3 2852 3030 2878\n3 3001 3031 2999\n3 2975 2763 2709\n3 2903 3009 3022\n3 2745 2766 2910\n3 2914 2694 2899\n3 2859 2862 2924\n3 3001 3000 3032\n3 3009 2996 3022\n3 3022 2996 2995\n3 2959 2988 3002\n3 2777 2444 2589\n3 3018 2853 2854\n3 3033 3034 3035\n3 3007 2921 2688\n3 2946 3012 2832\n3 2989 3036 2990\n3 2953 2983 3037\n3 2912 3038 2911\n3 3039 3040 2654\n3 2828 2622 2998\n3 2934 2933 3028\n3 2967 2714 3041\n3 3042 3031 3043\n3 2559 2777 2589\n3 3044 2672 2925\n3 2907 2906 2980\n3 3045 2957 3002\n3 3046 3047 3048\n3 3049 3050 3051\n3 3052 3018 3017\n3 3053 3054 3027\n3 2993 3036 2989\n3 2597 3055 2998\n3 3056 2709 2828\n3 2903 3023 3057\n3 3058 3042 3043\n3 3059 3024 3060\n3 2858 2818 2914\n3 3061 3059 3060\n3 3062 3003 2679\n3 2978 3041 2714\n3 2927 2991 3009\n3 2991 2996 3009\n3 3063 3064 3038\n3 3039 2654 2813\n3 3065 3030 2852\n3 3037 3007 3066\n3 3067 3068 2902\n3 3022 2995 3069\n3 3044 2777 2672\n3 3043 3031 3001\n3 2945 2954 3070\n3 2788 2954 2945\n3 3001 3032 3071\n3 3029 3072 2838\n3 3073 2543 2838\n3 3074 2946 3075\n3 2929 3028 2991\n3 3069 3076 3022\n3 3064 3063 2902\n3 2911 3038 3064\n3 3077 2917 2968\n3 2914 2899 3078\n3 2953 3037 3079\n3 3046 3048 3080\n3 3056 2828 2998\n3 2929 3027 3028\n3 3004 3011 2968\n3 2578 3081 2979\n3 2991 3028 2933\n3 3082 3083 2982\n3 2928 2990 2985\n3 2947 2941 2981\n3 3084 3046 3080\n3 2610 3085 2854\n3 2911 3086 3087\n3 3041 2947 2967\n3 3040 3039 3088\n3 2925 2858 2914\n3 3065 2852 3003\n3 2943 3066 3007\n3 3037 3066 3079\n3 3089 3058 3043\n3 3090 3091 3092\n3 3006 2976 2789\n3 3060 3024 3026\n3 2941 3015 2944\n3 3011 3093 2968\n3 2941 2947 3041\n3 3094 2943 2910\n3 2893 2827 2945\n3 3095 2945 3070\n3 3096 2978 3014\n3 3053 3027 3097\n3 2929 3098 3027\n3 3044 3099 2777\n3 3073 2838 3072\n3 3100 3101 3102\n3 2766 3094 2910\n3 2837 3103 2955\n3 2879 2444 2777\n3 3100 3104 3096\n3 3041 3015 2941\n3 3105 3106 3107\n3 3086 2911 3064\n3 3015 2978 3096\n3 3017 2854 3085\n3 3104 3015 3096\n3 3064 2902 3108\n3 3068 3108 2902\n3 2893 3094 2766\n3 3095 2893 2945\n3 3094 3066 2943\n3 3027 3098 3097\n3 2968 3109 3077\n3 3110 3022 3076\n3 3111 3092 3091\n3 3112 2990 3093\n3 3036 3093 2990\n3 3071 3032 3113\n3 3065 3003 3114\n3 3011 3112 3093\n3 3100 3102 3104\n3 2955 3103 3115\n3 3036 2993 3109\n3 2929 3116 3098\n3 2968 3093 3109\n3 3117 2723 2920\n3 2723 3117 2922\n3 3118 2954 2975\n3 3066 3094 3119\n3 3015 3041 2978\n3 3057 3023 3120\n3 3055 3056 2998\n3 3062 3114 3003\n3 3073 3121 3006\n3 2777 3122 2879\n3 3123 3072 3029\n3 3124 3011 3125\n3 3073 3006 2543\n3 3036 3109 3093\n3 3095 3094 2893\n3 3056 3126 2709\n3 2597 2976 3127\n3 3055 2597 3127\n3 3089 3043 3128\n3 3124 3098 3116\n3 3029 2922 3117\n3 2975 2709 3126\n3 3124 3116 2985\n3 3119 3095 3129\n3 3130 3131 3078\n3 3006 3121 2976\n3 2960 2961 3132\n3 3119 3094 3095\n3 3099 3122 2777\n3 3133 3134 3135\n3 3136 3111 3091\n3 3134 3133 3137\n3 3125 3097 3098\n3 3089 3128 3138\n3 3125 3098 3124\n3 3011 3124 3112\n3 3095 3070 3118\n3 3070 2954 3118\n3 3139 3089 3138\n3 3126 3140 3118\n3 3141 3057 3120\n3 2985 3112 3124\n3 3118 2975 3126\n3 3142 3143 3141\n3 3144 3029 3145\n3 2925 3146 3044\n3 3112 2985 2990\n3 3147 3143 3142\n3 3148 3149 3150\n3 3140 3129 3118\n3 3073 3142 3121\n3 3151 3087 3086\n3 3072 3142 3073\n3 3152 3147 3153\n3 3055 3154 3056\n3 3127 2976 3121\n3 3145 3029 3117\n3 3138 3155 3139\n3 3127 3154 3055\n3 3118 3129 3095\n3 3072 3153 3142\n3 3153 3147 3142\n3 3156 3157 3158\n3 3153 3072 3123\n3 3141 3121 3142\n3 3110 3121 3159\n3 3141 3120 3121\n3 3160 3126 3056\n3 3127 3121 3110\n3 3127 3110 3154\n3 3161 2914 3078\n3 3144 3152 3123\n3 3029 3144 3123\n3 3123 3152 3153\n3 3120 3159 3121\n3 3099 3044 3146\n3 2914 3146 2925\n3 3162 3163 3164\n3 2914 3161 3146\n3 3165 3147 3152\n3 3166 3167 3168\n3 3152 3144 3169\n3 3117 3170 3145\n3 3171 3145 3170\n3 3134 3172 3173\n3 3161 3078 3131\n3 3171 3174 3145\n3 3169 3165 3152\n3 3170 3175 3171\n3 3176 3147 3165\n3 3175 3177 3178\n3 3171 3175 3178\n3 3165 3179 3176\n3 3165 3169 3179\n3 3178 3169 3171\n3 3178 3179 3169\n");
+      _export("__useDefault", __useDefault = "ply\nformat ascii 1.0\ncomment Created by Blender 2.80 (sub 26) - www.blender.org, source file: ''\nelement vertex 780\nproperty float x\nproperty float y\nproperty float z\nproperty float nx\nproperty float ny\nproperty float nz\nproperty float s\nproperty float t\nelement face 260\nproperty list uchar uint vertex_indices\nend_header\n-0.272900 0.173153 0.112301 0.032940 -0.503877 -0.863147 0.278224 0.243730\n-0.061721 0.143417 0.137719 0.032940 -0.503877 -0.863147 0.277106 0.281184\n-0.107613 0.025334 0.204901 0.032940 -0.503877 -0.863147 0.248650 0.273993\n-0.179614 -0.220765 0.095132 -0.619945 0.463704 -0.632967 0.355668 0.646642\n-0.107613 0.025334 0.204901 -0.619945 0.463704 -0.632967 0.341181 0.613143\n-0.045528 -0.136834 0.025290 -0.619945 0.463704 -0.632967 0.367558 0.619830\n-0.107613 0.025334 0.204901 0.082856 0.385633 -0.918925 0.090608 0.772624\n-0.179614 -0.220765 0.095132 0.082856 0.385633 -0.918925 0.067498 0.785592\n-0.321598 -0.255489 0.067758 0.082856 0.385633 -0.918925 0.070499 0.775067\n0.389061 -1.321975 -0.030636 0.533454 -0.825722 0.183328 0.504200 0.704552\n0.896224 -0.978964 0.038546 0.533454 -0.825722 0.183328 0.522805 0.646859\n0.649182 -1.123705 0.105473 0.533454 -0.825722 0.183328 0.524580 0.705838\n-0.321598 -0.255489 0.067758 0.470537 0.070979 -0.879521 0.070499 0.775067\n-0.336763 -0.009834 0.079469 0.470537 0.070979 -0.879521 0.089952 0.748719\n-0.107613 0.025334 0.204901 0.470537 0.070979 -0.879521 0.090608 0.772624\n-0.336763 -0.009834 0.079469 0.481394 -0.010753 -0.876439 0.257966 0.227634\n-0.272900 0.173153 0.112301 0.481394 -0.010753 -0.876439 0.268198 0.237091\n-0.107613 0.025334 0.204901 0.481394 -0.010753 -0.876439 0.254396 0.247653\n1.178254 0.233343 0.051166 0.962448 0.009442 -0.271300 0.743252 0.753197\n1.211208 0.119206 0.164098 0.962448 0.009442 -0.271300 0.720007 0.730453\n1.181310 -0.346787 0.041816 0.962448 0.009442 -0.271300 0.748881 0.638839\n0.389061 -1.321975 -0.030636 0.547350 -0.724958 -0.418144 0.420000 0.857000\n0.668542 -1.076777 -0.089908 0.547350 -0.724958 -0.418144 0.423034 0.872187\n0.896224 -0.978964 0.038546 0.547350 -0.724958 -0.418144 0.415169 0.873523\n-0.272900 0.173153 0.112301 0.866857 -0.222483 -0.446161 0.319500 0.903000\n-0.336763 -0.009834 0.079469 0.866857 -0.222483 -0.446161 0.318388 0.894832\n-0.353222 0.135438 -0.024951 0.866857 -0.222483 -0.446161 0.320600 0.898700\n-0.061721 0.143417 0.137719 -0.902459 0.114458 -0.415292 0.358903 0.594387\n-0.045528 -0.136834 0.025290 -0.902459 0.114458 -0.415292 0.367558 0.619830\n-0.107613 0.025334 0.204901 -0.902459 0.114458 -0.415292 0.341181 0.613143\n-0.592078 1.078696 0.196725 -0.309112 0.937979 -0.156989 0.789500 0.681685\n-0.232504 1.209289 0.268987 -0.309112 0.937979 -0.156989 0.788012 0.660854\n-0.405462 1.121138 0.082861 -0.309112 0.937979 -0.156989 0.814851 0.679564\n-0.336763 -0.009834 0.079469 0.929444 0.074606 -0.361342 0.229060 0.758796\n-0.321598 -0.255489 0.067758 0.929444 0.074606 -0.361342 0.234850 0.732970\n-0.387892 -0.004352 -0.050914 0.929444 0.074606 -0.361342 0.251925 0.758263\n1.178898 0.690976 0.156231 0.971525 0.051718 -0.231222 0.725722 0.850189\n1.211208 0.119206 0.164098 0.971525 0.051718 -0.231222 0.720007 0.730453\n1.178254 0.233343 0.051166 0.971525 0.051718 -0.231222 0.743252 0.753197\n-0.061721 0.143417 0.137719 -0.820031 -0.093159 -0.564686 0.391056 0.782587\n0.016910 0.307785 -0.003585 -0.820031 -0.093159 -0.564686 0.381932 0.794412\n0.045196 0.003298 0.005572 -0.820031 -0.093159 -0.564686 0.386073 0.757456\n-0.348605 -1.368304 -0.035611 -0.012848 -0.050845 -0.998624 0.006559 0.270376\n-0.931240 -1.087969 -0.042389 -0.012848 -0.050845 -0.998624 0.058457 0.118254\n-0.277242 -1.118590 -0.049244 -0.012848 -0.050845 -0.998624 0.052547 0.256404\n0.345688 -1.051243 -0.052818 0.000170 -0.054559 -0.998510 0.076222 0.384370\n-0.348605 -1.368304 -0.035611 0.000170 -0.054559 -0.998510 0.006559 0.270376\n-0.277242 -1.118590 -0.049244 0.000170 -0.054559 -0.998510 0.052547 0.256404\n-0.348605 -1.368304 -0.035611 0.011734 -0.079786 -0.996743 0.006559 0.270376\n0.345688 -1.051243 -0.052818 0.011734 -0.079786 -0.996743 0.076222 0.384370\n0.389061 -1.321975 -0.030636 0.011734 -0.079786 -0.996743 0.021765 0.394578\n-0.179614 -0.220765 0.095132 -0.112008 0.855941 -0.504795 0.355668 0.646642\n-0.085695 -0.289557 -0.042353 -0.112008 0.855941 -0.504795 0.372700 0.648300\n-0.321598 -0.255489 0.067758 -0.112008 0.855941 -0.504795 0.362686 0.680732\n1.181310 -0.346787 0.041816 0.909965 -0.410654 0.057675 0.753916 0.565968\n0.896224 -0.978964 0.038546 0.909965 -0.410654 0.057675 0.757780 0.551320\n0.992102 -0.786916 -0.106752 0.909965 -0.410654 0.057675 0.773608 0.554557\n-0.145972 0.264313 0.017672 -0.015193 -0.709843 -0.704196 0.303610 0.264896\n-0.061721 0.143417 0.137719 -0.015193 -0.709843 -0.704196 0.277106 0.281184\n-0.272900 0.173153 0.112301 -0.015193 -0.709843 -0.704196 0.278224 0.243730\n-0.353222 0.135438 -0.024951 0.916783 -0.159362 -0.366214 0.429704 0.868547\n-0.336763 -0.009834 0.079469 0.916783 -0.159362 -0.366214 0.423300 0.857500\n-0.387892 -0.004352 -0.050914 0.916783 -0.159362 -0.366214 0.431754 0.855137\n0.389061 -1.321975 -0.030636 -0.121386 -0.100357 -0.987519 0.021765 0.394578\n0.345688 -1.051243 -0.052818 -0.121386 -0.100357 -0.987519 0.076222 0.384370\n0.668542 -1.076777 -0.089908 -0.121386 -0.100357 -0.987519 0.077279 0.454523\n-0.179614 -0.220765 0.095132 -0.617389 0.448597 -0.646213 0.470700 0.846700\n-0.045528 -0.136834 0.025290 -0.617389 0.448597 -0.646213 0.473445 0.854213\n-0.085695 -0.289557 -0.042353 -0.617389 0.448597 -0.646213 0.473029 0.864945\n-0.931240 -1.087969 -0.042389 -0.012616 -0.045820 -0.998870 0.058457 0.118254\n-0.672557 -0.886527 -0.054896 -0.012616 -0.045820 -0.998870 0.090774 0.170790\n-0.277242 -1.118590 -0.049244 -0.012616 -0.045820 -0.998870 0.052547 0.256404\n-0.061721 0.143417 0.137719 0.083433 -0.672278 -0.735582 0.277106 0.281184\n-0.145972 0.264313 0.017672 0.083433 -0.672278 -0.735582 0.303610 0.264896\n0.016910 0.307785 -0.003585 0.083433 -0.672278 -0.735582 0.311823 0.296946\n0.992102 -0.786916 -0.106752 0.564001 -0.658526 -0.498242 0.134059 0.515025\n0.896224 -0.978964 0.038546 0.564001 -0.658526 -0.498242 0.073636 0.487841\n0.668542 -1.076777 -0.089908 0.564001 -0.658526 -0.498242 0.077279 0.454523\n-0.277242 -1.118590 -0.049244 0.005222 -0.101096 -0.994863 0.052547 0.256404\n-0.087065 -0.659981 -0.094848 0.005222 -0.101096 -0.994863 0.143581 0.290439\n0.345688 -1.051243 -0.052818 0.005222 -0.101096 -0.994863 0.076222 0.384370\n-0.387892 -0.004352 -0.050914 0.971669 0.229150 -0.057879 0.251925 0.758263\n-0.321598 -0.255489 0.067758 0.971669 0.229150 -0.057879 0.234850 0.732970\n-0.324508 -0.277666 -0.068901 0.971669 0.229150 -0.057879 0.256392 0.731389\n0.345688 -1.051243 -0.052818 0.173002 0.085949 -0.981164 0.076222 0.384370\n-0.087065 -0.659981 -0.094848 0.173002 0.085949 -0.981164 0.143581 0.290439\n0.100398 -0.599970 -0.056537 0.173002 0.085949 -0.981164 0.151881 0.335427\n-0.931240 -1.087969 -0.042389 -0.019323 -0.037222 -0.999120 0.058457 0.118254\n-0.929160 -0.644831 -0.058938 -0.019323 -0.037222 -0.999120 0.132875 0.110351\n-0.672557 -0.886527 -0.054896 -0.019323 -0.037222 -0.999120 0.090774 0.170790\n-0.045528 -0.136834 0.025290 -0.586298 0.272212 -0.762991 0.367558 0.619830\n-0.061721 0.143417 0.137719 -0.586298 0.272212 -0.762991 0.358903 0.594387\n0.045196 0.003298 0.005572 -0.586298 0.272212 -0.762991 0.378842 0.591293\n-0.931240 -1.087969 -0.042389 -0.012039 -0.037260 -0.999233 0.058457 0.118254\n-1.219934 -0.713415 -0.052877 -0.012039 -0.037260 -0.999233 0.118984 0.053090\n-0.929160 -0.644831 -0.058938 -0.012039 -0.037260 -0.999233 0.132875 0.110351\n-0.353222 0.135438 -0.024951 0.538693 -0.838211 -0.084920 0.384594 0.696555\n-0.145972 0.264313 0.017672 0.538693 -0.838211 -0.084920 0.389682 0.725558\n-0.272900 0.173153 0.112301 0.538693 -0.838211 -0.084920 0.378423 0.718050\n-0.672557 -0.886527 -0.054896 -0.035299 -0.084386 -0.995808 0.090774 0.170790\n-0.087065 -0.659981 -0.094848 -0.035299 -0.084386 -0.995808 0.143581 0.290439\n-0.277242 -1.118590 -0.049244 -0.035299 -0.084386 -0.995808 0.052547 0.256404\n1.178254 0.233343 0.051166 0.964483 0.057816 -0.257740 0.743252 0.753197\n1.125805 0.555514 -0.072835 0.964483 0.057816 -0.257740 0.762751 0.818048\n1.178898 0.690976 0.156231 0.964483 0.057816 -0.257740 0.725722 0.850189\n1.181310 -0.346787 0.041816 0.917879 -0.311647 -0.245711 0.748881 0.638839\n0.992102 -0.786916 -0.106752 0.917879 -0.311647 -0.245711 0.773608 0.554557\n1.163973 -0.288245 -0.097200 0.917879 -0.311647 -0.245711 0.767602 0.647376\n0.345688 -1.051243 -0.052818 -0.093169 -0.058834 -0.993910 0.076222 0.384370\n0.100398 -0.599970 -0.056537 -0.093169 -0.058834 -0.993910 0.151881 0.335427\n0.771192 -0.670391 -0.115249 -0.093169 -0.058834 -0.993910 0.149253 0.475043\n1.178254 0.233343 0.051166 0.244200 0.016913 -0.969577 0.318049 0.800544\n1.181310 -0.346787 0.041816 0.244200 0.016913 -0.969577 0.311359 0.794696\n1.086986 0.161879 0.026932 0.244200 0.016913 -0.969577 0.313706 0.784438\n0.668542 -1.076777 -0.089908 -0.116604 -0.032445 -0.992648 0.077279 0.454523\n0.345688 -1.051243 -0.052818 -0.116604 -0.032445 -0.992648 0.076222 0.384370\n0.771192 -0.670391 -0.115249 -0.116604 -0.032445 -0.992648 0.149253 0.475043\n-0.085695 -0.289557 -0.042353 0.155703 0.138038 -0.978111 0.208055 0.282892\n0.100398 -0.599970 -0.056537 0.155703 0.138038 -0.978111 0.151881 0.335427\n-0.087065 -0.659981 -0.094848 0.155703 0.138038 -0.978111 0.143581 0.290439\n-0.672557 -0.886527 -0.054896 -0.075952 0.020486 -0.996901 0.090774 0.170790\n-0.324508 -0.277666 -0.068901 -0.075952 0.020486 -0.996901 0.206978 0.225763\n-0.087065 -0.659981 -0.094848 -0.075952 0.020486 -0.996901 0.143581 0.290439\n-0.857632 -0.412738 -0.080490 -0.055336 -0.075398 -0.995617 0.180430 0.124808\n-0.672557 -0.886527 -0.054896 -0.055336 -0.075398 -0.995617 0.090774 0.170790\n-0.929160 -0.644831 -0.058938 -0.055336 -0.075398 -0.995617 0.132875 0.110351\n-0.324508 -0.277666 -0.068901 0.066951 0.984646 -0.161214 0.381110 0.684156\n-0.321598 -0.255489 0.067758 0.066951 0.984646 -0.161214 0.362686 0.680732\n-0.085695 -0.289557 -0.042353 0.066951 0.984646 -0.161214 0.388085 0.642542\n-0.672557 -0.886527 -0.054896 0.032188 -0.041371 -0.998625 0.090774 0.170790\n-0.857632 -0.412738 -0.080490 0.032188 -0.041371 -0.998625 0.180430 0.124808\n-0.324508 -0.277666 -0.068901 0.032188 -0.041371 -0.998625 0.206978 0.225763\n1.086986 0.161879 0.026932 0.980729 0.183799 0.066248 0.760744 0.722988\n1.181310 -0.346787 0.041816 0.980729 0.183799 0.066248 0.748881 0.638839\n1.139283 -0.077363 -0.083522 0.980729 0.183799 0.066248 0.770815 0.687200\n0.668542 -1.076777 -0.089908 0.004906 -0.063470 -0.997972 0.077279 0.454523\n0.771192 -0.670391 -0.115249 0.004906 -0.063470 -0.997972 0.149253 0.475043\n0.992102 -0.786916 -0.106752 0.004906 -0.063470 -0.997972 0.134059 0.515025\n-0.324508 -0.277666 -0.068901 0.037909 -0.064070 -0.997225 0.206978 0.225763\n-0.857632 -0.412738 -0.080490 0.037909 -0.064070 -0.997225 0.180430 0.124808\n-0.583219 -0.084312 -0.091159 0.037909 -0.064070 -0.997225 0.246471 0.181745\n-0.045528 -0.136834 0.025290 -0.757763 0.420356 -0.499095 0.232576 0.297380\n0.045196 0.003298 0.005572 -0.757763 0.420356 -0.499095 0.246732 0.309224\n-0.085695 -0.289557 -0.042353 -0.757763 0.420356 -0.499095 0.208055 0.282892\n1.123029 0.176659 -0.106104 0.904012 0.322409 0.280740 0.365299 0.800442\n1.034752 0.393019 -0.070317 0.904012 0.322409 0.280740 0.362205 0.824174\n1.086986 0.161879 0.026932 0.904012 0.322409 0.280740 0.357465 0.796620\n-0.169687 0.468161 -0.037050 -0.054956 -0.264834 -0.962727 0.348441 0.257768\n0.016910 0.307785 -0.003585 -0.054956 -0.264834 -0.962727 0.311823 0.296946\n-0.145972 0.264313 0.017672 -0.054956 -0.264834 -0.962727 0.303610 0.264896\n-0.324508 -0.277666 -0.068901 0.116246 0.138941 -0.983454 0.206978 0.225763\n-0.085695 -0.289557 -0.042353 0.116246 0.138941 -0.983454 0.208055 0.282892\n-0.087065 -0.659981 -0.094848 0.116246 0.138941 -0.983454 0.143581 0.290439\n-1.219934 -0.713415 -0.052877 -0.006619 -0.060147 -0.998168 0.118984 0.053090\n-1.190131 -0.179203 -0.085265 -0.006619 -0.060147 -0.998168 0.222664 0.049662\n-0.929160 -0.644831 -0.058938 -0.006619 -0.060147 -0.998168 0.132875 0.110351\n-1.399129 -0.257880 -0.052693 -0.134454 -0.052492 -0.989528 0.166942 0.021268\n-1.190131 -0.179203 -0.085265 -0.134454 -0.052492 -0.989528 0.222664 0.049662\n-1.219934 -0.713415 -0.052877 -0.134454 -0.052492 -0.989528 0.118984 0.053090\n-0.929160 -0.644831 -0.058938 -0.041639 -0.079650 -0.995953 0.132875 0.110351\n-1.190131 -0.179203 -0.085265 -0.041639 -0.079650 -0.995953 0.222664 0.049662\n-0.857632 -0.412738 -0.080490 -0.041639 -0.079650 -0.995953 0.180430 0.124808\n-0.387892 -0.004352 -0.050914 0.160583 0.101853 -0.981753 0.253026 0.215238\n-0.324508 -0.277666 -0.068901 0.160583 0.101853 -0.981753 0.206978 0.225763\n-0.583219 -0.084312 -0.091159 0.160583 0.101853 -0.981753 0.246471 0.181745\n0.824203 -0.077389 -0.110415 -0.053547 -0.028743 -0.998152 0.264827 0.474558\n0.100398 -0.599970 -0.056537 -0.053547 -0.028743 -0.998152 0.151881 0.335427\n0.248677 -0.055318 -0.080176 -0.053547 -0.028743 -0.998152 0.254637 0.352503\n1.178254 0.233343 0.051166 0.435158 -0.263844 -0.860828 0.319268 0.545497\n1.086986 0.161879 0.026932 0.435158 -0.263844 -0.860828 0.303041 0.529207\n1.034752 0.393019 -0.070317 0.435158 -0.263844 -0.860828 0.348342 0.513757\n-0.085695 -0.289557 -0.042353 -0.101661 -0.015494 -0.994698 0.208055 0.282892\n0.248677 -0.055318 -0.080176 -0.101661 -0.015494 -0.994698 0.254637 0.352503\n0.100398 -0.599970 -0.056537 -0.101661 -0.015494 -0.994698 0.151881 0.335427\n0.248677 -0.055318 -0.080176 -0.301780 0.283823 -0.910150 0.254637 0.352503\n-0.085695 -0.289557 -0.042353 -0.301780 0.283823 -0.910150 0.208055 0.282892\n0.045196 0.003298 0.005572 -0.301780 0.283823 -0.910150 0.246732 0.309224\n0.016910 0.307785 -0.003585 -0.403333 -0.064916 -0.912748 0.311713 0.298937\n0.248677 -0.055318 -0.080176 -0.403333 -0.064916 -0.912748 0.254637 0.352503\n0.045196 0.003298 0.005572 -0.403333 -0.064916 -0.912748 0.262519 0.314117\n0.690246 0.370745 -0.033102 -0.059003 0.169836 -0.983704 0.338580 0.449488\n0.248677 -0.055318 -0.080176 -0.059003 0.169836 -0.983704 0.254637 0.352503\n0.016910 0.307785 -0.003585 -0.059003 0.169836 -0.983704 0.311823 0.296946\n0.016910 0.307785 -0.003585 0.181696 0.006212 -0.983335 0.311823 0.296946\n-0.169687 0.468161 -0.037050 0.181696 0.006212 -0.983335 0.348441 0.257768\n0.190102 0.785007 0.031431 0.181696 0.006212 -0.983335 0.401117 0.333991\n0.248677 -0.055318 -0.080176 -0.045836 0.156511 -0.986612 0.254637 0.352503\n0.690246 0.370745 -0.033102 -0.045836 0.156511 -0.986612 0.338580 0.449488\n0.824203 -0.077389 -0.110415 -0.045836 0.156511 -0.986612 0.264827 0.474558\n1.139283 -0.077363 -0.083522 0.990035 0.120623 -0.072674 0.770815 0.687200\n1.181310 -0.346787 0.041816 0.990035 0.120623 -0.072674 0.748881 0.638839\n1.163973 -0.288245 -0.097200 0.990035 0.120623 -0.072674 0.767602 0.647376\n-0.232504 1.209289 0.268987 -0.581232 0.797352 0.162479 0.802659 0.635403\n-0.175743 1.300467 0.024589 -0.581232 0.797352 0.162479 0.825282 0.619031\n-0.405462 1.121138 0.082861 -0.581232 0.797352 0.162479 0.814851 0.679564\n0.770120 1.174566 0.172084 0.360822 0.929762 -0.073142 0.490300 0.820800\n0.661800 1.207083 0.051083 0.360822 0.929762 -0.073142 0.490147 0.840777\n0.491221 1.288571 0.245431 0.360822 0.929762 -0.073142 0.479648 0.830403\n1.178898 0.690976 0.156231 0.866209 0.315595 -0.387405 0.725722 0.850189\n1.125805 0.555514 -0.072835 0.866209 0.315595 -0.387405 0.762751 0.818048\n1.044912 0.854866 -0.009842 0.866209 0.315595 -0.387405 0.753905 0.891535\n0.190102 0.785007 0.031431 -0.052185 0.091903 -0.994400 0.401117 0.333991\n0.690246 0.370745 -0.033102 -0.052185 0.091903 -0.994400 0.338580 0.449488\n0.016910 0.307785 -0.003585 -0.052185 0.091903 -0.994400 0.311823 0.296946\n0.190102 0.785007 0.031431 -0.036070 0.111164 -0.993147 0.401117 0.333991\n0.779615 0.736414 0.004582 -0.036070 0.111164 -0.993147 0.407851 0.457106\n0.690246 0.370745 -0.033102 -0.036070 0.111164 -0.993147 0.338580 0.449488\n0.824203 -0.077389 -0.110415 -0.085539 0.015768 -0.996210 0.264827 0.474558\n0.771192 -0.670391 -0.115249 -0.085539 0.015768 -0.996210 0.149253 0.475043\n0.100398 -0.599970 -0.056537 -0.085539 0.015768 -0.996210 0.151881 0.335427\n1.044912 0.854866 -0.009842 0.595677 0.712176 -0.371449 0.753905 0.891535\n0.661800 1.207083 0.051083 0.595677 0.712176 -0.371449 0.761449 0.925559\n0.947873 1.029113 0.168623 0.595677 0.712176 -0.371449 0.739889 0.925603\n0.771192 -0.670391 -0.115249 0.003969 -0.065237 -0.997862 0.149253 0.475043\n1.070360 -0.133434 -0.149164 0.003969 -0.065237 -0.997862 0.256267 0.528571\n0.992102 -0.786916 -0.106752 0.003969 -0.065237 -0.997862 0.134059 0.515025\n1.123029 0.176659 -0.106104 0.959250 0.085327 0.269367 0.121732 0.887029\n1.086986 0.161879 0.026932 0.959250 0.085327 0.269367 0.116500 0.882475\n1.139283 -0.077363 -0.083522 0.959250 0.085327 0.269367 0.119358 0.874259\n-0.857632 -0.412738 -0.080490 0.090866 -0.108082 -0.989981 0.180430 0.124808\n-0.931665 -0.165335 -0.114295 0.090866 -0.108082 -0.989981 0.225063 0.104523\n-0.583219 -0.084312 -0.091159 0.090866 -0.108082 -0.989981 0.246471 0.181745\n-0.592078 1.078696 0.196725 -0.378956 0.877467 -0.294013 0.791555 0.717385\n-0.405462 1.121138 0.082861 -0.378956 0.877467 -0.294013 0.814851 0.679564\n-0.581505 0.982078 -0.105254 -0.378956 0.877467 -0.294013 0.835616 0.722793\n1.178254 0.233343 0.051166 0.439322 -0.259497 -0.860034 0.319268 0.545497\n1.034752 0.393019 -0.070317 0.439322 -0.259497 -0.860034 0.348342 0.513757\n1.125805 0.555514 -0.072835 0.439322 -0.259497 -0.860034 0.381745 0.523275\n0.816808 0.484696 -0.063575 -0.386249 0.187472 -0.903142 0.356914 0.472117\n0.690246 0.370745 -0.033102 -0.386249 0.187472 -0.903142 0.338580 0.449488\n0.779615 0.736414 0.004582 -0.386249 0.187472 -0.903142 0.407851 0.457106\n0.389029 1.084653 0.053440 -0.037236 0.097764 -0.994513 0.460186 0.370233\n0.779615 0.736414 0.004582 -0.037236 0.097764 -0.994513 0.407851 0.457106\n0.190102 0.785007 0.031431 -0.037236 0.097764 -0.994513 0.401117 0.333991\n1.163973 -0.288245 -0.097200 0.348263 -0.102182 -0.931811 0.233267 0.548422\n0.992102 -0.786916 -0.106752 0.348263 -0.102182 -0.931811 0.134059 0.515025\n1.070360 -0.133434 -0.149164 0.348263 -0.102182 -0.931811 0.256267 0.528571\n-0.164700 0.845477 -0.013618 0.135728 0.059623 -0.988950 0.409600 0.251596\n0.190102 0.785007 0.031431 0.135728 0.059623 -0.988950 0.401117 0.333991\n-0.169687 0.468161 -0.037050 0.135728 0.059623 -0.988950 0.348441 0.257768\n0.779615 0.736414 0.004582 -0.047400 0.086450 -0.995128 0.407851 0.457106\n0.389029 1.084653 0.053440 -0.047400 0.086450 -0.995128 0.460186 0.370233\n0.661800 1.207083 0.051083 -0.047400 0.086450 -0.995128 0.481052 0.416829\n0.143574 1.314012 0.045021 0.174081 0.812108 -0.556935 0.496064 0.305192\n0.299742 1.337268 0.127746 0.174081 0.812108 -0.556935 0.496500 0.362200\n0.661800 1.207083 0.051083 0.174081 0.812108 -0.556935 0.481052 0.416829\n0.779615 0.736414 0.004582 -0.087980 0.076103 -0.993211 0.407851 0.457106\n0.661800 1.207083 0.051083 -0.087980 0.076103 -0.993211 0.481052 0.416829\n1.044912 0.854866 -0.009842 -0.087980 0.076103 -0.993211 0.418749 0.509380\n0.771192 -0.670391 -0.115249 -0.150680 0.021527 -0.988348 0.149253 0.475043\n0.824203 -0.077389 -0.110415 -0.150680 0.021527 -0.988348 0.264827 0.474558\n1.070360 -0.133434 -0.149164 -0.150680 0.021527 -0.988348 0.256267 0.528571\n0.389029 1.084653 0.053440 0.005290 -0.031026 -0.999505 0.460186 0.370233\n0.143574 1.314012 0.045021 0.005290 -0.031026 -0.999505 0.496064 0.305192\n0.661800 1.207083 0.051083 0.005290 -0.031026 -0.999505 0.481052 0.416829\n-0.857632 -0.412738 -0.080490 -0.101381 -0.164406 -0.981169 0.180430 0.124808\n-1.190131 -0.179203 -0.085265 -0.101381 -0.164406 -0.981169 0.222664 0.049662\n-0.931665 -0.165335 -0.114295 -0.101381 -0.164406 -0.981169 0.225063 0.104523\n-0.628776 0.686079 -0.112185 0.225790 -0.041203 -0.973304 0.388840 0.157244\n-0.145972 0.264313 0.017672 0.225790 -0.041203 -0.973304 0.303610 0.264896\n-0.353222 0.135438 -0.024951 0.225790 -0.041203 -0.973304 0.285165 0.227554\n0.190102 0.785007 0.031431 0.124331 -0.009666 -0.992194 0.401117 0.333991\n-0.164700 0.845477 -0.013618 0.124331 -0.009666 -0.992194 0.409600 0.251596\n0.389029 1.084653 0.053440 0.124331 -0.009666 -0.992194 0.460186 0.370233\n0.389029 1.084653 0.053440 0.085949 0.079455 -0.993126 0.460186 0.370233\n-0.164700 0.845477 -0.013618 0.085949 0.079455 -0.993126 0.409600 0.251596\n-0.194645 1.138331 0.007221 0.085949 0.079455 -0.993126 0.466766 0.247951\n0.816808 0.484696 -0.063575 -0.297088 0.075413 -0.951868 0.356914 0.472117\n0.824203 -0.077389 -0.110415 -0.297088 0.075413 -0.951868 0.264827 0.474558\n0.690246 0.370745 -0.033102 -0.297088 0.075413 -0.951868 0.338580 0.449488\n-0.353222 0.135438 -0.024951 0.141657 0.146694 -0.978986 0.285165 0.227554\n-0.387892 -0.004352 -0.050914 0.141657 0.146694 -0.978986 0.253026 0.215238\n-0.583219 -0.084312 -0.091159 0.141657 0.146694 -0.978986 0.246471 0.181745\n-0.372562 0.609725 -0.093449 0.302931 0.055083 -0.951419 0.375123 0.218688\n-0.164700 0.845477 -0.013618 0.302931 0.055083 -0.951419 0.409600 0.251596\n-0.169687 0.468161 -0.037050 0.302931 0.055083 -0.951419 0.348441 0.257768\n-1.031265 0.135096 -0.117168 -0.109080 -0.045656 -0.992984 0.285967 0.077553\n-0.931665 -0.165335 -0.114295 -0.109080 -0.045656 -0.992984 0.225063 0.104523\n-1.190131 -0.179203 -0.085265 -0.109080 -0.045656 -0.992984 0.222664 0.049662\n1.163973 -0.288245 -0.097200 0.629863 0.123478 -0.766828 0.767602 0.647376\n1.070360 -0.133434 -0.149164 0.629863 0.123478 -0.766828 0.780971 0.677345\n1.139283 -0.077363 -0.083522 0.629863 0.123478 -0.766828 0.770815 0.687200\n-0.665860 0.910506 -0.081787 0.358921 0.753862 -0.550335 0.830776 0.758251\n-0.842432 0.982843 -0.097856 0.358921 0.753862 -0.550335 0.825166 0.782737\n-0.592078 1.078696 0.196725 0.358921 0.753862 -0.550335 0.791555 0.717385\n0.779615 0.736414 0.004582 -0.129287 0.170615 -0.976819 0.407851 0.457106\n1.044912 0.854866 -0.009842 -0.129287 0.170615 -0.976819 0.418749 0.509380\n1.125805 0.555514 -0.072835 -0.129287 0.170615 -0.976819 0.381745 0.523275\n0.389029 1.084653 0.053440 0.083672 0.053020 -0.995082 0.460186 0.370233\n-0.194645 1.138331 0.007221 0.083672 0.053020 -0.995082 0.466766 0.247951\n0.143574 1.314012 0.045021 0.083672 0.053020 -0.995082 0.496064 0.305192\n0.779615 0.736414 0.004582 -0.175814 0.083318 -0.980891 0.407851 0.457106\n1.125805 0.555514 -0.072835 -0.175814 0.083318 -0.980891 0.381745 0.523275\n1.034752 0.393019 -0.070317 -0.175814 0.083318 -0.980891 0.348342 0.513757\n-1.190131 -0.179203 -0.085265 -0.116714 -0.099072 -0.988212 0.222664 0.049662\n-1.399129 -0.257880 -0.052693 -0.116714 -0.099072 -0.988212 0.166942 0.021268\n-1.365682 0.240001 -0.106558 -0.116714 -0.099072 -0.988212 0.307578 0.010537\n0.143574 1.314012 0.045021 0.059335 0.099483 -0.993268 0.496069 0.283645\n-0.194645 1.138331 0.007221 0.059335 0.099483 -0.993268 0.466766 0.247951\n-0.175743 1.300467 0.024589 0.059335 0.099483 -0.993268 0.486428 0.244606\n-0.628776 0.686079 -0.112185 0.037058 -0.255065 -0.966214 0.388840 0.157244\n-0.169687 0.468161 -0.037050 0.037058 -0.255065 -0.966214 0.348441 0.257768\n-0.145972 0.264313 0.017672 0.037058 -0.255065 -0.966214 0.303610 0.264896\n0.779615 0.736414 0.004582 0.084794 0.272070 -0.958534 0.407851 0.457106\n1.034752 0.393019 -0.070317 0.084794 0.272070 -0.958534 0.348342 0.513757\n0.816808 0.484696 -0.063575 0.084794 0.272070 -0.958534 0.356914 0.472117\n1.070360 -0.133434 -0.149164 0.697607 -0.019030 -0.716227 0.287856 0.531584\n1.123029 0.176659 -0.106104 0.697607 -0.019030 -0.716227 0.316021 0.532599\n1.139283 -0.077363 -0.083522 0.697607 -0.019030 -0.716227 0.288295 0.543953\n-0.583219 -0.084312 -0.091159 0.289643 -0.014811 -0.957020 0.246471 0.181745\n-0.693441 0.393364 -0.131910 0.289643 -0.014811 -0.957020 0.334239 0.150994\n-0.353222 0.135438 -0.024951 0.289643 -0.014811 -0.957020 0.285165 0.227554\n-0.693441 0.393364 -0.131910 0.081394 -0.066060 -0.994490 0.334239 0.150994\n-0.583219 -0.084312 -0.091159 0.081394 -0.066060 -0.994490 0.246471 0.181745\n-0.931665 -0.165335 -0.114295 0.081394 -0.066060 -0.994490 0.225063 0.104523\n-0.931665 -0.165335 -0.114295 -0.028966 -0.019158 -0.999397 0.225063 0.104523\n-1.031265 0.135096 -0.117168 -0.028966 -0.019158 -0.999397 0.285967 0.077553\n-0.693441 0.393364 -0.131910 -0.028966 -0.019158 -0.999397 0.334239 0.150994\n-0.581505 0.982078 -0.105254 -0.665941 0.703441 -0.248382 0.835616 0.722793\n-0.665860 0.910506 -0.081787 -0.665941 0.703441 -0.248382 0.830776 0.758251\n-0.592078 1.078696 0.196725 -0.665941 0.703441 -0.248382 0.791555 0.717385\n-0.353222 0.135438 -0.024951 0.298745 -0.001689 -0.954331 0.285165 0.227554\n-0.693441 0.393364 -0.131910 0.298745 -0.001689 -0.954331 0.334239 0.150994\n-0.628776 0.686079 -0.112185 0.298745 -0.001689 -0.954331 0.388840 0.157244\n0.824203 -0.077389 -0.110415 -0.055518 0.082191 -0.995069 0.264827 0.474558\n0.816808 0.484696 -0.063575 -0.055518 0.082191 -0.995069 0.356914 0.472117\n1.123029 0.176659 -0.106104 -0.055518 0.082191 -0.995069 0.316021 0.532599\n-1.031265 0.135096 -0.117168 -0.057840 -0.071836 -0.995738 0.285967 0.077553\n-1.190131 -0.179203 -0.085265 -0.057840 -0.071836 -0.995738 0.246337 0.052721\n-1.170429 0.349359 -0.124542 -0.057840 -0.071836 -0.995738 0.318845 0.052449\n-0.169687 0.468161 -0.037050 -0.070657 -0.454926 -0.887722 0.348441 0.257768\n-0.628776 0.686079 -0.112185 -0.070657 -0.454926 -0.887722 0.388840 0.157244\n-0.372562 0.609725 -0.093449 -0.070657 -0.454926 -0.887722 0.377696 0.213632\n-0.175743 1.300467 0.024589 -0.616208 0.787564 -0.005526 0.825282 0.619031\n-0.581505 0.982078 -0.105254 -0.616208 0.787564 -0.005526 0.838218 0.719376\n-0.405462 1.121138 0.082861 -0.616208 0.787564 -0.005526 0.814851 0.679564\n1.070360 -0.133434 -0.149164 -0.118758 0.156331 -0.980539 0.256267 0.528571\n0.824203 -0.077389 -0.110415 -0.118758 0.156331 -0.980539 0.264827 0.474558\n1.123029 0.176659 -0.106104 -0.118758 0.156331 -0.980539 0.316021 0.532599\n1.034752 0.393019 -0.070317 0.045827 0.181187 -0.982380 0.348342 0.513757\n1.123029 0.176659 -0.106104 0.045827 0.181187 -0.982380 0.316021 0.532599\n0.816808 0.484696 -0.063575 0.045827 0.181187 -0.982380 0.356914 0.472117\n-1.190131 -0.179203 -0.085265 -0.051360 -0.072102 -0.996074 0.246337 0.052721\n-1.365682 0.240001 -0.106558 -0.051360 -0.072102 -0.996074 0.307578 0.010537\n-1.170429 0.349359 -0.124542 -0.051360 -0.072102 -0.996074 0.318845 0.052449\n-0.175743 1.300467 0.024589 0.250668 0.074173 -0.965227 0.486428 0.244606\n-0.194645 1.138331 0.007221 0.250668 0.074173 -0.965227 0.466766 0.247951\n-0.581505 0.982078 -0.105254 0.250668 0.074173 -0.965227 0.445624 0.172835\n-0.963990 0.423294 -0.148418 0.047397 -0.118610 -0.991809 0.338687 0.085267\n-0.693441 0.393364 -0.131910 0.047397 -0.118610 -0.991809 0.334239 0.150994\n-1.031265 0.135096 -0.117168 0.047397 -0.118610 -0.991809 0.285967 0.077553\n-1.170429 0.349359 -0.124542 -0.161678 0.135769 -0.977459 0.321227 0.049605\n-0.920522 0.731400 -0.112813 -0.161678 0.135769 -0.977459 0.390681 0.097859\n-0.963990 0.423294 -0.148418 -0.161678 0.135769 -0.977459 0.338687 0.085267\n-0.920522 0.731400 -0.112813 0.150322 -0.068051 -0.986292 0.390681 0.097859\n-1.170429 0.349359 -0.124542 0.150322 -0.068051 -0.986292 0.321227 0.049605\n-1.255255 0.564079 -0.152285 0.150322 -0.068051 -0.986292 0.357214 0.032175\n-1.170429 0.349359 -0.124542 -0.016013 -0.134345 -0.990805 0.318845 0.052449\n-1.365682 0.240001 -0.106558 -0.016013 -0.134345 -0.990805 0.307578 0.010537\n-1.255255 0.564079 -0.152285 -0.016013 -0.134345 -0.990805 0.357214 0.032175\n-1.031265 0.135096 -0.117168 -0.083214 -0.088209 -0.992620 0.285967 0.077553\n-1.170429 0.349359 -0.124542 -0.083214 -0.088209 -0.992620 0.318845 0.052449\n-0.963990 0.423294 -0.148418 -0.083214 -0.088209 -0.992620 0.338687 0.085267\n-0.194645 1.138331 0.007221 0.242931 0.093543 -0.965523 0.466766 0.247951\n-0.164700 0.845477 -0.013618 0.242931 0.093543 -0.965523 0.409600 0.251596\n-0.581505 0.982078 -0.105254 0.242931 0.093543 -0.965523 0.445624 0.172835\n-0.693441 0.393364 -0.131910 0.072081 0.104460 -0.991914 0.334239 0.150994\n-0.963990 0.423294 -0.148418 0.072081 0.104460 -0.991914 0.338687 0.085267\n-0.920522 0.731400 -0.112813 0.072081 0.104460 -0.991914 0.390681 0.097859\n-0.581505 0.982078 -0.105254 0.247150 0.108160 -0.962922 0.445624 0.172835\n-0.164700 0.845477 -0.013618 0.247150 0.108160 -0.962922 0.409600 0.251596\n-0.372562 0.609725 -0.093449 0.247150 0.108160 -0.962922 0.377696 0.213632\n-0.920522 0.731400 -0.112813 0.012174 0.064551 -0.997840 0.390681 0.097859\n-0.628776 0.686079 -0.112185 0.012174 0.064551 -0.997840 0.388840 0.157244\n-0.693441 0.393364 -0.131910 0.012174 0.064551 -0.997840 0.334239 0.150994\n-0.628776 0.686079 -0.112185 0.153291 0.157468 -0.975554 0.388840 0.157244\n-0.842432 0.982843 -0.097856 0.153291 0.157468 -0.975554 0.438072 0.113907\n-0.665860 0.910506 -0.081787 0.153291 0.157468 -0.975554 0.422706 0.142831\n-0.372562 0.609725 -0.093449 0.076237 0.011173 -0.997027 0.377696 0.213632\n-0.628776 0.686079 -0.112185 0.076237 0.011173 -0.997027 0.388840 0.157244\n-0.581505 0.982078 -0.105254 0.076237 0.011173 -0.997027 0.445624 0.172835\n-0.628776 0.686079 -0.112185 0.010849 0.056018 -0.998371 0.388840 0.157244\n-0.920522 0.731400 -0.112813 0.010849 0.056018 -0.998371 0.390681 0.097859\n-0.842432 0.982843 -0.097856 0.010849 0.056018 -0.998371 0.438072 0.113907\n-0.920522 0.731400 -0.112813 0.103792 0.026907 -0.994235 0.390681 0.097859\n-1.255255 0.564079 -0.152285 0.103792 0.026907 -0.994235 0.357214 0.032175\n-0.842432 0.982843 -0.097856 0.103792 0.026907 -0.994235 0.438072 0.113907\n-0.842432 0.982843 -0.097856 -0.294932 0.403336 -0.866219 0.438072 0.113907\n-1.255255 0.564079 -0.152285 -0.294932 0.403336 -0.866219 0.357214 0.032175\n-1.095333 0.829782 -0.083017 -0.294932 0.403336 -0.866219 0.408750 0.069178\n-0.581505 0.982078 -0.105254 -0.325053 0.073989 -0.942797 0.445624 0.172835\n-0.628776 0.686079 -0.112185 -0.325053 0.073989 -0.942797 0.388840 0.157244\n-0.665860 0.910506 -0.081787 -0.325053 0.073989 -0.942797 0.422706 0.142831\n-1.365682 0.240001 -0.106558 -0.927233 0.338538 0.160095 0.622513 0.836555\n-1.216022 0.578376 0.044712 -0.927233 0.338538 0.160095 0.657399 0.889901\n-1.255255 0.564079 -0.152285 -0.927233 0.338538 0.160095 0.626947 0.884091\n-1.095333 0.829782 -0.083017 -0.857933 0.453370 0.241676 0.823409 0.837397\n-1.255255 0.564079 -0.152285 -0.857933 0.453370 0.241676 0.828756 0.895795\n-1.046437 0.818700 0.111348 -0.857933 0.453370 0.241676 0.800106 0.830790\n-1.216022 0.578376 0.044712 -0.925449 0.315626 0.209582 0.657399 0.889901\n-1.365682 0.240001 -0.106558 -0.925449 0.315626 0.209582 0.622513 0.836555\n-1.394261 0.022947 0.094128 -0.925449 0.315626 0.209582 0.656605 0.795193\n-1.216022 0.578376 0.044712 -0.826642 0.548712 0.124808 0.201329 0.584665\n-1.046437 0.818700 0.111348 -0.826642 0.548712 0.124808 0.172857 0.559797\n-1.255255 0.564079 -0.152285 -0.826642 0.548712 0.124808 0.220198 0.575187\n-1.365682 0.240001 -0.106558 -0.995196 0.058350 -0.078610 0.622513 0.836555\n-1.399129 -0.257880 -0.052693 -0.995196 0.058350 -0.078610 0.637497 0.733730\n-1.394261 0.022947 0.094128 -0.995196 0.058350 -0.078610 0.656605 0.795193\n-0.931240 -1.087969 -0.042389 -0.779331 -0.605228 -0.162304 0.661683 0.580892\n-1.093279 -0.906890 0.060434 -0.779331 -0.605228 -0.162304 0.675820 0.589937\n-1.219934 -0.713415 -0.052877 -0.779331 -0.605228 -0.162304 0.652557 0.613739\n-0.877273 -1.103634 0.062092 -0.656103 -0.718390 0.231182 0.693439 0.542942\n-1.093279 -0.906890 0.060434 -0.656103 -0.718390 0.231182 0.675820 0.589937\n-0.931240 -1.087969 -0.042389 -0.656103 -0.718390 0.231182 0.663794 0.570320\n-0.348605 -1.368304 -0.035611 -0.432694 -0.897138 0.088985 0.079519 0.887506\n-0.877273 -1.103634 0.062092 -0.432694 -0.897138 0.088985 0.072771 0.888880\n-0.931240 -1.087969 -0.042389 -0.432694 -0.897138 0.088985 0.075500 0.879700\n-0.842432 0.982843 -0.097856 -0.502299 0.846874 0.174645 0.825166 0.782737\n-1.095333 0.829782 -0.083017 -0.502299 0.846874 0.174645 0.823409 0.837397\n-1.046437 0.818700 0.111348 -0.502299 0.846874 0.174645 0.792052 0.794554\n-1.327656 -0.434523 0.120230 -0.930533 -0.366051 0.010682 0.668332 0.694099\n-1.399129 -0.257880 -0.052693 -0.930533 -0.366051 0.010682 0.637497 0.733730\n-1.219934 -0.713415 -0.052877 -0.930533 -0.366051 0.010682 0.652557 0.613739\n-1.394261 0.022947 0.094128 -0.955318 -0.123773 0.268417 0.656605 0.795193\n-1.399129 -0.257880 -0.052693 -0.955318 -0.123773 0.268417 0.637497 0.733730\n-1.327656 -0.434523 0.120230 -0.955318 -0.123773 0.268417 0.668332 0.694099\n-0.348605 -1.368304 -0.035611 0.057250 -0.945852 0.319511 0.535972 0.908410\n0.389061 -1.321975 -0.030636 0.057250 -0.945852 0.319511 0.504847 0.765673\n-0.110753 -1.290496 0.152108 0.057250 -0.945852 0.319511 0.549757 0.864745\n-1.216022 0.578376 0.044712 -0.856882 0.311520 0.410741 0.657399 0.889901\n-1.394261 0.022947 0.094128 -0.856882 0.311520 0.410741 0.656605 0.795193\n-1.153516 0.410552 0.302394 -0.856882 0.311520 0.410741 0.707880 0.874090\n-1.327656 -0.434523 0.120230 -0.868934 -0.455615 0.193311 0.668332 0.694099\n-1.219934 -0.713415 -0.052877 -0.868934 -0.455615 0.193311 0.652557 0.613739\n-1.093279 -0.906890 0.060434 -0.868934 -0.455615 0.193311 0.675820 0.589937\n-0.877273 -1.103634 0.062092 -0.253272 -0.737159 0.626458 0.602481 0.991329\n-0.348605 -1.368304 -0.035611 -0.253272 -0.737159 0.626458 0.568529 0.970764\n-0.110753 -1.290496 0.152108 -0.253272 -0.737159 0.626458 0.549757 0.864745\n-0.990399 -0.111007 0.115908 0.185061 0.105338 0.977065 0.835813 0.076460\n-0.934966 -0.875402 0.187819 0.185061 0.105338 0.977065 0.965835 0.143883\n-0.865999 -0.373701 0.120667 0.185061 0.105338 0.977065 0.875826 0.126608\n-0.934966 -0.875402 0.187819 -0.473471 -0.513793 0.715431 0.701700 0.574000\n-1.093279 -0.906890 0.060434 -0.473471 -0.513793 0.715431 0.675820 0.589937\n-0.877273 -1.103634 0.062092 -0.473471 -0.513793 0.715431 0.693439 0.542942\n-0.110753 -1.290496 0.152108 -0.222412 -0.512950 0.829105 0.549757 0.864745\n-0.934966 -0.875402 0.187819 -0.222412 -0.512950 0.829105 0.607333 0.970022\n-0.877273 -1.103634 0.062092 -0.222412 -0.512950 0.829105 0.602481 0.991329\n0.896224 -0.978964 0.038546 0.788134 -0.358005 0.500676 0.525259 0.640102\n1.181310 -0.346787 0.041816 0.788134 -0.358005 0.500676 0.564126 0.569199\n0.942105 -0.754847 0.126576 0.788134 -0.358005 0.500676 0.567183 0.623853\n-1.046437 0.818700 0.111348 -0.701760 0.318502 0.637251 0.160634 0.588402\n-1.216022 0.578376 0.044712 -0.701760 0.318502 0.637251 0.180000 0.598474\n-1.053061 0.485734 0.270472 -0.701760 0.318502 0.637251 0.155289 0.620846\n-0.865999 -0.373701 0.120667 -0.143230 -0.049920 0.988430 0.864488 0.135529\n-0.715941 -0.110029 0.155728 -0.143230 -0.049920 0.988430 0.825110 0.130935\n-0.990399 -0.111007 0.115908 -0.143230 -0.049920 0.988430 0.835813 0.076460\n-1.093279 -0.906890 0.060434 -0.539013 -0.363623 0.759766 0.499700 0.672500\n-0.934966 -0.875402 0.187819 -0.539013 -0.363623 0.759766 0.499700 0.682900\n-1.327656 -0.434523 0.120230 -0.539013 -0.363623 0.759766 0.495600 0.678300\n-1.327656 -0.434523 0.120230 -0.440243 -0.012872 0.897786 0.668332 0.694099\n-1.156836 0.327142 0.214914 -0.440243 -0.012872 0.897786 0.676219 0.771816\n-1.394261 0.022947 0.094128 -0.440243 -0.012872 0.897786 0.656605 0.795193\n0.649182 -1.123705 0.105473 0.198568 -0.718276 0.666821 0.524580 0.705838\n-0.110753 -1.290496 0.152108 0.198568 -0.718276 0.666821 0.549757 0.864745\n0.389061 -1.321975 -0.030636 0.198568 -0.718276 0.666821 0.504847 0.765673\n-0.592078 1.078696 0.196725 -0.512825 0.843170 0.161475 0.791555 0.717385\n-0.842432 0.982843 -0.097856 -0.512825 0.843170 0.161475 0.825166 0.782737\n-1.046437 0.818700 0.111348 -0.512825 0.843170 0.161475 0.787826 0.765994\n-1.156836 0.327142 0.214914 0.716344 0.116666 0.687925 0.815364 0.047763\n-0.934966 -0.875402 0.187819 0.716344 0.116666 0.687925 0.965835 0.143883\n-0.990399 -0.111007 0.115908 0.716344 0.116666 0.687925 0.835813 0.076460\n-1.394261 0.022947 0.094128 0.512387 -0.631146 0.582335 0.656605 0.795193\n-1.156836 0.327142 0.214914 0.512387 -0.631146 0.582335 0.685699 0.839945\n-1.153516 0.410552 0.302394 0.512387 -0.631146 0.582335 0.707880 0.874090\n-1.327656 -0.434523 0.120230 -0.241082 -0.066296 0.968238 0.898914 0.034209\n-0.934966 -0.875402 0.187819 -0.241082 -0.066296 0.968238 0.965835 0.143883\n-1.156836 0.327142 0.214914 -0.241082 -0.066296 0.968238 0.815364 0.047763\n0.896224 -0.978964 0.038546 0.452428 -0.404753 0.794659 0.525259 0.640102\n0.942105 -0.754847 0.126576 0.452428 -0.404753 0.794659 0.567183 0.623853\n0.649182 -1.123705 0.105473 0.452428 -0.404753 0.794659 0.539026 0.681924\n-0.934966 -0.875402 0.187819 0.073854 0.061011 0.995401 0.965835 0.143883\n-0.110753 -1.290496 0.152108 0.073854 0.061011 0.995401 0.976323 0.345581\n-0.306048 -0.956761 0.146143 0.073854 0.061011 0.995401 0.950229 0.273436\n-0.306048 -0.956761 0.146143 0.067337 0.009464 0.997685 0.950229 0.273436\n-0.647612 -0.670442 0.166480 0.067337 0.009464 0.997685 0.920011 0.182067\n-0.934966 -0.875402 0.187819 0.067337 0.009464 0.997685 0.965835 0.143883\n0.093382 1.330226 0.237482 -0.036237 0.994981 -0.093275 0.811720 0.560671\n0.143574 1.314012 0.045021 -0.036237 0.994981 -0.093275 0.840381 0.559955\n-0.175743 1.300467 0.024589 -0.036237 0.994981 -0.093275 0.825282 0.619031\n-0.306048 -0.956761 0.146143 0.007452 0.022231 0.999725 0.950229 0.273436\n-0.110753 -1.290496 0.152108 0.007452 0.022231 0.999725 0.976323 0.345581\n0.390548 -0.860713 0.138815 0.007452 0.022231 0.999725 0.901004 0.410114\n-0.934966 -0.875402 0.187819 -0.023292 0.135773 0.990466 0.965835 0.143883\n-0.647612 -0.670442 0.166480 -0.023292 0.135773 0.990466 0.920011 0.182067\n-0.865999 -0.373701 0.120667 -0.023292 0.135773 0.990466 0.875826 0.126608\n0.390548 -0.860713 0.138815 0.038954 -0.087883 0.995369 0.901004 0.410114\n0.649182 -1.123705 0.105473 0.038954 -0.087883 0.995369 0.917027 0.461214\n0.942105 -0.754847 0.126576 0.038954 -0.087883 0.995369 0.871060 0.489258\n-0.647612 -0.670442 0.166480 -0.284728 -0.401496 0.870477 0.920011 0.182067\n-0.306048 -0.956761 0.146143 -0.284728 -0.401496 0.870477 0.950229 0.273436\n-0.463978 -0.572964 0.271506 -0.284728 -0.401496 0.870477 0.937200 0.223800\n0.942105 -0.754847 0.126576 -0.341170 -0.014454 0.939891 0.838921 0.498645\n1.138324 -0.149172 0.207116 -0.341170 -0.014454 0.939891 0.761876 0.510649\n0.775145 -0.340658 0.072341 -0.341170 -0.014454 0.939891 0.776116 0.461619\n0.390548 -0.860713 0.138815 0.073054 -0.054408 0.995843 0.901004 0.410114\n-0.110753 -1.290496 0.152108 0.073054 -0.054408 0.995843 0.976323 0.345581\n0.649182 -1.123705 0.105473 0.073054 -0.054408 0.995843 0.917027 0.461214\n0.947873 1.029113 0.168623 0.593021 0.732657 -0.333975 0.453612 0.769213\n0.661800 1.207083 0.051083 0.593021 0.732657 -0.333975 0.438596 0.784945\n0.770120 1.174566 0.172084 0.593021 0.732657 -0.333975 0.440292 0.758272\n-0.647612 -0.670442 0.166480 -0.161426 0.033473 0.986317 0.880239 0.164547\n-0.451283 -0.290365 0.185714 -0.161426 0.033473 0.986317 0.843593 0.191586\n-0.865999 -0.373701 0.120667 -0.161426 0.033473 0.986317 0.864488 0.135529\n-0.715941 -0.110029 0.155728 -0.145195 -0.048771 0.988200 0.825110 0.130935\n-0.865999 -0.373701 0.120667 -0.145195 -0.048771 0.988200 0.864488 0.135529\n-0.451283 -0.290365 0.185714 -0.145195 -0.048771 0.988200 0.843593 0.191586\n1.138324 -0.149172 0.207116 0.750756 -0.320061 0.577863 0.594749 0.557098\n0.942105 -0.754847 0.126576 0.750756 -0.320061 0.577863 0.567183 0.623853\n1.181310 -0.346787 0.041816 0.750756 -0.320061 0.577863 0.564126 0.569199\n1.138324 -0.149172 0.207116 0.884580 -0.170653 0.434047 0.722511 0.674977\n1.181310 -0.346787 0.041816 0.884580 -0.170653 0.434047 0.748881 0.638839\n1.211208 0.119206 0.164098 0.884580 -0.170653 0.434047 0.720007 0.730453\n1.044912 0.854866 -0.009842 0.819343 0.563641 -0.104810 0.753905 0.891535\n0.947873 1.029113 0.168623 0.819343 0.563641 -0.104810 0.739889 0.925603\n1.178898 0.690976 0.156231 0.819343 0.563641 -0.104810 0.725722 0.850189\n0.775145 -0.340658 0.072341 0.735437 0.038394 0.676504 0.127718 0.893989\n0.671645 -0.221749 0.178109 0.735437 0.038394 0.676504 0.129400 0.899700\n0.608190 -0.562975 0.266458 0.735437 0.038394 0.676504 0.123500 0.894500\n0.822210 0.088762 0.223173 0.452846 -0.339242 0.824527 0.178723 0.782138\n0.671645 -0.221749 0.178109 0.452846 -0.339242 0.824527 0.180177 0.759959\n0.775145 -0.340658 0.072341 0.452846 -0.339242 0.824527 0.196957 0.771320\n0.390548 -0.860713 0.138815 0.103659 -0.697709 0.708842 0.024689 0.631187\n0.039352 -0.760893 0.288425 0.103659 -0.697709 0.708842 0.041491 0.700452\n-0.306048 -0.956761 0.146143 0.103659 -0.697709 0.708842 0.010702 0.774590\n0.661800 1.207083 0.051083 0.313322 0.942037 -0.119980 0.425899 0.714533\n0.299742 1.337268 0.127746 0.313322 0.942037 -0.119980 0.416593 0.769370\n0.491221 1.288571 0.245431 0.313322 0.942037 -0.119980 0.401919 0.738028\n0.388566 -0.350182 0.131772 -0.299905 0.339351 0.891571 0.801465 0.382742\n0.344851 -0.659604 0.234840 -0.299905 0.339351 0.891571 0.866058 0.386206\n0.671645 -0.221749 0.178109 -0.299905 0.339351 0.891571 0.777762 0.421183\n0.775145 -0.340658 0.072341 0.513944 0.311815 0.799145 0.776116 0.461619\n0.608190 -0.562975 0.266458 0.513944 0.311815 0.799145 0.836004 0.447865\n0.942105 -0.754847 0.126576 0.513944 0.311815 0.799145 0.838921 0.498645\n0.822210 0.088762 0.223173 -0.184182 -0.307696 0.933488 0.469400 0.683800\n0.775145 -0.340658 0.072341 -0.184182 -0.307696 0.933488 0.441717 0.729565\n1.138324 -0.149172 0.207116 -0.184182 -0.307696 0.933488 0.462299 0.661268\n-0.463978 -0.572964 0.271506 -0.579788 0.260422 0.772028 0.460600 0.891500\n-0.451283 -0.290365 0.185714 -0.579788 0.260422 0.772028 0.460600 0.899900\n-0.647612 -0.670442 0.166480 -0.579788 0.260422 0.772028 0.454900 0.893400\n-0.175743 1.300467 0.024589 -0.312403 0.911508 0.267503 0.825282 0.619031\n-0.232504 1.209289 0.268987 -0.312403 0.911508 0.267503 0.791069 0.638471\n0.093382 1.330226 0.237482 -0.312403 0.911508 0.267503 0.802958 0.576443\n0.429144 -0.159982 0.279202 0.158933 -0.625809 0.763612 0.252246 0.629687\n0.388566 -0.350182 0.131772 0.158933 -0.625809 0.763612 0.284567 0.604812\n0.671645 -0.221749 0.178109 0.158933 -0.625809 0.763612 0.285797 0.642938\n0.942105 -0.754847 0.126576 0.107305 -0.456980 0.882981 0.040257 0.554372\n0.608190 -0.562975 0.266458 0.107305 -0.456980 0.882981 0.050722 0.577354\n0.390548 -0.860713 0.138815 0.107305 -0.456980 0.882981 0.024689 0.631187\n-0.501256 0.139159 0.225502 -0.072556 -0.093166 0.993003 0.768466 0.167856\n-0.141853 0.328569 0.269534 -0.072556 -0.093166 0.993003 0.726579 0.212311\n-0.443440 0.275712 0.242539 -0.072556 -0.093166 0.993003 0.750291 0.174968\n-0.306048 -0.956761 0.146143 -0.168104 -0.367900 0.914544 0.010702 0.774590\n0.039352 -0.760893 0.288425 -0.168104 -0.367900 0.914544 0.053197 0.758716\n-0.463978 -0.572964 0.271506 -0.168104 -0.367900 0.914544 0.054335 0.797869\n0.390548 -0.860713 0.138815 0.046085 -0.421876 0.905482 0.024689 0.631187\n0.608190 -0.562975 0.266458 0.046085 -0.421876 0.905482 0.050722 0.577354\n0.344851 -0.659604 0.234840 0.046085 -0.421876 0.905482 0.058074 0.632221\n0.344851 -0.659604 0.234840 0.436679 0.228169 0.870201 0.866058 0.386206\n0.388566 -0.350182 0.131772 0.436679 0.228169 0.870201 0.801465 0.382742\n0.128003 -0.426222 0.282464 0.436679 0.228169 0.870201 0.836984 0.340770\n0.671645 -0.221749 0.178109 0.705688 -0.424509 0.567271 0.277848 0.676294\n0.822210 0.088762 0.223173 0.705688 -0.424509 0.567271 0.278942 0.720061\n0.695998 -0.046317 0.279096 0.705688 -0.424509 0.567271 0.253608 0.690500\n-0.715941 -0.110029 0.155728 -0.124106 -0.482171 0.867242 0.139788 0.589575\n-0.712176 0.160597 0.306730 -0.124106 -0.482171 0.867242 0.079822 0.627633\n-0.990399 -0.111007 0.115908 -0.124106 -0.482171 0.867242 0.130145 0.555416\n0.671645 -0.221749 0.178109 -0.215770 0.282156 0.934789 0.777762 0.421183\n0.344851 -0.659604 0.234840 -0.215770 0.282156 0.934789 0.866058 0.386206\n0.608190 -0.562975 0.266458 -0.215770 0.282156 0.934789 0.835180 0.430868\n0.039352 -0.760893 0.288425 0.074903 0.286596 0.955119 0.903405 0.323144\n-0.451283 -0.290365 0.185714 0.074903 0.286596 0.955119 0.843593 0.191586\n-0.463978 -0.572964 0.271506 0.074903 0.286596 0.955119 0.893672 0.215907\n0.039352 -0.760893 0.288425 0.276254 -0.362275 0.890191 0.041491 0.700452\n0.390548 -0.860713 0.138815 0.276254 -0.362275 0.890191 0.024689 0.631187\n0.344851 -0.659604 0.234840 0.276254 -0.362275 0.890191 0.058074 0.632221\n-0.712176 0.160597 0.306730 -0.393583 -0.443747 0.805097 0.790072 0.142413\n-0.715941 -0.110029 0.155728 -0.393583 -0.443747 0.805097 0.809029 0.143095\n-0.451283 -0.290365 0.185714 -0.393583 -0.443747 0.805097 0.822168 0.187802\n-0.279396 0.042536 0.294830 -0.345585 -0.126343 0.929843 0.795613 0.209417\n-0.501256 0.139159 0.225502 -0.345585 -0.126343 0.929843 0.785290 0.177663\n-0.451283 -0.290365 0.185714 -0.345585 -0.126343 0.929843 0.822168 0.187802\n0.093382 1.330226 0.237482 -0.090725 0.990103 -0.107074 0.811720 0.560671\n0.299742 1.337268 0.127746 -0.090725 0.990103 -0.107074 0.827969 0.534368\n0.143574 1.314012 0.045021 -0.090725 0.990103 -0.107074 0.840381 0.559955\n-0.712176 0.160597 0.306730 0.355010 -0.045196 0.933769 0.790072 0.142413\n-0.451283 -0.290365 0.185714 0.355010 -0.045196 0.933769 0.822168 0.187802\n-0.501256 0.139159 0.225502 0.355010 -0.045196 0.933769 0.785290 0.177663\n-0.451283 -0.290365 0.185714 -0.152317 0.053343 0.986891 0.843593 0.191586\n0.128003 -0.426222 0.282464 -0.152317 0.053343 0.986891 0.836984 0.340770\n-0.007478 -0.049663 0.241200 -0.152317 0.053343 0.986891 0.782331 0.295872\n-0.279396 0.042536 0.294830 0.068647 -0.342564 0.936983 0.138600 0.882300\n-0.451283 -0.290365 0.185714 0.068647 -0.342564 0.936983 0.130300 0.878200\n-0.007478 -0.049663 0.241200 0.068647 -0.342564 0.936983 0.138600 0.870100\n0.515628 0.276653 0.212411 -0.062236 -0.044443 0.997072 0.688920 0.366885\n0.822210 0.088762 0.223173 -0.062236 -0.044443 0.997072 0.704893 0.438797\n0.996191 0.689201 0.260796 -0.062236 -0.044443 0.997072 0.589762 0.426679\n0.128003 -0.426222 0.282464 0.526623 -0.588138 0.613810 0.260165 0.569329\n0.388566 -0.350182 0.131772 0.526623 -0.588138 0.613810 0.284567 0.604812\n0.429144 -0.159982 0.279202 0.526623 -0.588138 0.613810 0.252246 0.629687\n-1.053061 0.485734 0.270472 -0.386875 0.403867 0.828987 0.739384 0.039650\n-0.592078 1.078696 0.196725 -0.386875 0.403867 0.828987 0.604347 0.093562\n-1.046437 0.818700 0.111348 -0.386875 0.403867 0.828987 0.655527 0.031113\n-0.141853 0.328569 0.269534 -0.196112 -0.142351 0.970194 0.720952 0.225882\n-0.007478 -0.049663 0.241200 -0.196112 -0.142351 0.970194 0.764403 0.268919\n0.120670 0.282299 0.315811 -0.196112 -0.142351 0.970194 0.731279 0.282043\n0.947873 1.029113 0.168623 0.472834 0.292594 0.831154 0.535336 0.419120\n0.996191 0.689201 0.260796 0.472834 0.292594 0.831154 0.589762 0.426679\n1.178898 0.690976 0.156231 0.472834 0.292594 0.831154 0.563182 0.462197\n-0.451283 -0.290365 0.185714 -0.151292 0.057652 0.986806 0.843593 0.191586\n0.039352 -0.760893 0.288425 -0.151292 0.057652 0.986806 0.903405 0.323144\n0.128003 -0.426222 0.282464 -0.151292 0.057652 0.986806 0.836984 0.340770\n-0.141853 0.328569 0.269534 -0.082974 -0.035217 0.995929 0.702048 0.207259\n-0.227052 0.594435 0.271837 -0.082974 -0.035217 0.995929 0.685516 0.190390\n-0.443440 0.275712 0.242539 -0.082974 -0.035217 0.995929 0.737642 0.181112\n1.211208 0.119206 0.164098 0.407550 0.035584 0.912489 0.678890 0.511765\n1.178898 0.690976 0.156231 0.407550 0.035584 0.912489 0.588861 0.479347\n1.138324 -0.149172 0.207116 0.407550 0.035584 0.912489 0.714744 0.500465\n-0.227052 0.594435 0.271837 0.827570 -0.561334 -0.005661 0.129957 0.738176\n-0.426206 0.300098 0.343970 0.827570 -0.561334 -0.005661 0.115428 0.701802\n-0.443440 0.275712 0.242539 0.827570 -0.561334 -0.005661 0.131522 0.687316\n-0.501256 0.139159 0.225502 -0.216948 0.189020 0.957708 0.768466 0.167856\n-0.279396 0.042536 0.294830 -0.216948 0.189020 0.957708 0.777816 0.219110\n-0.141853 0.328569 0.269534 -0.216948 0.189020 0.957708 0.726579 0.212311\n-0.990399 -0.111007 0.115908 -0.115263 -0.260393 0.958598 0.201166 0.716376\n-1.053061 0.485734 0.270472 -0.115263 -0.260393 0.958598 0.151800 0.647181\n-1.156836 0.327142 0.214914 -0.115263 -0.260393 0.958598 0.183568 0.668532\n0.695998 -0.046317 0.279096 0.217330 -0.509453 0.832601 0.253608 0.690500\n0.429144 -0.159982 0.279202 0.217330 -0.509453 0.832601 0.252246 0.629687\n0.671645 -0.221749 0.178109 0.217330 -0.509453 0.832601 0.277848 0.676294\n-1.156836 0.327142 0.214914 0.608507 -0.585732 0.535385 0.126016 0.766593\n-1.053061 0.485734 0.270472 0.608507 -0.585732 0.535385 0.129649 0.796957\n-1.153516 0.410552 0.302394 0.608507 -0.585732 0.535385 0.101249 0.787922\n-1.153516 0.410552 0.302394 -0.369534 0.735099 0.568396 0.497318 0.745466\n-1.053061 0.485734 0.270472 -0.369534 0.735099 0.568396 0.486933 0.769993\n-1.216022 0.578376 0.044712 -0.369534 0.735099 0.568396 0.486315 0.740020\n1.138324 -0.149172 0.207116 0.496302 0.028584 0.867679 0.714744 0.500465\n1.178898 0.690976 0.156231 0.496302 0.028584 0.867679 0.588861 0.479347\n0.996191 0.689201 0.260796 0.496302 0.028584 0.867679 0.589762 0.426679\n-0.426206 0.300098 0.343970 0.921804 -0.382212 -0.064735 0.115428 0.701802\n-0.501256 0.139159 0.225502 0.921804 -0.382212 -0.064735 0.135755 0.665176\n-0.443440 0.275712 0.242539 0.921804 -0.382212 -0.064735 0.127779 0.686604\n0.515628 0.276653 0.212411 0.159585 -0.296335 0.941657 0.309863 0.562338\n0.996191 0.689201 0.260796 0.159585 -0.296335 0.941657 0.323393 0.551569\n0.580401 0.539433 0.284130 0.159585 -0.296335 0.941657 0.319910 0.598625\n-0.712176 0.160597 0.306730 -0.352074 -0.269159 0.896436 0.079822 0.627633\n-1.053061 0.485734 0.270472 -0.352074 -0.269159 0.896436 0.067637 0.619592\n-0.990399 -0.111007 0.115908 -0.352074 -0.269159 0.896436 0.130145 0.555416\n0.093382 1.330226 0.237482 0.096215 0.965274 0.242877 0.526782 0.212218\n0.491221 1.288571 0.245431 0.096215 0.965274 0.242877 0.513158 0.292408\n0.299742 1.337268 0.127746 0.096215 0.965274 0.242877 0.516636 0.234473\n0.822210 0.088762 0.223173 0.240528 0.441968 0.864182 0.704893 0.438797\n0.515628 0.276653 0.212411 0.240528 0.441968 0.864182 0.688920 0.366885\n0.489514 0.088691 0.315809 0.240528 0.441968 0.864182 0.731381 0.374054\n0.947873 1.029113 0.168623 0.411964 0.485092 0.771344 0.535336 0.419120\n0.770120 1.174566 0.172084 0.411964 0.485092 0.771344 0.515011 0.357946\n0.692525 1.009564 0.317295 0.411964 0.485092 0.771344 0.547746 0.326442\n0.039352 -0.760893 0.288425 0.182601 -0.030866 0.982703 0.903405 0.323144\n0.344851 -0.659604 0.234840 0.182601 -0.030866 0.982703 0.866058 0.386206\n0.128003 -0.426222 0.282464 0.182601 -0.030866 0.982703 0.836984 0.340770\n-0.592078 1.078696 0.196725 -0.366903 0.390262 0.844439 0.604347 0.093562\n-1.053061 0.485734 0.270472 -0.366903 0.390262 0.844439 0.739384 0.039650\n-0.660591 0.469675 0.448419 -0.366903 0.390262 0.844439 0.728225 0.111443\n-0.279396 0.042536 0.294830 0.191735 -0.005403 0.981432 0.777816 0.219110\n-0.007478 -0.049663 0.241200 0.191735 -0.005403 0.981432 0.764403 0.268919\n-0.141853 0.328569 0.269534 0.191735 -0.005403 0.981432 0.720952 0.225882\n0.996191 0.689201 0.260796 0.002974 -0.063395 0.997984 0.589762 0.426679\n0.822210 0.088762 0.223173 0.002974 -0.063395 0.997984 0.704893 0.438797\n1.138324 -0.149172 0.207116 0.002974 -0.063395 0.997984 0.714744 0.500465\n-0.426206 0.300098 0.343970 0.424889 -0.066234 0.902819 0.716544 0.172597\n-0.227052 0.594435 0.271837 0.424889 -0.066234 0.902819 0.685516 0.190390\n-0.448007 0.643092 0.379393 0.424889 -0.066234 0.902819 0.701556 0.168155\n0.770120 1.174566 0.172084 0.403541 0.490155 0.772595 0.515011 0.357946\n0.491221 1.288571 0.245431 0.403541 0.490155 0.772595 0.513158 0.292408\n0.692525 1.009564 0.317295 0.403541 0.490155 0.772595 0.547746 0.326442\n0.489514 0.088691 0.315809 0.069279 -0.161729 0.984400 0.739221 0.370755\n0.429144 -0.159982 0.279202 0.069279 -0.161729 0.984400 0.768980 0.372211\n0.695998 -0.046317 0.279096 0.069279 -0.161729 0.984400 0.744047 0.399358\n0.107560 0.741714 0.289848 0.009797 0.070998 0.997428 0.634979 0.247506\n0.250286 0.579515 0.299991 0.009797 0.070998 0.997428 0.651842 0.286677\n0.337298 0.907067 0.275821 0.009797 0.070998 0.997428 0.617632 0.247330\n0.580401 0.539433 0.284130 -0.102864 -0.045564 0.993651 0.636338 0.360223\n0.692525 1.009564 0.317295 -0.102864 -0.045564 0.993651 0.578236 0.352572\n0.337298 0.907067 0.275821 -0.102864 -0.045564 0.993651 0.591797 0.288383\n0.996191 0.689201 0.260796 0.464296 0.292674 0.835925 0.589762 0.426679\n0.947873 1.029113 0.168623 0.464296 0.292674 0.835925 0.535336 0.419120\n0.692525 1.009564 0.317295 0.464296 0.292674 0.835925 0.547746 0.326442\n-0.110477 0.676753 0.299810 0.034795 0.036376 0.998732 0.637586 0.199190\n0.107560 0.741714 0.289848 0.034795 0.036376 0.998732 0.634979 0.247506\n0.337298 0.907067 0.275821 0.034795 0.036376 0.998732 0.591797 0.288383\n-0.227052 0.594435 0.271837 -0.184763 -0.067702 0.980448 0.673910 0.194715\n-0.141853 0.328569 0.269534 -0.184763 -0.067702 0.980448 0.709966 0.229730\n0.120670 0.282299 0.315811 -0.184763 -0.067702 0.980448 0.692164 0.270133\n-0.660591 0.469675 0.448419 -0.012647 0.383128 0.923608 0.728225 0.111443\n-0.448007 0.643092 0.379393 -0.012647 0.383128 0.923608 0.687362 0.145102\n-0.592078 1.078696 0.196725 -0.012647 0.383128 0.923608 0.604347 0.093562\n0.489514 0.088691 0.315809 0.265308 0.146636 0.952948 0.731381 0.374054\n0.695998 -0.046317 0.279096 0.265308 0.146636 0.952948 0.735215 0.423492\n0.822210 0.088762 0.223173 0.265308 0.146636 0.952948 0.704893 0.438797\n-0.110477 0.676753 0.299810 0.117771 -0.126378 0.984966 0.637586 0.199190\n0.337298 0.907067 0.275821 0.117771 -0.126378 0.984966 0.591797 0.288383\n0.017309 1.198588 0.351486 0.117771 -0.126378 0.984966 0.585162 0.224790\n0.489514 0.088691 0.315809 0.232900 0.443691 0.865388 0.739221 0.370755\n0.515628 0.276653 0.212411 0.232900 0.443691 0.865388 0.688920 0.366885\n0.120670 0.282299 0.315811 0.232900 0.443691 0.865388 0.726100 0.296914\n-0.232504 1.209289 0.268987 -0.195297 0.704111 0.682706 0.562589 0.158180\n0.017309 1.198588 0.351486 -0.195297 0.704111 0.682706 0.578795 0.213011\n0.093382 1.330226 0.237482 -0.195297 0.704111 0.682706 0.526782 0.212218\n0.017309 1.198588 0.351486 0.051291 0.636696 0.769407 0.578795 0.213011\n0.491221 1.288571 0.245431 0.051291 0.636696 0.769407 0.513158 0.292408\n0.093382 1.330226 0.237482 0.051291 0.636696 0.769407 0.526782 0.212218\n-0.426206 0.300098 0.343970 0.217686 -0.642403 0.734800 0.115428 0.701802\n-0.712176 0.160597 0.306730 0.217686 -0.642403 0.734800 0.101555 0.638398\n-0.501256 0.139159 0.225502 0.217686 -0.642403 0.734800 0.135755 0.665176\n-0.448007 0.643092 0.379393 0.239850 -0.599219 0.763812 0.366911 0.763088\n-0.227052 0.594435 0.271837 0.239850 -0.599219 0.763812 0.344491 0.743725\n-0.110477 0.676753 0.299810 0.239850 -0.599219 0.763812 0.345136 0.709384\n0.250286 0.579515 0.299991 0.055047 0.058927 0.996743 0.651842 0.286677\n0.580401 0.539433 0.284130 0.055047 0.058927 0.996743 0.636338 0.360223\n0.337298 0.907067 0.275821 0.055047 0.058927 0.996743 0.591797 0.288383\n-0.227052 0.594435 0.271837 -0.186198 -0.069356 0.980061 0.673910 0.194715\n0.120670 0.282299 0.315811 -0.186198 -0.069356 0.980061 0.692164 0.270133\n-0.110477 0.676753 0.299810 -0.186198 -0.069356 0.980061 0.660836 0.221877\n-0.712176 0.160597 0.306730 -0.401474 -0.325450 0.856097 0.766188 0.082409\n-0.660591 0.469675 0.448419 -0.401474 -0.325450 0.856097 0.750163 0.070862\n-1.053061 0.485734 0.270472 -0.401474 -0.325450 0.856097 0.739384 0.039650\n0.120670 0.282299 0.315811 -0.067798 -0.129172 0.989302 0.726100 0.296914\n0.429144 -0.159982 0.279202 -0.067798 -0.129172 0.989302 0.768980 0.372211\n0.489514 0.088691 0.315809 -0.067798 -0.129172 0.989302 0.739221 0.370755\n0.580401 0.539433 0.284130 0.088470 -0.091073 0.991907 0.636338 0.360223\n0.996191 0.689201 0.260796 0.088470 -0.091073 0.991907 0.589762 0.426679\n0.692525 1.009564 0.317295 0.088470 -0.091073 0.991907 0.578236 0.352572\n0.017309 1.198588 0.351486 -0.030483 -0.282327 0.958834 0.411169 0.684507\n0.337298 0.907067 0.275821 -0.030483 -0.282327 0.958834 0.400114 0.618582\n0.692525 1.009564 0.317295 -0.030483 -0.282327 0.958834 0.415384 0.576375\n0.128003 -0.426222 0.282464 -0.408604 -0.047129 0.911494 0.836984 0.340770\n0.120670 0.282299 0.315811 -0.408604 -0.047129 0.911494 0.726100 0.296914\n-0.007478 -0.049663 0.241200 -0.408604 -0.047129 0.911494 0.764403 0.268919\n0.128003 -0.426222 0.282464 0.051839 -0.046415 0.997576 0.836984 0.340770\n0.429144 -0.159982 0.279202 0.051839 -0.046415 0.997576 0.768980 0.372211\n0.120670 0.282299 0.315811 0.051839 -0.046415 0.997576 0.726100 0.296914\n0.120670 0.282299 0.315811 0.236668 -0.309675 0.920918 0.314385 0.667600\n0.515628 0.276653 0.212411 0.236668 -0.309675 0.920918 0.295734 0.615913\n0.580401 0.539433 0.284130 0.236668 -0.309675 0.920918 0.319910 0.598625\n0.250286 0.579515 0.299991 0.021363 0.081116 0.996476 0.651842 0.286677\n0.107560 0.741714 0.289848 0.021363 0.081116 0.996476 0.634979 0.247506\n-0.110477 0.676753 0.299810 0.021363 0.081116 0.996476 0.660836 0.221877\n0.120670 0.282299 0.315811 0.012372 0.047764 0.998782 0.692164 0.270133\n0.250286 0.579515 0.299991 0.012372 0.047764 0.998782 0.651842 0.286677\n-0.110477 0.676753 0.299810 0.012372 0.047764 0.998782 0.660836 0.221877\n-0.448007 0.643092 0.379393 -0.289144 0.288067 0.912914 0.687362 0.145102\n0.017309 1.198588 0.351486 -0.289144 0.288067 0.912914 0.578795 0.213011\n-0.232504 1.209289 0.268987 -0.289144 0.288067 0.912914 0.562589 0.158180\n-0.448007 0.643092 0.379393 -0.288059 0.287741 0.913360 0.687362 0.145102\n-0.232504 1.209289 0.268987 -0.288059 0.287741 0.913360 0.562589 0.158180\n-0.592078 1.078696 0.196725 -0.288059 0.287741 0.913360 0.604347 0.093562\n0.120670 0.282299 0.315811 0.051677 0.030592 0.998195 0.692164 0.270133\n0.580401 0.539433 0.284130 0.051677 0.030592 0.998195 0.636338 0.360223\n0.250286 0.579515 0.299991 0.051677 0.030592 0.998195 0.651842 0.286677\n0.692525 1.009564 0.317295 0.142841 0.342263 0.928683 0.547746 0.326442\n0.491221 1.288571 0.245431 0.142841 0.342263 0.928683 0.513158 0.292408\n0.017309 1.198588 0.351486 0.142841 0.342263 0.928683 0.578795 0.213011\n-0.448007 0.643092 0.379393 0.241272 -0.153967 0.958166 0.687362 0.145102\n-0.110477 0.676753 0.299810 0.241272 -0.153967 0.958166 0.637586 0.199190\n0.017309 1.198588 0.351486 0.241272 -0.153967 0.958166 0.578795 0.213011\n-0.712176 0.160597 0.306730 0.091448 -0.427549 0.899355 0.101555 0.638398\n-0.426206 0.300098 0.343970 0.091448 -0.427549 0.899355 0.115428 0.701802\n-0.660591 0.469675 0.448419 0.091448 -0.427549 0.899355 0.077381 0.688755\n-0.426206 0.300098 0.343970 0.361396 -0.073030 0.929548 0.710980 0.153725\n-0.448007 0.643092 0.379393 0.361396 -0.073030 0.929548 0.687362 0.145102\n-0.660591 0.469675 0.448419 0.361396 -0.073030 0.929548 0.728225 0.111443\n3 0 1 2\n3 3 4 5\n3 6 7 8\n3 9 10 11\n3 12 13 14\n3 15 16 17\n3 18 19 20\n3 21 22 23\n3 24 25 26\n3 27 28 29\n3 30 31 32\n3 33 34 35\n3 36 37 38\n3 39 40 41\n3 42 43 44\n3 45 46 47\n3 48 49 50\n3 51 52 53\n3 54 55 56\n3 57 58 59\n3 60 61 62\n3 63 64 65\n3 66 67 68\n3 69 70 71\n3 72 73 74\n3 75 76 77\n3 78 79 80\n3 81 82 83\n3 84 85 86\n3 87 88 89\n3 90 91 92\n3 93 94 95\n3 96 97 98\n3 99 100 101\n3 102 103 104\n3 105 106 107\n3 108 109 110\n3 111 112 113\n3 114 115 116\n3 117 118 119\n3 120 121 122\n3 123 124 125\n3 126 127 128\n3 129 130 131\n3 132 133 134\n3 135 136 137\n3 138 139 140\n3 141 142 143\n3 144 145 146\n3 147 148 149\n3 150 151 152\n3 153 154 155\n3 156 157 158\n3 159 160 161\n3 162 163 164\n3 165 166 167\n3 168 169 170\n3 171 172 173\n3 174 175 176\n3 177 178 179\n3 180 181 182\n3 183 184 185\n3 186 187 188\n3 189 190 191\n3 192 193 194\n3 195 196 197\n3 198 199 200\n3 201 202 203\n3 204 205 206\n3 207 208 209\n3 210 211 212\n3 213 214 215\n3 216 217 218\n3 219 220 221\n3 222 223 224\n3 225 226 227\n3 228 229 230\n3 231 232 233\n3 234 235 236\n3 237 238 239\n3 240 241 242\n3 243 244 245\n3 246 247 248\n3 249 250 251\n3 252 253 254\n3 255 256 257\n3 258 259 260\n3 261 262 263\n3 264 265 266\n3 267 268 269\n3 270 271 272\n3 273 274 275\n3 276 277 278\n3 279 280 281\n3 282 283 284\n3 285 286 287\n3 288 289 290\n3 291 292 293\n3 294 295 296\n3 297 298 299\n3 300 301 302\n3 303 304 305\n3 306 307 308\n3 309 310 311\n3 312 313 314\n3 315 316 317\n3 318 319 320\n3 321 322 323\n3 324 325 326\n3 327 328 329\n3 330 331 332\n3 333 334 335\n3 336 337 338\n3 339 340 341\n3 342 343 344\n3 345 346 347\n3 348 349 350\n3 351 352 353\n3 354 355 356\n3 357 358 359\n3 360 361 362\n3 363 364 365\n3 366 367 368\n3 369 370 371\n3 372 373 374\n3 375 376 377\n3 378 379 380\n3 381 382 383\n3 384 385 386\n3 387 388 389\n3 390 391 392\n3 393 394 395\n3 396 397 398\n3 399 400 401\n3 402 403 404\n3 405 406 407\n3 408 409 410\n3 411 412 413\n3 414 415 416\n3 417 418 419\n3 420 421 422\n3 423 424 425\n3 426 427 428\n3 429 430 431\n3 432 433 434\n3 435 436 437\n3 438 439 440\n3 441 442 443\n3 444 445 446\n3 447 448 449\n3 450 451 452\n3 453 454 455\n3 456 457 458\n3 459 460 461\n3 462 463 464\n3 465 466 467\n3 468 469 470\n3 471 472 473\n3 474 475 476\n3 477 478 479\n3 480 481 482\n3 483 484 485\n3 486 487 488\n3 489 490 491\n3 492 493 494\n3 495 496 497\n3 498 499 500\n3 501 502 503\n3 504 505 506\n3 507 508 509\n3 510 511 512\n3 513 514 515\n3 516 517 518\n3 519 520 521\n3 522 523 524\n3 525 526 527\n3 528 529 530\n3 531 532 533\n3 534 535 536\n3 537 538 539\n3 540 541 542\n3 543 544 545\n3 546 547 548\n3 549 550 551\n3 552 553 554\n3 555 556 557\n3 558 559 560\n3 561 562 563\n3 564 565 566\n3 567 568 569\n3 570 571 572\n3 573 574 575\n3 576 577 578\n3 579 580 581\n3 582 583 584\n3 585 586 587\n3 588 589 590\n3 591 592 593\n3 594 595 596\n3 597 598 599\n3 600 601 602\n3 603 604 605\n3 606 607 608\n3 609 610 611\n3 612 613 614\n3 615 616 617\n3 618 619 620\n3 621 622 623\n3 624 625 626\n3 627 628 629\n3 630 631 632\n3 633 634 635\n3 636 637 638\n3 639 640 641\n3 642 643 644\n3 645 646 647\n3 648 649 650\n3 651 652 653\n3 654 655 656\n3 657 658 659\n3 660 661 662\n3 663 664 665\n3 666 667 668\n3 669 670 671\n3 672 673 674\n3 675 676 677\n3 678 679 680\n3 681 682 683\n3 684 685 686\n3 687 688 689\n3 690 691 692\n3 693 694 695\n3 696 697 698\n3 699 700 701\n3 702 703 704\n3 705 706 707\n3 708 709 710\n3 711 712 713\n3 714 715 716\n3 717 718 719\n3 720 721 722\n3 723 724 725\n3 726 727 728\n3 729 730 731\n3 732 733 734\n3 735 736 737\n3 738 739 740\n3 741 742 743\n3 744 745 746\n3 747 748 749\n3 750 751 752\n3 753 754 755\n3 756 757 758\n3 759 760 761\n3 762 763 764\n3 765 766 767\n3 768 769 770\n3 771 772 773\n3 774 775 776\n3 777 778 779\n");
 
       _export("__useDefault", __useDefault);
 
@@ -7343,7 +5929,7 @@ $__System.register("2a", [], function (_export, _context) {
     }
   };
 });
-$__System.register("2b", [], function (_export, _context) {
+$__System.register("18", [], function (_export, _context) {
   "use strict";
 
   var __useDefault;
@@ -7351,7 +5937,7 @@ $__System.register("2b", [], function (_export, _context) {
   return {
     setters: [],
     execute: function () {
-      _export("__useDefault", __useDefault = "uniform float tone;\r\nuniform float strength;\r\nuniform sampler2D texBase;\r\nuniform sampler2D texBlur;\r\n\r\nvarying vec2 vUv;\r\n\r\nvoid main(void) {\r\n  gl_FragColor = texture2D(texBase, vUv) + texture2D(texBlur, vUv)* 2. ;\r\n}\r\n");
+      _export("__useDefault", __useDefault = "\r\nvarying vec2 vAnchor;\r\n\r\nvoid main () {\r\n\tfloat dist = abs(vAnchor.x);\r\n\tdist = (1.-dist)*.1/dist;\r\n\tgl_FragColor = vec4(1, 0.380, 0.019,dist);\r\n}");
 
       _export("__useDefault", __useDefault);
 
@@ -7359,7 +5945,7 @@ $__System.register("2b", [], function (_export, _context) {
     }
   };
 });
-$__System.register("2c", [], function (_export, _context) {
+$__System.register("19", [], function (_export, _context) {
   "use strict";
 
   var __useDefault;
@@ -7367,7 +5953,7 @@ $__System.register("2c", [], function (_export, _context) {
   return {
     setters: [],
     execute: function () {
-      _export("__useDefault", __useDefault = "varying vec2 vUv;\n\nvoid main(void) {\n  vUv = uv;\n  gl_Position = vec4(position, 1.0);\n}\n");
+      _export("__useDefault", __useDefault = "attribute vec2 anchor, quantity;\r\nattribute vec3 color, next;\r\n\r\nuniform float time;\r\nuniform vec2 resolution;\r\n\r\nvarying vec2 vAnchor;\r\n\r\nvoid animate (float ratio, out vec3 p, vec3 n) {\r\n\tfloat fade = smoothstep(1.2, .5, length(p));\r\n\tfloat t = sin(time + quantity.x * 11354.6546) * .1;\r\n\t// vec3 offset = vec3(\r\n\t// \tsin(quantity.x * TAU * 100.) * .5 * fade,\r\n\t// \tsin(quantity.x * TAU * 10.) * .5 * fade,\r\n\t// \tabs(sin(quantity.x * TAU * 1000.)) * 2. * fade);\r\n\tvec3 offset = normalize(vec3(p.x, p.y, 0.));\r\n\toffset.z += abs(sin(quantity.x * TAU * 1000.)) * 2.;\r\n\tp += offset * ratio * fade;\r\n}\r\n\r\nvoid main () {\r\n\tvec3 pos = position;\r\n\tvec3 nxt = next;\r\n\r\n\tfloat ratio = mod(time * (.2 + .1 * sin(quantity.x * 65.1635)) + quantity.x, 1.);\r\n\r\n\tanimate(ratio, pos, nxt);\r\n\tanimate(ratio, nxt, pos);\r\n\r\n\tvec2 size = 10. / resolution;\r\n\r\n\tsize *= smoothstep(.0, .1, ratio) * smoothstep(1., .9, ratio);\r\n\r\n\tgl_Position = vec4(0, 0, 0, 1);\r\n\t\r\n\tvec4 sPos = projectionMatrix * viewMatrix * vec4(pos, 1);\r\n\tvec4 sNxt = projectionMatrix * viewMatrix * vec4(nxt, 1);\r\n\tgl_Position.xy = mix(sPos.xy/sPos.w, sNxt.xy/sNxt.w, anchor.y*.5+.5);\r\n\t\r\n\tvec2 forward = normalize(sNxt.xy-sPos.xy);\r\n\tvec2 right = vec2(forward.y, -forward.x);\r\n\tgl_Position.xy += right * anchor.x * size;\r\n\t// gl_Position.xy += forward * sign(anchor.y) * size / 2.;\r\n\r\n\tvAnchor = anchor;\r\n}");
 
       _export("__useDefault", __useDefault);
 
@@ -7375,7 +5961,7 @@ $__System.register("2c", [], function (_export, _context) {
     }
   };
 });
-$__System.register("2d", [], function (_export, _context) {
+$__System.register("1a", [], function (_export, _context) {
   "use strict";
 
   var __useDefault;
@@ -7383,7 +5969,7 @@ $__System.register("2d", [], function (_export, _context) {
   return {
     setters: [],
     execute: function () {
-      _export("__useDefault", __useDefault = "uniform float minBright;\nuniform sampler2D texture;\n\nvarying vec2 vUv;\n\nvoid main(void) {\n  vec4 bright = max(vec4(0.0), (texture2D(texture, vUv) - .2));\n  gl_FragColor = bright;\n}\n");
+      _export("__useDefault", __useDefault = "\r\nvarying vec2 vAnchor;\r\n\r\nvoid main () {\r\n\tfloat dist = abs(vAnchor.x);\r\n\tdist = (1.-dist)*.1/dist;\r\n\tgl_FragColor = vec4(1, 0.882, 0.078,dist);\r\n}");
 
       _export("__useDefault", __useDefault);
 
@@ -7391,7 +5977,7 @@ $__System.register("2d", [], function (_export, _context) {
     }
   };
 });
-$__System.register("2e", [], function (_export, _context) {
+$__System.register("1b", [], function (_export, _context) {
   "use strict";
 
   var __useDefault;
@@ -7399,7 +5985,7 @@ $__System.register("2e", [], function (_export, _context) {
   return {
     setters: [],
     execute: function () {
-      _export("__useDefault", __useDefault = "varying vec2 vUv;\n\nvoid main(void) {\n  vUv = uv;\n  gl_Position = vec4(position, 1.0);\n}\n");
+      _export("__useDefault", __useDefault = "attribute vec2 anchor, quantity;\r\n\r\nuniform float time;\r\nuniform vec2 resolution;\r\n\r\nvarying vec2 vAnchor;\r\n\r\nvoid animate (float ratio, out vec3 p, vec3 n) {\r\n}\r\n\r\nvoid main () {\r\n\tvec3 pos = position * .5;\r\n\tpos.z = abs(pos.z);\r\n\r\n\tfloat ratio = mod(time * (.2 + .1 * sin(quantity.x * 65.1635)) + quantity.x, 1.);\r\n\r\n\tpos += normalize(pos) * ratio;\r\n\r\n\tvec3 nxt = pos * 2.;\r\n\r\n\tanimate(ratio, pos, nxt);\r\n\tanimate(ratio, nxt, pos);\r\n\r\n\tvec2 size = 10. / resolution;\r\n\r\n\tsize *= smoothstep(.0, .1, ratio) * smoothstep(1., .9, ratio);\r\n\r\n\tgl_Position = vec4(0, 0, 0, 1);\r\n\t\r\n\tvec4 sPos = projectionMatrix * viewMatrix * vec4(pos, 1);\r\n\tvec4 sNxt = projectionMatrix * viewMatrix * vec4(nxt, 1);\r\n\tgl_Position.xy = mix(sPos.xy/sPos.w, sNxt.xy/sNxt.w, anchor.y*.5+.5);\r\n\t\r\n\tvec2 forward = normalize(sNxt.xy-sPos.xy);\r\n\tvec2 right = vec2(forward.y, -forward.x);\r\n\tgl_Position.xy += right * anchor.x * size;\r\n\t// gl_Position.xy += forward * sign(anchor.y) * size / 2.;\r\n\r\n\tvAnchor = anchor;\r\n}");
 
       _export("__useDefault", __useDefault);
 
@@ -7407,7 +5993,7 @@ $__System.register("2e", [], function (_export, _context) {
     }
   };
 });
-$__System.register("2f", [], function (_export, _context) {
+$__System.register("1c", [], function (_export, _context) {
   "use strict";
 
   var __useDefault;
@@ -7415,7 +6001,7 @@ $__System.register("2f", [], function (_export, _context) {
   return {
     setters: [],
     execute: function () {
-      _export("__useDefault", __useDefault = "uniform vec2 resolution;\nuniform vec2 direction;\nuniform sampler2D texture;\nuniform float weight[10];\n\nvarying vec2 vUv;\n\n// #pragma glslify: blur13 = require('glsl-fast-gaussian-blur/13')\n// #pragma glslify: blur9 = require('glsl-fast-gaussian-blur/9')\n// #pragma glslify: blur5 = require('glsl-fast-gaussian-blur/5')\n\nvec4 blur9(sampler2D image, vec2 uv, vec2 resolution, vec2 direction) {\n  vec4 color = vec4(0.0);\n  vec2 off1 = vec2(.53846153846) * direction;\n  vec2 off2 = vec2(.52307692308) * direction;\n  color += texture2D(image, uv) * 0.2270270270;\n  color += texture2D(image, uv + (off1 / resolution)) * 0.3162162162;\n  color += texture2D(image, uv - (off1 / resolution)) * 0.3162162162;\n  color += texture2D(image, uv + (off2 / resolution)) * 0.0702702703;\n  color += texture2D(image, uv - (off2 / resolution)) * 0.0702702703;\n  return color;\n}\n\nfloat gaussianPdf(in float x, in float sigma) {\n  return 0.39894 * exp( -0.5 * x * x/(sigma * sigma))/sigma;\n}\n\nvoid main(void) {\n  gl_FragColor = blur9(texture, vUv, resolution, direction);\n}\n");
+      _export("__useDefault", __useDefault = "\r\nvarying vec2 vAnchor;\r\n\r\nvoid main () {\r\n\tfloat dist = abs(vAnchor.x);\r\n\tdist = (1.-dist)*.1/dist;\r\n\tgl_FragColor = vec4(1, 1, 1,dist);\r\n}");
 
       _export("__useDefault", __useDefault);
 
@@ -7423,7 +6009,7 @@ $__System.register("2f", [], function (_export, _context) {
     }
   };
 });
-$__System.register("30", [], function (_export, _context) {
+$__System.register("1d", [], function (_export, _context) {
   "use strict";
 
   var __useDefault;
@@ -7431,7 +6017,7 @@ $__System.register("30", [], function (_export, _context) {
   return {
     setters: [],
     execute: function () {
-      _export("__useDefault", __useDefault = "varying vec2 vUv;\n\nvoid main(void) {\n  vUv = uv;\n  gl_Position = vec4(position, 1.0);\n}\n");
+      _export("__useDefault", __useDefault = "attribute vec2 anchor, quantity;\r\n\r\nuniform float time;\r\nuniform vec2 resolution;\r\n\r\nvarying vec2 vAnchor;\r\n\r\nvoid animate (out vec3 p) {\r\n\tfloat i = floor(quantity.y / 2.);\r\n\tp.xz *= rotation(time + i * .15465);\r\n\tp.yz *= rotation(time + i * .98735);\r\n}\r\n\r\nvoid main () {\r\n\tfloat i = floor(quantity.y / 2.);\r\n\tvec3 pos = vec3(1.5+.25*sin(i*100.),0,0);\r\n\tfloat n = mix(-1., 1., mod(quantity.y, 2.));\r\n\tfloat b = mix(-1., 1., mod(i, 2.));\r\n\tpos.xz *= rotation(i * .1546);\r\n\tpos.yz *= rotation(i * .687354);\r\n\tpos.yx *= rotation(i * .8973);\r\n\tpos.z = abs(pos.z);\r\n\r\n\tfloat l = .02 + .01*sin(i*.984);\r\n\r\n\tvec3 front = normalize(pos);\r\n\tvec3 up = vec3(0,1,0);\r\n\tanimate(front);\r\n\tanimate(up);\r\n\r\n\tvec3 nxt = pos + (front * n + up * b) * l;\r\n\tpos -= (front * n + up * b) * l;\r\n\r\n\r\n\tvec2 size = 10. / resolution;\r\n\r\n\tgl_Position = vec4(0, 0, 0, 1);\r\n\t\r\n\tvec4 sPos = projectionMatrix * viewMatrix * vec4(pos, 1);\r\n\tvec4 sNxt = projectionMatrix * viewMatrix * vec4(nxt, 1);\r\n\tgl_Position.xy = mix(sPos.xy/sPos.w, sNxt.xy/sNxt.w, anchor.y*.5+.5);\r\n\t\r\n\tvec2 forward = normalize(sNxt.xy-sPos.xy);\r\n\tvec2 right = vec2(forward.y, -forward.x);\r\n\tgl_Position.xy += right * anchor.x * size;\r\n\t// gl_Position.xy += forward * sign(anchor.y) * size / 2.;\r\n\r\n\tvAnchor = anchor;\r\n}");
 
       _export("__useDefault", __useDefault);
 
@@ -7439,256 +6025,40 @@ $__System.register("30", [], function (_export, _context) {
     }
   };
 });
-$__System.register("31", [], function (_export, _context) {
-  "use strict";
-
-  var __useDefault;
+$__System.register("1e", ["11", "12", "13", "14", "15", "16", "17", "18", "19", "c", "d", "1a", "1b", "1c", "1d"], function (_export) {
+  var makeAnimations, OBJLoader, THREE, PLYLoader, shaderHeader, animation_scene_json, mesh_cookie_ply, shader_line_frag, shader_line_vert, _Object$assign, descriptors, shader_ray_frag, shader_ray_vert, shader_star_frag, shader_star_vert, plyLoader, objLoader, fontLoader;
 
   return {
-    setters: [],
-    execute: function () {
-      _export("__useDefault", __useDefault = "\r\nvarying vec3 vColor, vNormal, vView;\r\nvarying vec2 vUv;\r\n\r\nvoid main () {\r\n\tvec3 normal = normalize(vNormal);\r\n\tvec3 view = normalize(vView);\r\n\tfloat shade = dot(normal, view)*.5+.5;\r\n\r\n\tvec3 color = mix(vec3(1), vec3(0.341, 0.231, 0.078)*.25, shade);\r\n\tgl_FragColor = vec4(color, 1);\r\n}");
-
-      _export("__useDefault", __useDefault);
-
-      _export("default", __useDefault);
-    }
-  };
-});
-$__System.register("32", [], function (_export, _context) {
-  "use strict";
-
-  var __useDefault;
-
-  return {
-    setters: [],
-    execute: function () {
-      _export("__useDefault", __useDefault = "\r\nattribute vec2 quantity;\r\nattribute vec3 color;\r\nuniform float time;\r\nuniform vec3 cameraPos;\r\nvarying vec3 vColor, vNormal, vView;\r\nvarying vec2 vUv;\r\n\r\nfloat fbm (vec2 p) {\r\n    float value = 0.0;\r\n    float amplitud = .5;\r\n    for (float i = 3.; i >= 1.; --i) {\r\n        value += amplitud * noise(p);\r\n        p *= 2.;\r\n        amplitud *= .5;\r\n    }\r\n    return value;\r\n}\r\n\r\nvoid main () {\r\n\tfloat salt = random(quantity.xx*100.);\r\n\tfloat pepper = random(quantity.xx*10.+vec2(.123124,.5243));\r\n\tfloat curry = random(quantity.xx*20.+vec2(.87354,.1657));\r\n\t// float slide = mod(quantity.x + time * .02, 1.) * 2. - 1.;\r\n\tfloat size = (.1+.9*(.5+.5*sin(salt * TAU + time)))*1.5;\r\n\tvec3 pos = position * size;\r\n\tvNormal = normal;\r\n\r\n\tfloat a1 = salt*TAU + time * (1.+salt);\r\n\tfloat a2 = pepper*TAU + time * .1;\r\n\r\n\tpos.xz *= rotation(a1);\r\n\tpos.yz *= rotation(a2);\r\n\tvNormal.xz *= rotation(a1);\r\n\tvNormal.yz *= rotation(a2);\r\n\r\n\tfloat a3 = quantity.x * TAU + time * (.01+.2*salt);\r\n\tpos.xz += vec2(cos(a3), sin(a3)) * (6.+7.*quantity.x);\r\n\tpos.y += 3. + sin(salt*10.+time * (.1+.5*pepper)) * 3.;\r\n\t// pos.z += slide * 10.;\r\n\r\n\r\n\t/*\r\n\t// pos.z += quantity.y;\r\n\tfloat angle = quantity.x * 32.6246;\r\n\tfloat radius = quantity.x * 4.;\r\n\tvec2 offset = vec2(cos(angle),sin(angle)) * radius;\r\n\tpos.xz += offset;\r\n\tfloat noisy = fbm(offset*.5);\r\n\tnoisy = abs(noisy*2.-1.);\r\n\tvec2 p = offset/5.;\r\n\tfloat fade = abs(p.x)*abs(p.y);\r\n\tpos.y += noisy*size-fade;\r\n\t*/\r\n\tvView = cameraPos - pos;\r\n\tvColor = color;\r\n\tvUv = uv;\r\n\tgl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(pos, 1);\r\n}");
-
-      _export("__useDefault", __useDefault);
-
-      _export("default", __useDefault);
-    }
-  };
-});
-$__System.register("33", [], function (_export, _context) {
-  "use strict";
-
-  var __useDefault;
-
-  return {
-    setters: [],
-    execute: function () {
-      _export("__useDefault", __useDefault = "\r\nuniform float time;\r\nvarying vec3 vColor, vNormal, vView, vWorld;\r\nvarying vec2 vUv, vScreen;\r\n\r\nvoid main () {\r\n\tvec3 normal = normalize(vNormal);\r\n\tvec3 view = normalize(vView);\r\n\tfloat shade = dot(normal, -view)*2.+1.5;\r\n\t// shade *= dot(normal, view)*.5+.5;\r\n\tfloat fade = 1.-length(vUv*2.-1.);\r\n\tfade = smoothstep(.0, .5, fade);\r\n\tfloat salt = noise(vWorld * 100.);\r\n\tfloat dust = abs(sin(vWorld.y*10.+time*.2+vNormal.y*10.));\r\n\tvec3 color = vec3(0.968, 0.792, 0.372);\r\n\tvec3 c = vec3(0.968, 0.909, 0.768);\r\n\tcolor = mix(color, c, abs(dot(normal, vec3(0,0,1))));\r\n\t// color = mix(color, c, abs(dot(normal, vec3(1,0,0))));\r\n\tcolor *= .5;\r\n\r\n\tcolor *= shade * fade;\r\n\tcolor = mix(color, c, smoothstep(.0, 1., .5/dust)*.05);\r\n\tcolor += smoothstep(.5,1.,salt)*.1;\r\n\tcolor = clamp(color, 0., 1.);\r\n\tgl_FragColor = vec4(color, 1);\r\n}");
-
-      _export("__useDefault", __useDefault);
-
-      _export("default", __useDefault);
-    }
-  };
-});
-$__System.register("34", [], function (_export, _context) {
-  "use strict";
-
-  var __useDefault;
-
-  return {
-    setters: [],
-    execute: function () {
-      _export("__useDefault", __useDefault = "\r\nattribute vec3 color;\r\nuniform float time;\r\nuniform vec3 cameraPos;\r\nvarying vec3 vColor, vNormal, vView, vWorld;\r\nvarying vec2 vUv, vScreen;\r\n\r\nfloat fbm (vec2 p) {\r\n    float value = 0.0;\r\n    float amplitud = .5;\r\n    for (float i = 3.; i >= 1.; --i) {\r\n        value += amplitud * noise(p);\r\n        p *= 2.;\r\n        p += sin(length(p)-time*.5);\r\n        amplitud *= .5;\r\n    }\r\n    return value;\r\n}\r\n\r\nvoid displace (inout vec3 pos) {\r\n\tvec2 p = uv*2.-1.;\r\n\t// float fade = (1.-abs(p.x))*(1.-abs(p.y));\r\n\tfloat fade = abs(p.x)*abs(p.y);\r\n\tfloat noisy = fbm(pos.xz*.25);\r\n\tnoisy = abs(noisy*2.-1.);\r\n\t// noisy = clamp(.01/noisy, 0., 1.);\r\n\tpos.y += noisy - fade;// * (.5 + fade) + fade;\r\n}\r\n\r\nvoid main () {\r\n\tvec3 pos = position;\r\n\tpos.xyz = vec3(pos.x, pos.z, -pos.y);\r\n\tpos.y -= 2.;\r\n\tvec2 delta = vec2(.5,0);\r\n\tvec3 north = pos + delta.yyx;\r\n\tvec3 south = pos - delta.yyx;\r\n\tvec3 east = pos + delta.xyy;\r\n\tvec3 west = pos - delta.xyy;\r\n\tdisplace(pos);\r\n\tdisplace(north);\r\n\tdisplace(south);\r\n\tdisplace(east);\r\n\tdisplace(west);\r\n\tvNormal = normalize(cross(north-south, east-west));\r\n\tvView = cameraPos - pos;\r\n\tvColor = color;\r\n\tvUv = uv;\r\n\tvWorld = pos;\r\n\tgl_Position = projectionMatrix * viewMatrix * vec4(pos, 1);\r\n\tvScreen = gl_Position.xy;\r\n}");
-
-      _export("__useDefault", __useDefault);
-
-      _export("default", __useDefault);
-    }
-  };
-});
-$__System.register("35", [], function (_export, _context) {
-  "use strict";
-
-  var __useDefault;
-
-  return {
-    setters: [],
-    execute: function () {
-      _export("__useDefault", __useDefault = "\r\nvarying vec2 vUv;\r\n\r\nvoid main () {\r\n\tvUv = uv;\r\n\tgl_Position = vec4(uv * 2. - 1., 0., 1.);\r\n}");
-
-      _export("__useDefault", __useDefault);
-
-      _export("default", __useDefault);
-    }
-  };
-});
-$__System.register("36", [], function (_export, _context) {
-  "use strict";
-
-  var __useDefault;
-
-  return {
-    setters: [],
-    execute: function () {
-      _export("__useDefault", __useDefault = "\r\nuniform sampler2D frame, frameUI, curve, bloom, blur;\r\nuniform vec2 resolution, mouse;\r\nuniform float time;\r\nvarying vec2 vUv;\r\n\r\nvoid main () {\r\n\tvec2 p = vUv;\r\n\tp.x *= resolution.x/resolution.y;\r\n\tp = vUv * 2. - 1.;\r\n\tvec4 color = texture2D(bloom, vUv);\r\n\tcolor *= 1.+.1*sin(p.y*1000.);\r\n\tcolor *= 1.+.1*random(p);\r\n\tgl_FragColor = color;\r\n}");
-
-      _export("__useDefault", __useDefault);
-
-      _export("default", __useDefault);
-    }
-  };
-});
-$__System.register("37", [], function (_export, _context) {
-  "use strict";
-
-  var __useDefault;
-
-  return {
-    setters: [],
-    execute: function () {
-      _export("__useDefault", __useDefault = "\r\nuniform sampler2D texture;\r\nvarying vec2 vUv;\r\n\r\nvoid main () {\r\n\tgl_FragColor = texture2D(texture, vUv);\r\n}");
-
-      _export("__useDefault", __useDefault);
-
-      _export("default", __useDefault);
-    }
-  };
-});
-$__System.register("38", [], function (_export, _context) {
-  "use strict";
-
-  var __useDefault;
-
-  return {
-    setters: [],
-    execute: function () {
-      _export("__useDefault", __useDefault = "\r\nuniform vec2 resolution;\r\nuniform vec4 rect;\r\nuniform vec2 anchor, offset;\r\nvarying vec2 vUv;\r\n\r\nvoid main () {\r\n\tvUv = uv;\r\n\tvec2 p = uv*2.-1.;\r\n\tp -= anchor;\r\n\tp.x *= resolution.y/resolution.x;\r\n\t// vec3 pos = (modelMatrix * vec4(p, 0, 1)).xyz;\r\n\tvec2 pos = p * rect.zw + rect.xy + 2. * offset / resolution;\r\n\tgl_Position = vec4(pos, 0., 1.);\r\n}");
-
-      _export("__useDefault", __useDefault);
-
-      _export("default", __useDefault);
-    }
-  };
-});
-$__System.register("39", [], function (_export, _context) {
-  "use strict";
-
-  var __useDefault;
-
-  return {
-    setters: [],
-    execute: function () {
-      _export("__useDefault", __useDefault = "\r\nvarying vec2 vAnchor;\r\nvarying vec3 vColor;\r\n\r\nvoid main () {\r\n\tif (length(vAnchor) > 1.) discard;\r\n\t// float dist = clamp(length(vAnchor), 0., 1.);\r\n\t// float shade = .2/dist;\r\n\tgl_FragColor = vec4(1);\r\n\t// gl_FragColor = vec4(vColor, 1);\r\n}");
-
-      _export("__useDefault", __useDefault);
-
-      _export("default", __useDefault);
-    }
-  };
-});
-$__System.register("3a", [], function (_export, _context) {
-  "use strict";
-
-  var __useDefault;
-
-  return {
-    setters: [],
-    execute: function () {
-      _export("__useDefault", __useDefault = "\r\nattribute vec3 color;\r\nattribute vec2 anchor, quantity;\r\nuniform vec3 cameraPos, cameraTarget;\r\nuniform float time;\r\nvarying vec2 vAnchor;\r\nvarying vec3 vColor;\r\n\r\nvoid main () {\r\n\tfloat salt = random(quantity.xx*10.);\r\n\tfloat pepper = random(quantity.xx*10.+vec2(.546857,.951354));\r\n\tfloat size = .02+.02*salt;\r\n\tvec3 pos = position * 30.;\r\n\tpos = normalize(pos) * 20.;\r\n\t// pos.z *= 2.;\r\n\t// pos.x -= 50.;\r\n\t// pos.y += 15.;\r\n\t// pos.xz *= rotation(time*(.1+salt)*.01);\r\n\t// pos.yz *= rotation(time*(.1+pepper)*.01);\r\n\r\n\tvec3 front = normalize(cameraPos - pos);\r\n\tvec3 right = normalize(cross(front, vec3(0,1,0)));\r\n\tvec3 up = normalize(cross(front, right));\r\n\tpos += (right * anchor.x + up * anchor.y) * size;\r\n\r\n\tvAnchor = anchor;\r\n\tvColor = vec3(1);\r\n\tgl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(pos, 1);\r\n}");
-
-      _export("__useDefault", __useDefault);
-
-      _export("default", __useDefault);
-    }
-  };
-});
-$__System.register("3b", [], function (_export, _context) {
-  "use strict";
-
-  var __useDefault;
-
-  return {
-    setters: [],
-    execute: function () {
-      _export("__useDefault", __useDefault = "\r\nvarying vec3 vColor;\r\n\r\nvoid main () {\r\n\tgl_FragColor = vec4(vColor, 1);\r\n}");
-
-      _export("__useDefault", __useDefault);
-
-      _export("default", __useDefault);
-    }
-  };
-});
-$__System.register("3c", [], function (_export, _context) {
-  "use strict";
-
-  var __useDefault;
-
-  return {
-    setters: [],
-    execute: function () {
-      _export("__useDefault", __useDefault = "\r\nattribute vec3 color;\r\nuniform float time;\r\nuniform vec3 cameraPos;\r\nvarying vec3 vColor;\r\n\r\nvoid main () {\r\n\tvec3 pos = position;\r\n\tfloat t = time * .01;\r\n\tpos *= 10.;\r\n\t// pos.xyz = pos.yxz;\r\n\tpos.zx *= rotation(t);\r\n\t// pos.xy *= rotation(-PI/8.+PI);\r\n\t// pos.yz *= rotation(t*.5);\r\n\tpos.y += 10.;\r\n\t// pos.x -= 20.;\r\n\tvColor = color * smoothstep(1., 0.5, length(pos.xz)/15.);// * clamp(pos.y*.1+.2, 0., 1.);\r\n\tgl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(pos, 1);\r\n}");
-
-      _export("__useDefault", __useDefault);
-
-      _export("default", __useDefault);
-    }
-  };
-});
-$__System.register("c", ["3", "20", "21", "25", "26", "27", "28", "29", "30", "31", "32", "33", "34", "35", "36", "37", "38", "39", "2a", "2b", "2c", "2d", "2e", "2f", "3a", "3b", "3c"], function (_export) {
-  var THREE, _Object$assign, descriptors, makeAnimations, OBJLoader, PLYLoader, shaderHeader, animation_scene_json, shader_bloom_gaussian_blur_vert, shader_chocolat_frag, shader_chocolat_vert, shader_desert_frag, shader_desert_vert, shader_fullscreen_vert, shader_render_frag, shader_shape2D_frag, shader_shape2D_vert, shader_star_frag, mesh_cookie_ply, shader_bloom_bloom_frag, shader_bloom_bloom_vert, shader_bloom_bright_frag, shader_bloom_bright_vert, shader_bloom_gaussian_blur_frag, shader_star_vert, shader_wireframe_frag, shader_wireframe_vert, plyLoader, objLoader, fontLoader;
-
-  return {
-    setters: [function (_6) {
-      THREE = _6;
-    }, function (_) {
-      _Object$assign = _["default"];
+    setters: [function (_) {
+      makeAnimations = _["default"];
     }, function (_2) {
-      descriptors = _2["default"];
-    }, function (_3) {
-      makeAnimations = _3["default"];
+      OBJLoader = _2.OBJLoader;
     }, function (_4) {
-      OBJLoader = _4.OBJLoader;
+      THREE = _4;
+    }, function (_3) {
+      PLYLoader = _3.PLYLoader;
     }, function (_5) {
-      PLYLoader = _5.PLYLoader;
+      shaderHeader = _5["default"];
+    }, function (_6) {
+      animation_scene_json = _6["default"];
     }, function (_7) {
-      shaderHeader = _7["default"];
+      mesh_cookie_ply = _7["default"];
     }, function (_8) {
-      animation_scene_json = _8["default"];
+      shader_line_frag = _8["default"];
     }, function (_9) {
-      shader_bloom_gaussian_blur_vert = _9["default"];
-    }, function (_10) {
-      shader_chocolat_frag = _10["default"];
-    }, function (_11) {
-      shader_chocolat_vert = _11["default"];
-    }, function (_12) {
-      shader_desert_frag = _12["default"];
-    }, function (_13) {
-      shader_desert_vert = _13["default"];
-    }, function (_14) {
-      shader_fullscreen_vert = _14["default"];
-    }, function (_15) {
-      shader_render_frag = _15["default"];
-    }, function (_16) {
-      shader_shape2D_frag = _16["default"];
-    }, function (_17) {
-      shader_shape2D_vert = _17["default"];
-    }, function (_18) {
-      shader_star_frag = _18["default"];
-    }, function (_a) {
-      mesh_cookie_ply = _a["default"];
-    }, function (_b) {
-      shader_bloom_bloom_frag = _b["default"];
+      shader_line_vert = _9["default"];
     }, function (_c) {
-      shader_bloom_bloom_vert = _c["default"];
+      _Object$assign = _c["default"];
     }, function (_d) {
-      shader_bloom_bright_frag = _d["default"];
-    }, function (_e) {
-      shader_bloom_bright_vert = _e["default"];
-    }, function (_f) {
-      shader_bloom_gaussian_blur_frag = _f["default"];
-    }, function (_a2) {
-      shader_star_vert = _a2["default"];
-    }, function (_b2) {
-      shader_wireframe_frag = _b2["default"];
+      descriptors = _d["default"];
+    }, function (_a) {
+      shader_ray_frag = _a["default"];
+    }, function (_b) {
+      shader_ray_vert = _b["default"];
     }, function (_c2) {
-      shader_wireframe_vert = _c2["default"];
+      shader_star_frag = _c2["default"];
+    }, function (_d2) {
+      shader_star_vert = _d2["default"];
     }],
     execute: function () {
       /* eslint-disable */
@@ -7706,41 +6076,17 @@ $__System.register("c", ["3", "20", "21", "25", "26", "27", "28", "29", "30", "3
         },
         fonts: {},
         shaders: {
-          wireframe: new THREE.ShaderMaterial(_Object$assign({}, descriptors.shaders.wireframe, {
-            vertexShader: shaderHeader + shader_wireframe_vert,
-            fragmentShader: shaderHeader + shader_wireframe_frag
-          })),
-          desert: new THREE.ShaderMaterial(_Object$assign({}, descriptors.shaders.desert, {
-            vertexShader: shaderHeader + shader_desert_vert,
-            fragmentShader: shaderHeader + shader_desert_frag
+          line: new THREE.ShaderMaterial(_Object$assign({}, descriptors.shaders.line, {
+            vertexShader: shaderHeader + shader_line_vert,
+            fragmentShader: shaderHeader + shader_line_frag
           })),
           star: new THREE.ShaderMaterial(_Object$assign({}, descriptors.shaders.star, {
             vertexShader: shaderHeader + shader_star_vert,
             fragmentShader: shaderHeader + shader_star_frag
           })),
-          chocolat: new THREE.ShaderMaterial(_Object$assign({}, descriptors.shaders.chocolat, {
-            vertexShader: shaderHeader + shader_chocolat_vert,
-            fragmentShader: shaderHeader + shader_chocolat_frag
-          })),
-          shape2D: new THREE.ShaderMaterial(_Object$assign({}, descriptors.shaders.shape2D, {
-            vertexShader: shaderHeader + shader_shape2D_vert,
-            fragmentShader: shaderHeader + shader_shape2D_frag
-          })),
-          bloom: new THREE.ShaderMaterial(_Object$assign({}, descriptors.shaders.bloom, {
-            vertexShader: shaderHeader + shader_bloom_bloom_vert,
-            fragmentShader: shaderHeader + shader_bloom_bloom_frag
-          })),
-          bright: new THREE.ShaderMaterial(_Object$assign({}, descriptors.shaders.bright, {
-            vertexShader: shaderHeader + shader_bloom_bright_vert,
-            fragmentShader: shaderHeader + shader_bloom_bright_frag
-          })),
-          gaussian_blur: new THREE.ShaderMaterial(_Object$assign({}, descriptors.shaders.gaussian_blur, {
-            vertexShader: shaderHeader + shader_bloom_gaussian_blur_vert,
-            fragmentShader: shaderHeader + shader_bloom_gaussian_blur_frag
-          })),
-          render: new THREE.ShaderMaterial(_Object$assign({}, descriptors.shaders.render, {
-            vertexShader: shaderHeader + shader_fullscreen_vert,
-            fragmentShader: shaderHeader + shader_render_frag
+          ray: new THREE.ShaderMaterial(_Object$assign({}, descriptors.shaders.ray, {
+            vertexShader: shaderHeader + shader_ray_vert,
+            fragmentShader: shaderHeader + shader_ray_frag
           }))
         },
         load: function load(callback) {
@@ -7751,382 +6097,33 @@ $__System.register("c", ["3", "20", "21", "25", "26", "27", "28", "29", "30", "3
   };
 });
 
-$__System.register('3d', ['3', '5', '6', 'c'], function (_export) {
-  var THREE, _createClass, _classCallCheck, assets, PlaneBloom;
-
-  return {
-    setters: [function (_3) {
-      THREE = _3;
-    }, function (_) {
-      _createClass = _['default'];
-    }, function (_2) {
-      _classCallCheck = _2['default'];
-    }, function (_c) {
-      assets = _c['default'];
-    }],
-    execute: function () {
-      'use strict';
-
-      PlaneBloom = (function () {
-        function PlaneBloom(tex_base, tex_blur) {
-          _classCallCheck(this, PlaneBloom);
-
-          this.uniforms = null;
-          this.tone = 0.7;
-          this.strength = 3;
-          this.texBase = tex_base;
-          this.texBlur = tex_blur;
-          this.mesh = this.createMesh();
-        }
-
-        _createClass(PlaneBloom, [{
-          key: 'createMesh',
-          value: function createMesh() {
-            this.uniforms = {
-              tone: {
-                type: 'f',
-                value: this.tone
-              },
-              strength: {
-                type: 'f',
-                value: this.strength
-              },
-              texBase: {
-                type: 't',
-                value: this.texBase
-              },
-              texBlur: {
-                type: 't',
-                value: this.texBlur
-              }
-            };
-            var material = assets.shaders.bloom;
-            material.uniforms = this.uniforms;
-            return new THREE.Mesh(new THREE.PlaneBufferGeometry(2, 2), material);
-          }
-        }]);
-
-        return PlaneBloom;
-      })();
-
-      _export('default', PlaneBloom);
-    }
-  };
-});
-
-$__System.register('3e', ['3', '5', '6', '15', '16', '3d'], function (_export) {
-  var THREE, _createClass, _classCallCheck, PlaneBright, PlaneBlur, PlaneBloom, Bloom;
-
-  return {
-    setters: [function (_3) {
-      THREE = _3;
-    }, function (_) {
-      _createClass = _['default'];
-    }, function (_2) {
-      _classCallCheck = _2['default'];
-    }, function (_4) {
-      PlaneBright = _4['default'];
-    }, function (_5) {
-      PlaneBlur = _5['default'];
-    }, function (_d) {
-      PlaneBloom = _d['default'];
-    }],
-    execute: function () {
-      'use strict';
-
-      Bloom = (function () {
-        function Bloom(tex_base) {
-          _classCallCheck(this, Bloom);
-
-          this.blurCount = 3;
-          this.renderTarget = [new THREE.WebGLRenderTarget(window.innerWidth / 4, window.innerHeight / 4), new THREE.WebGLRenderTarget(window.innerWidth / 4, window.innerHeight / 4)];
-          this.scene = {
-            bright: new THREE.Scene(),
-            blurh: new THREE.Scene(),
-            blurv: new THREE.Scene(),
-            bloom: new THREE.Scene()
-          };
-          this.camera = new THREE.PerspectiveCamera(45, 1, 1, 2);
-          this.plane = {
-            bright: new PlaneBright(tex_base),
-            blurh: new PlaneBlur(this.renderTarget[0].texture, new THREE.Vector2(1.0, 0.0)),
-            blurv: new PlaneBlur(this.renderTarget[1].texture, new THREE.Vector2(0.0, 1.0)),
-            bloom: new PlaneBloom(tex_base, this.renderTarget[0].texture)
-          };
-          this.blurTarget = this.renderTarget[0];
-          this.bloomTarget = new THREE.WebGLRenderTarget(window.innerWidth, window.innerHeight);
-          this.init();
-        }
-
-        _createClass(Bloom, [{
-          key: 'init',
-          value: function init() {
-            this.scene.bright.add(this.plane.bright.mesh);
-            this.scene.blurh.add(this.plane.blurh.mesh);
-            this.scene.blurv.add(this.plane.blurv.mesh);
-            this.scene.bloom.add(this.plane.bloom.mesh);
-          }
-        }, {
-          key: 'render',
-          value: function render(renderer) {
-            renderer.render(this.scene.bright, this.camera, this.renderTarget[0]);
-            for (var i = 0; i < this.blurCount; i++) {
-              renderer.render(this.scene.blurh, this.camera, this.renderTarget[1]);
-              renderer.render(this.scene.blurv, this.camera, this.renderTarget[0]);
-            }
-            renderer.render(this.scene.bloom, this.camera, this.bloomTarget);
-          }
-        }, {
-          key: 'resize',
-          value: function resize() {
-            this.renderTarget[0].setSize(window.innerWidth / 4, window.innerHeight / 4);
-            this.renderTarget[1].setSize(window.innerWidth / 4, window.innerHeight / 4);
-            this.plane.blurh.resize();
-            this.plane.blurv.resize();
-            this.bloomTarget.setSize(window.innerWidth, window.innerHeight);
-          }
-        }]);
-
-        return Bloom;
-      })();
-
-      _export('default', Bloom);
-    }
-  };
-});
-
-$__System.register('d', ['3', '8', '14', 'c', '3e'], function (_export) {
+$__System.register('1f', ['13'], function (_export) {
 	'use strict';
 
-	var THREE, renderer, OrbitControls, assets, Bloom, engine;
-
-	_export('initEngine', initEngine);
-
-	function initEngine() {
-		engine.controls = new OrbitControls(engine.camera, renderer.domElement);
-		engine.framerender = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), assets.shaders.render);
-		engine.framerender.frustumCulled = false;
-		engine.bloom = new Bloom(engine.frametarget.texture);
-	}
-
+	var THREE, renderer;
 	return {
 		setters: [function (_) {
 			THREE = _;
-		}, function (_3) {
-			renderer = _3['default'];
-		}, function (_2) {
-			OrbitControls = _2.OrbitControls;
-		}, function (_c) {
-			assets = _c['default'];
-		}, function (_e) {
-			Bloom = _e['default'];
 		}],
 		execute: function () {
-			engine = {
-				scene: new THREE.Scene(),
-				camera: new THREE.PerspectiveCamera(90, window.innerWidth / window.innerHeight, 0.01, 2000),
-				controls: null,
-				framerender: null,
-				frametarget: new THREE.WebGLRenderTarget(window.innerWidth, window.innerHeight),
-				bloom: null
-			};
+			renderer = new THREE.WebGLRenderer({
+				alpha: true,
+				antialias: true
+			});
 
-			_export('engine', engine);
+			renderer.scale = 1.;
+			renderer.setPixelRatio(window.devicePixelRatio / renderer.scale);
+			renderer.setSize(window.innerWidth, window.innerHeight);
+			renderer.shadowMap.enabled = true;
+			renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+			document.body.appendChild(renderer.domElement);
+
+			_export('default', renderer);
 		}
 	};
 });
 
-$__System.register('3f', ['3', '4', '9', '40', 'd'], function (_export) {
-	'use strict';
-
-	var THREE, FrameBuffer, uniforms, uniformsToUpdate, Geometry, engine;
-
-	_export('add', add);
-
-	_export('addWireframe', addWireframe);
-
-	_export('addShape2D', addShape2D);
-
-	_export('generateCurve', generateCurve);
-
-	function add(material, geometries, sceneLayer) {
-		material.uniforms = uniforms;
-		sceneLayer = sceneLayer || engine.scene;
-		geometries.forEach(function (geometry) {
-			var mesh = new THREE.Mesh(geometry, material);
-			mesh.frustumCulled = false;
-			sceneLayer.add(mesh);
-		});
-	}
-
-	function addWireframe(material, geometries, sceneLayer) {
-		material.uniforms = uniforms;
-		sceneLayer = sceneLayer || engine.scene;
-		geometries.forEach(function (geometry) {
-			var mesh = new THREE.LineSegments(new THREE.EdgesGeometry(geometry), material);
-			mesh.frustumCulled = false;
-			sceneLayer.add(mesh);
-		});
-	}
-
-	function addShape2D(material, rect, anchor, offset, texture, sceneLayer) {
-		rect = rect || [0, 0, 1, 1];
-		anchor = anchor || [0, 0];
-		offset = offset || [0, 0];
-		sceneLayer = sceneLayer || engine.scene;
-		var mesh = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), material);
-		mesh.frustumCulled = false;
-		sceneLayer.add(mesh);
-		material.uniforms.resolution = { value: [window.innerWidth, window.innerHeight] };
-		material.uniforms.rect = { value: rect };
-		material.uniforms.anchor = { value: anchor };
-		material.uniforms.offset = { value: offset };
-		material.uniforms.texture = { value: texture };
-		material.uniforms.time = { value: 0 };
-		uniformsToUpdate.push(material.uniforms);
-	}
-
-	function generateCurve(positions, material, uniformsToUpdate) {
-
-		// calculate normals of the curve
-		// Parallel Transport Approach to Curve Framing
-		// https://pdfs.semanticscholar.org/7e65/2313c1f8183a0f43acce58ae8d8caf370a6b.pdf
-
-		var dataArray = [];
-		for (var i = 0; i < positions.length / 3 / 2; ++i) for (var x = 0; x < 3; ++x) dataArray.push(positions[i * 2 * 3 + x]);
-		var dataNormalArray = [];
-		var posVector = new THREE.Vector3();
-		var nextVector = new THREE.Vector3();
-		var biVector = new THREE.Vector3();
-		var tangentVectors = [];
-		var normalVectors = [new THREE.Vector3(-.5, 0, 1).normalize()];
-		for (var i = 0; i < dataArray.length / 3; ++i) {
-			tangentVectors.push(new THREE.Vector3());
-			posVector.set(dataArray[i * 3], dataArray[i * 3 + 1], dataArray[i * 3 + 2]);
-			if ((i + 1) * 3 + 2 < dataArray.length) {
-				nextVector.set(dataArray[(i + 1) * 3], dataArray[(i + 1) * 3 + 1], dataArray[(i + 1) * 3 + 2]);
-				tangentVectors[i].subVectors(nextVector, posVector).normalize();
-			} else {
-				nextVector.set(dataArray[(i - 1) * 3], dataArray[(i - 1) * 3 + 1], dataArray[(i - 1) * 3 + 2]);
-				tangentVectors[i].subVectors(posVector, nextVector).normalize();
-			}
-		}
-		dataNormalArray.push(normalVectors[0].x, normalVectors[0].y, normalVectors[0].z);
-		for (var i = 0; i < tangentVectors.length - 1; ++i) {
-			biVector.crossVectors(tangentVectors[i], tangentVectors[i + 1]);
-			normalVectors.push(new THREE.Vector3());
-			var normal = normalVectors[i];
-			if (biVector.length() == 0.) {
-				normalVectors[i + 1].set(normal.x, normal.y, normal.z);
-			} else {
-				biVector.normalize();
-				var angle = Math.acos(tangentVectors[i].dot(tangentVectors[i + 1]));
-				posVector.set(normal.x, normal.y, normal.z);
-				normalVectors[i + 1] = posVector.applyAxisAngle(biVector, angle);
-			}
-			dataNormalArray.push(normalVectors[i + 1].x, normalVectors[i + 1].y, normalVectors[i + 1].z);
-		}
-
-		material.uniforms.time = { value: 0 };
-		material.uniforms.curvePosition = { value: FrameBuffer.createDataTexture(dataArray, 3) };
-		material.uniforms.curveNormal = { value: FrameBuffer.createDataTexture(dataNormalArray, 3) };
-
-		_export('sceneLayer', _export('sceneLayer', _export('sceneLayer', sceneLayer = sceneLayer || engine.scene)));
-		Geometry.create(Geometry.random(1), [dataArray.length / 3, 1]).forEach(function (geometry) {
-			var mesh = new THREE.Mesh(geometry, material);
-			mesh.frustumCulled = false;
-			sceneLayer.add(mesh);
-		});
-	}
-
-	return {
-		setters: [function (_) {
-			THREE = _;
-		}, function (_2) {
-			FrameBuffer = _2['default'];
-		}, function (_4) {
-			uniforms = _4.uniforms;
-			uniformsToUpdate = _4.uniformsToUpdate;
-		}, function (_3) {
-			Geometry = _3['default'];
-		}, function (_d) {
-			engine = _d.engine;
-		}],
-		execute: function () {}
-	};
-});
-
-$__System.register('41', ['2', 'c', '3f'], function (_export) {
-	'use strict';
-
-	var makeText, assets, generateCurve, add, addWireframe, addShape2D;
-
-	_export('addText', addText);
-
-	function addText() {
-
-		addShape2D(assets.shaders.shape2D.clone(), [.0, .0, 1, 1], // rect.xyzw
-		[0, 0], // anchor
-		[0, 40], // offset
-		makeText.createTexture([{
-			text: 'cookie',
-			font: 'bebasneue_bold',
-			fillStyle: '#bdbdbd',
-			width: 1024,
-			height: 1024,
-			fontSize: 150,
-			offsetY: -90,
-			textAlign: 'center',
-			textBaseline: 'middle'
-		}, {
-			text: 'demoparty',
-			font: 'bebasneue_bold',
-			fillStyle: '#bdbdbd',
-			fontSize: 85,
-			offsetY: 0
-		}, {
-			text: 'NOV 30 - DEC 1, 2018',
-			font: 'bebasneue_bold',
-			fillStyle: '#bdbdbd',
-			fontSize: 65,
-			offsetY: 80
-		}, {
-			text: 'AT FOLIE NUMERIQUE',
-			font: 'bebasneue_bold',
-			fillStyle: '#bdbdbd',
-			fontSize: 50,
-			offsetY: 150
-		}, {
-			text: 'PARIS, FRANCE',
-			font: 'bebasneue_bold',
-			fillStyle: '#bdbdbd',
-			fontSize: 70,
-			offsetY: 200
-		}, {
-			text: 'more info coming soon',
-			font: 'bebasneue_bold',
-			fillStyle: '#a3a3a3',
-			fontSize: 40,
-			offsetY: 280
-		}]));
-	}
-
-	return {
-		setters: [function (_) {
-			makeText = _;
-		}, function (_c) {
-			assets = _c['default'];
-		}, function (_f) {
-			generateCurve = _f.generateCurve;
-			add = _f.add;
-			addWireframe = _f.addWireframe;
-			addShape2D = _f.addShape2D;
-		}],
-		execute: function () {}
-	};
-});
-
-$__System.registerDynamic("10", [], true, function ($__require, exports, module) {
+$__System.registerDynamic("5", [], true, function ($__require, exports, module) {
   var global = this || self,
       GLOBAL = global;
   /* */
@@ -8144,28 +6141,28 @@ $__System.registerDynamic("10", [], true, function ($__require, exports, module)
     each: [].forEach
   };
 });
-$__System.registerDynamic('42', ['10'], true, function ($__require, exports, module) {
+$__System.registerDynamic('20', ['5'], true, function ($__require, exports, module) {
   var global = this || self,
       GLOBAL = global;
   /* */
-  var $ = $__require('10');
+  var $ = $__require('5');
   module.exports = function defineProperty(it, key, desc) {
     return $.setDesc(it, key, desc);
   };
 });
-$__System.registerDynamic("43", ["42"], true, function ($__require, exports, module) {
+$__System.registerDynamic("21", ["20"], true, function ($__require, exports, module) {
   var global = this || self,
       GLOBAL = global;
   /* */
-  module.exports = { "default": $__require("42"), __esModule: true };
+  module.exports = { "default": $__require("20"), __esModule: true };
 });
-$__System.registerDynamic("5", ["43"], true, function ($__require, exports, module) {
+$__System.registerDynamic("22", ["21"], true, function ($__require, exports, module) {
   /* */
   "use strict";
 
   var global = this || self,
       GLOBAL = global;
-  var _Object$defineProperty = $__require("43")["default"];
+  var _Object$defineProperty = $__require("21")["default"];
   exports["default"] = function () {
     function defineProperties(target, props) {
       for (var i = 0; i < props.length; i++) {
@@ -8184,7 +6181,7 @@ $__System.registerDynamic("5", ["43"], true, function ($__require, exports, modu
   }();
   exports.__esModule = true;
 });
-$__System.registerDynamic("6", [], true, function ($__require, exports, module) {
+$__System.registerDynamic("23", [], true, function ($__require, exports, module) {
   /* */
   "use strict";
 
@@ -8198,10 +6195,173 @@ $__System.registerDynamic("6", [], true, function ($__require, exports, module) 
 
   exports.__esModule = true;
 });
+$__System.registerDynamic("24", [], true, function ($__require, exports, module) {
+  var global = this || self,
+      GLOBAL = global;
+  // 7.2.1 RequireObjectCoercible(argument)
+  module.exports = function (it) {
+    if (it == undefined) throw TypeError("Can't call method on  " + it);
+    return it;
+  };
+});
+$__System.registerDynamic('6', ['24'], true, function ($__require, exports, module) {
+  var global = this || self,
+      GLOBAL = global;
+  /* */
+  var defined = $__require('24');
+  module.exports = function (it) {
+    return Object(defined(it));
+  };
+});
+$__System.registerDynamic('25', [], true, function ($__require, exports, module) {
+  var global = this || self,
+      GLOBAL = global;
+  // https://github.com/zloirock/core-js/issues/86#issuecomment-115759028
+  var global = module.exports = typeof window != 'undefined' && window.Math == Math ? window : typeof self != 'undefined' && self.Math == Math ? self : Function('return this')();
+  if (typeof __g == 'number') __g = global; // eslint-disable-line no-undef
+});
+$__System.registerDynamic('26', [], true, function ($__require, exports, module) {
+  var global = this || self,
+      GLOBAL = global;
+  /* */
+  module.exports = function (it) {
+    if (typeof it != 'function') throw TypeError(it + ' is not a function!');
+    return it;
+  };
+});
+$__System.registerDynamic('27', ['26'], true, function ($__require, exports, module) {
+  var global = this || self,
+      GLOBAL = global;
+  /* */
+  var aFunction = $__require('26');
+  module.exports = function (fn, that, length) {
+    aFunction(fn);
+    if (that === undefined) return fn;
+    switch (length) {
+      case 1:
+        return function (a) {
+          return fn.call(that, a);
+        };
+      case 2:
+        return function (a, b) {
+          return fn.call(that, a, b);
+        };
+      case 3:
+        return function (a, b, c) {
+          return fn.call(that, a, b, c);
+        };
+    }
+    return function () {
+      return fn.apply(that, arguments);
+    };
+  };
+});
+$__System.registerDynamic('9', ['25', 'b', '27'], true, function ($__require, exports, module) {
+  var global = this || self,
+      GLOBAL = global;
+  /* */
+  var global = $__require('25'),
+      core = $__require('b'),
+      ctx = $__require('27'),
+      PROTOTYPE = 'prototype';
+  var $export = function (type, name, source) {
+    var IS_FORCED = type & $export.F,
+        IS_GLOBAL = type & $export.G,
+        IS_STATIC = type & $export.S,
+        IS_PROTO = type & $export.P,
+        IS_BIND = type & $export.B,
+        IS_WRAP = type & $export.W,
+        exports = IS_GLOBAL ? core : core[name] || (core[name] = {}),
+        target = IS_GLOBAL ? global : IS_STATIC ? global[name] : (global[name] || {})[PROTOTYPE],
+        key,
+        own,
+        out;
+    if (IS_GLOBAL) source = name;
+    for (key in source) {
+      own = !IS_FORCED && target && key in target;
+      if (own && key in exports) continue;
+      out = own ? target[key] : source[key];
+      exports[key] = IS_GLOBAL && typeof target[key] != 'function' ? source[key] : IS_BIND && own ? ctx(out, global) : IS_WRAP && target[key] == out ? function (C) {
+        var F = function (param) {
+          return this instanceof C ? new C(param) : C(param);
+        };
+        F[PROTOTYPE] = C[PROTOTYPE];
+        return F;
+      }(out) : IS_PROTO && typeof out == 'function' ? ctx(Function.call, out) : out;
+      if (IS_PROTO) (exports[PROTOTYPE] || (exports[PROTOTYPE] = {}))[key] = out;
+    }
+  };
+  $export.F = 1;
+  $export.G = 2;
+  $export.S = 4;
+  $export.P = 8;
+  $export.B = 16;
+  $export.W = 32;
+  module.exports = $export;
+});
+$__System.registerDynamic("7", [], true, function ($__require, exports, module) {
+  var global = this || self,
+      GLOBAL = global;
+  /* */
+  module.exports = function (exec) {
+    try {
+      return !!exec();
+    } catch (e) {
+      return true;
+    }
+  };
+});
+$__System.registerDynamic('28', ['9', 'b', '7'], true, function ($__require, exports, module) {
+    var global = this || self,
+        GLOBAL = global;
+    /* */
+    var $export = $__require('9'),
+        core = $__require('b'),
+        fails = $__require('7');
+    module.exports = function (KEY, exec) {
+        var fn = (core.Object || {})[KEY] || Object[KEY],
+            exp = {};
+        exp[KEY] = exec(fn);
+        $export($export.S + $export.F * fails(function () {
+            fn(1);
+        }), 'Object', exp);
+    };
+});
+$__System.registerDynamic('29', ['6', '28'], true, function ($__require, exports, module) {
+  var global = this || self,
+      GLOBAL = global;
+  /* */
+  var toObject = $__require('6');
+  $__require('28')('keys', function ($keys) {
+    return function keys(it) {
+      return $keys(toObject(it));
+    };
+  });
+});
+$__System.registerDynamic('b', [], true, function ($__require, exports, module) {
+  var global = this || self,
+      GLOBAL = global;
+  /* */
+  var core = module.exports = { version: '1.2.6' };
+  if (typeof __e == 'number') __e = core; // eslint-disable-line no-undef
+});
+$__System.registerDynamic('2a', ['29', 'b'], true, function ($__require, exports, module) {
+  var global = this || self,
+      GLOBAL = global;
+  /* */
+  $__require('29');
+  module.exports = $__require('b').Object.keys;
+});
+$__System.registerDynamic("2b", ["2a"], true, function ($__require, exports, module) {
+  var global = this || self,
+      GLOBAL = global;
+  /* */
+  module.exports = { "default": $__require("2a"), __esModule: true };
+});
 (function() {
 var define = $__System.amdDefine;
 (function(global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) : typeof define === 'function' && define.amd ? define("44", ["exports"], factory) : (factory((global.THREE = {})));
+  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) : typeof define === 'function' && define.amd ? define("2c", ["exports"], factory) : (factory((global.THREE = {})));
 }(this, (function(exports) {
   'use strict';
   if (Number.EPSILON === undefined) {
@@ -34381,12 +32541,12 @@ var define = $__System.amdDefine;
 })();
 (function() {
 var define = $__System.amdDefine;
-define("3", ["44"], function(main) {
+define("13", ["2c"], function(main) {
   return main;
 });
 
 })();
-$__System.register('7', ['3', 'a'], function (_export) {
+$__System.register('2d', ['13', '2b'], function (_export) {
 	var BufferAttribute, Vector3, _Object$keys, sqrt3;
 
 	function arrayVec3Distance(array, index, nextIndex) {
@@ -34437,6 +32597,13 @@ $__System.register('7', ['3', 'a'], function (_export) {
 	function lerpArray(a0, a1, t) {
 		for (var i = 0; i < a0.length; ++i) {
 			a0[i] = lerp(a0[i], a1[i], t);
+		}
+		return a0;
+	}
+
+	function lerpArray2(a0, a1, t, diffTreshold) {
+		for (var i = 0; i < a0.length; ++i) {
+			if (Math.abs(a0[i] - a1[i]) > diffTreshold) a0[i] = a1[i];else a0[i] = lerp(a0[i], a1[i], t);
 		}
 		return a0;
 	}
@@ -34663,8 +32830,8 @@ $__System.register('7', ['3', 'a'], function (_export) {
 		setters: [function (_) {
 			BufferAttribute = _.BufferAttribute;
 			Vector3 = _.Vector3;
-		}, function (_a) {
-			_Object$keys = _a['default'];
+		}, function (_b) {
+			_Object$keys = _b['default'];
 		}],
 		execute: function () {
 			'use strict';
@@ -34684,6 +32851,8 @@ $__System.register('7', ['3', 'a'], function (_export) {
 			_export('lerp', lerp);
 
 			_export('lerpArray', lerpArray);
+
+			_export('lerpArray2', lerpArray2);
 
 			_export('lerpVector', lerpVector);
 
@@ -34708,8 +32877,8 @@ $__System.register('7', ['3', 'a'], function (_export) {
 	};
 });
 
-$__System.register('40', ['3', '5', '6', '7', 'a'], function (_export) {
-	var THREE, _createClass, _classCallCheck, closestPowerOfTwo, lerp, getRandomPoints, _Object$keys, Geometry;
+$__System.register('2e', ['13', '22', '23', '2b', '2d'], function (_export) {
+	var THREE, _createClass, _classCallCheck, _Object$keys, closestPowerOfTwo, lerp, getRandomPoints, Geometry;
 
 	return {
 		setters: [function (_3) {
@@ -34718,12 +32887,12 @@ $__System.register('40', ['3', '5', '6', '7', 'a'], function (_export) {
 			_createClass = _['default'];
 		}, function (_2) {
 			_classCallCheck = _2['default'];
-		}, function (_4) {
-			closestPowerOfTwo = _4.closestPowerOfTwo;
-			lerp = _4.lerp;
-			getRandomPoints = _4.getRandomPoints;
-		}, function (_a) {
-			_Object$keys = _a['default'];
+		}, function (_b) {
+			_Object$keys = _b['default'];
+		}, function (_d) {
+			closestPowerOfTwo = _d.closestPowerOfTwo;
+			lerp = _d.lerp;
+			getRandomPoints = _d.getRandomPoints;
 		}],
 		execute: function () {
 			'use strict';
@@ -34800,12 +32969,36 @@ $__System.register('40', ['3', '5', '6', '7', 'a'], function (_export) {
 								geometry.addAttribute(name, new THREE.BufferAttribute(array, attributes[name].itemSize));
 							});
 							geometry.addAttribute('anchor', new THREE.BufferAttribute(new Float32Array(anchors), 2));
-							geometry.addAttribute('quantity', new THREE.BufferAttribute(new Float32Array(quantities), 2));
+							if (geometry.attributes.quantity == null) {
+								geometry.addAttribute('quantity', new THREE.BufferAttribute(new Float32Array(quantities), 2));
+							}
 							// geometry.addAttribute( 'indexMap', new THREE.BufferAttribute( new Float32Array(indexMap), 2 ) );
 							geometry.setIndex(new THREE.BufferAttribute(new Uint32Array(indices), 1));
 							geometries.push(geometry);
 						}
 						return geometries;
+					}
+				}, {
+					key: 'createLine',
+					value: function createLine(geometry, subdivisions) {
+						var positions = [];
+						var nexts = [];
+						var colors = [];
+						var arrayPosition = geometry.attributes.position.array;
+						var index = geometry.index.array;
+						var count = index.length / 3;
+						var line = new THREE.BufferGeometry();
+						for (var i = 0; i < count; ++i) {
+							for (var t = 0; t < 3; ++t) {
+								for (var x = 0; x < 3; ++x) {
+									positions.push(arrayPosition[(index[i * 3 + t] * 3 + x) % arrayPosition.length]);
+									nexts.push(arrayPosition[(index[i * 3 + (t + 1) % 3] * 3 + x) % arrayPosition.length]);
+								}
+							}
+						}
+						geometry.addAttribute('position', new THREE.BufferAttribute(new Float32Array(positions), 3));
+						geometry.addAttribute('next', new THREE.BufferAttribute(new Float32Array(nexts), 3));
+						return Geometry.create(geometry.attributes, subdivisions);
 					}
 				}, {
 					key: 'clone',
@@ -34851,7 +33044,7 @@ $__System.register('40', ['3', '5', '6', '7', 'a'], function (_export) {
 							geometry.setIndex(new THREE.BufferAttribute(new Uint32Array(indices), 1));
 						}
 						geometries.push(geometry);
-
+						console.log(geometries);
 						return geometries;
 					}
 				}, {
@@ -34911,3191 +33104,151 @@ $__System.register('40', ['3', '5', '6', '7', 'a'], function (_export) {
 	};
 });
 
-$__System.register("e", [], function (_export) {
+$__System.register("2f", [], function (_export) {
   "use strict";
 
-  var Mouse;
+  var mouse;
   return {
     setters: [],
     execute: function () {
-      Mouse = {};
+      mouse = {};
 
-      Mouse.x = 0;
-      Mouse.y = 0;
-      Mouse.down = false;
+      mouse.x = 0;
+      mouse.y = 0;
+      mouse.down = false;
 
       // Pan
-      Mouse.panX = 0;
-      Mouse.panY = 0;
-      Mouse.panStartX = 0;
-      Mouse.panStartY = 0;
-      Mouse.panStarted = false;
+      mouse.panX = 0;
+      mouse.panY = 0;
+      mouse.panStartX = 0;
+      mouse.panStartY = 0;
+      mouse.panStarted = false;
 
-      Mouse.onMove = function (event) {
-        Mouse.x = event.clientX;
-        Mouse.y = event.clientY;
-        if (Mouse.panStarted) {
-          Mouse.panX = Mouse.x - Mouse.panStartX;
-          Mouse.panY = Mouse.y - Mouse.panStartY;
+      mouse.onMove = function (event) {
+        mouse.x = event.clientX;
+        mouse.y = event.clientY;
+        if (mouse.panStarted) {
+          mouse.panX = mouse.x - mouse.panStartX;
+          mouse.panY = mouse.y - mouse.panStartY;
         }
       };
 
-      Mouse.onClic = function (event) {
-        Mouse.x = event.clientX;
-        Mouse.y = event.clientY;
-        Mouse.down = true;
+      mouse.onClic = function (event) {
+        mouse.x = event.clientX;
+        mouse.y = event.clientY;
+        mouse.down = true;
 
         // Pan
-        Mouse.panStartX = Mouse.x - Mouse.panX;
-        Mouse.panStartY = Mouse.y - Mouse.panY;
-        Mouse.panStarted = true;
+        mouse.panStartX = mouse.x - mouse.panX;
+        mouse.panStartY = mouse.y - mouse.panY;
+        mouse.panStarted = true;
       };
 
-      Mouse.onMouseUp = function (event) {
-        Mouse.down = false;
-        Mouse.panStarted = false;
+      mouse.onmouseUp = function (event) {
+        mouse.down = false;
+        mouse.panStarted = false;
       };
 
-      _export("default", Mouse);
+      _export("default", mouse);
     }
   };
 });
 
-$__System.register('45', ['3', '7', '8', '9', '40', '41', '46', 'c', 'b', '3f', 'd', 'e'], function (_export) {
-	'use strict';
+$__System.register('30', ['13', '2b', '2d', '1e', '1f', '2e', '2f'], function (_export) {
+		var THREE, _Object$keys, clamp, lerp, lerpArray, lerpVector, lerpVectorArray, saturate, assets, renderer, Geometry, mouse;
 
-	var THREE, clamp, lerp, lerpArray, lerpVector, lerpVectorArray, saturate, renderer, uniforms, initUniforms, updateUniforms, resizeUniforms, Geometry, addText, gui, assets, parameters, generateCurve, add, addWireframe, addShape2D, engine, initEngine, Mouse;
-	return {
-		setters: [function (_) {
-			THREE = _;
-		}, function (_3) {
-			clamp = _3.clamp;
-			lerp = _3.lerp;
-			lerpArray = _3.lerpArray;
-			lerpVector = _3.lerpVector;
-			lerpVectorArray = _3.lerpVectorArray;
-			saturate = _3.saturate;
-		}, function (_2) {
-			renderer = _2['default'];
-		}, function (_4) {
-			uniforms = _4.uniforms;
-			initUniforms = _4.initUniforms;
-			updateUniforms = _4.updateUniforms;
-			resizeUniforms = _4.resizeUniforms;
-		}, function (_7) {
-			Geometry = _7['default'];
-		}, function (_5) {
-			addText = _5.addText;
-		}, function (_6) {
-			gui = _6.gui;
-		}, function (_c) {
-			assets = _c['default'];
-		}, function (_b) {
-			parameters = _b['default'];
-		}, function (_f) {
-			generateCurve = _f.generateCurve;
-			add = _f.add;
-			addWireframe = _f.addWireframe;
-			addShape2D = _f.addShape2D;
-		}, function (_d) {
-			engine = _d.engine;
-			initEngine = _d.initEngine;
-		}, function (_e) {
-			Mouse = _e['default'];
-		}],
-		execute: function () {
-			_export('default', function () {
+		return {
+				setters: [function (_) {
+						THREE = _;
+				}, function (_b) {
+						_Object$keys = _b['default'];
+				}, function (_d) {
+						clamp = _d.clamp;
+						lerp = _d.lerp;
+						lerpArray = _d.lerpArray;
+						lerpVector = _d.lerpVector;
+						lerpVectorArray = _d.lerpVectorArray;
+						saturate = _d.saturate;
+				}, function (_e) {
+						assets = _e['default'];
+				}, function (_f) {
+						renderer = _f['default'];
+				}, function (_e2) {
+						Geometry = _e2['default'];
+				}, function (_f2) {
+						mouse = _f2['default'];
+				}],
+				execute: function () {
+						'use strict';
 
-				assets.load(function () {
-					initEngine();
-					initUniforms();
+						_export('default', function () {
 
-					engine.camera.position.x = 5;
-					engine.camera.position.y = 3;
-					engine.camera.position.z = 0;
+								var scene, camera, uniforms;
 
-					engine.controls.enableDamping = true;
-					engine.controls.dampingFactor = 0.01;
-					engine.controls.rotateSpeed = 0.01;
-					engine.controls.target.y = 3;
-					engine.controls.enablePan = false;
-					engine.controls.minDistance = 2.;
-					engine.controls.maxDistance = 5.;
-					engine.controls.minPolarAngle = -Math.PI / 8. + Math.PI / 2.;
-					engine.controls.maxPolarAngle = Math.PI / 8. + Math.PI / 2.;
+								assets.load(function () {
 
-					// add(assets.shaders.raymarching);
+										scene = new THREE.Scene();
+										camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, .01, 1000);
 
-					var cookie = assets.geometries.cookie;
-					add(assets.shaders.star, Geometry.create(Geometry.random(1000)));
-					addWireframe(assets.shaders.wireframe, [cookie]);
-					add(assets.shaders.desert, [new THREE.PlaneGeometry(20, 20, 100, 100)]);
-					add(assets.shaders.chocolat, Geometry.clone(new THREE.DodecahedronBufferGeometry(1, 0), 50));
-					addText();
+										camera.position.z = 3;
+										camera.targetLookAt = new THREE.Vector3();
 
-					onWindowResize();
-					window.addEventListener('resize', onWindowResize, false);
-					window.addEventListener('mousemove', Mouse.onMove, false);
-					requestAnimationFrame(animate);
-				});
+										uniforms = {
+												time: { value: 0 },
+												mouse: { value: [0, 0] },
+												resolution: { value: [window.innerWidth, window.innerHeight] }
+										};
 
-				function animate(elapsed) {
-					requestAnimationFrame(animate);
-					elapsed /= 1000.;
-					engine.controls.update();
+										_Object$keys(assets.shaders).forEach(function (key) {
+												return assets.shaders[key].uniforms = uniforms;
+										});
 
-					updateUniforms(elapsed);
+										scene.add(new THREE.Mesh(Geometry.createLine(assets.geometries.cookie)[0], assets.shaders.line));
+										scene.add(new THREE.Mesh(Geometry.create(Geometry.random(100))[0], assets.shaders.ray));
+										scene.add(new THREE.Mesh(Geometry.create(Geometry.random(200))[0], assets.shaders.star));
 
-					renderer.render(engine.scene, engine.camera, engine.frametarget, true);
-					engine.bloom.render(renderer);
-					renderer.render(engine.framerender, engine.camera);
-				}
+										onWindowResize();
+										window.addEventListener('resize', onWindowResize, false);
+										window.addEventListener('mousemove', mouse.onMove, false);
+										requestAnimationFrame(animate);
+								});
 
-				function onWindowResize() {
-					var w = window.innerWidth / renderer.scale;
-					var h = window.innerHeight / renderer.scale;
-					renderer.setSize(window.innerWidth, window.innerHeight);
-					engine.bloom.resize();
-					engine.frametarget.setSize(w, h);
-					engine.camera.aspect = w / h;
-					engine.camera.updateProjectionMatrix();
-					resizeUniforms(w, h);
-				}
-			});
-		}
-	};
-});
+								function animate(elapsed) {
+										requestAnimationFrame(animate);
 
-$__System.registerDynamic("47", [], true, function ($__require, exports, module) {
-  var global = this || self,
-      GLOBAL = global;
-  // 7.2.1 RequireObjectCoercible(argument)
-  module.exports = function (it) {
-    if (it == undefined) throw TypeError("Can't call method on  " + it);
-    return it;
-  };
-});
-$__System.registerDynamic('1a', ['47'], true, function ($__require, exports, module) {
-  var global = this || self,
-      GLOBAL = global;
-  /* */
-  var defined = $__require('47');
-  module.exports = function (it) {
-    return Object(defined(it));
-  };
-});
-$__System.registerDynamic('48', [], true, function ($__require, exports, module) {
-  var global = this || self,
-      GLOBAL = global;
-  // https://github.com/zloirock/core-js/issues/86#issuecomment-115759028
-  var global = module.exports = typeof window != 'undefined' && window.Math == Math ? window : typeof self != 'undefined' && self.Math == Math ? self : Function('return this')();
-  if (typeof __g == 'number') __g = global; // eslint-disable-line no-undef
-});
-$__System.registerDynamic('49', [], true, function ($__require, exports, module) {
-  var global = this || self,
-      GLOBAL = global;
-  /* */
-  module.exports = function (it) {
-    if (typeof it != 'function') throw TypeError(it + ' is not a function!');
-    return it;
-  };
-});
-$__System.registerDynamic('4a', ['49'], true, function ($__require, exports, module) {
-  var global = this || self,
-      GLOBAL = global;
-  /* */
-  var aFunction = $__require('49');
-  module.exports = function (fn, that, length) {
-    aFunction(fn);
-    if (that === undefined) return fn;
-    switch (length) {
-      case 1:
-        return function (a) {
-          return fn.call(that, a);
-        };
-      case 2:
-        return function (a, b) {
-          return fn.call(that, a, b);
-        };
-      case 3:
-        return function (a, b, c) {
-          return fn.call(that, a, b, c);
-        };
-    }
-    return function () {
-      return fn.apply(that, arguments);
-    };
-  };
-});
-$__System.registerDynamic('1d', ['48', '1f', '4a'], true, function ($__require, exports, module) {
-  var global = this || self,
-      GLOBAL = global;
-  /* */
-  var global = $__require('48'),
-      core = $__require('1f'),
-      ctx = $__require('4a'),
-      PROTOTYPE = 'prototype';
-  var $export = function (type, name, source) {
-    var IS_FORCED = type & $export.F,
-        IS_GLOBAL = type & $export.G,
-        IS_STATIC = type & $export.S,
-        IS_PROTO = type & $export.P,
-        IS_BIND = type & $export.B,
-        IS_WRAP = type & $export.W,
-        exports = IS_GLOBAL ? core : core[name] || (core[name] = {}),
-        target = IS_GLOBAL ? global : IS_STATIC ? global[name] : (global[name] || {})[PROTOTYPE],
-        key,
-        own,
-        out;
-    if (IS_GLOBAL) source = name;
-    for (key in source) {
-      own = !IS_FORCED && target && key in target;
-      if (own && key in exports) continue;
-      out = own ? target[key] : source[key];
-      exports[key] = IS_GLOBAL && typeof target[key] != 'function' ? source[key] : IS_BIND && own ? ctx(out, global) : IS_WRAP && target[key] == out ? function (C) {
-        var F = function (param) {
-          return this instanceof C ? new C(param) : C(param);
-        };
-        F[PROTOTYPE] = C[PROTOTYPE];
-        return F;
-      }(out) : IS_PROTO && typeof out == 'function' ? ctx(Function.call, out) : out;
-      if (IS_PROTO) (exports[PROTOTYPE] || (exports[PROTOTYPE] = {}))[key] = out;
-    }
-  };
-  $export.F = 1;
-  $export.G = 2;
-  $export.S = 4;
-  $export.P = 8;
-  $export.B = 16;
-  $export.W = 32;
-  module.exports = $export;
-});
-$__System.registerDynamic("1b", [], true, function ($__require, exports, module) {
-  var global = this || self,
-      GLOBAL = global;
-  /* */
-  module.exports = function (exec) {
-    try {
-      return !!exec();
-    } catch (e) {
-      return true;
-    }
-  };
-});
-$__System.registerDynamic('4b', ['1d', '1f', '1b'], true, function ($__require, exports, module) {
-    var global = this || self,
-        GLOBAL = global;
-    /* */
-    var $export = $__require('1d'),
-        core = $__require('1f'),
-        fails = $__require('1b');
-    module.exports = function (KEY, exec) {
-        var fn = (core.Object || {})[KEY] || Object[KEY],
-            exp = {};
-        exp[KEY] = exec(fn);
-        $export($export.S + $export.F * fails(function () {
-            fn(1);
-        }), 'Object', exp);
-    };
-});
-$__System.registerDynamic('4c', ['1a', '4b'], true, function ($__require, exports, module) {
-  var global = this || self,
-      GLOBAL = global;
-  /* */
-  var toObject = $__require('1a');
-  $__require('4b')('keys', function ($keys) {
-    return function keys(it) {
-      return $keys(toObject(it));
-    };
-  });
-});
-$__System.registerDynamic('1f', [], true, function ($__require, exports, module) {
-  var global = this || self,
-      GLOBAL = global;
-  /* */
-  var core = module.exports = { version: '1.2.6' };
-  if (typeof __e == 'number') __e = core; // eslint-disable-line no-undef
-});
-$__System.registerDynamic('4d', ['4c', '1f'], true, function ($__require, exports, module) {
-  var global = this || self,
-      GLOBAL = global;
-  /* */
-  $__require('4c');
-  module.exports = $__require('1f').Object.keys;
-});
-$__System.registerDynamic("a", ["4d"], true, function ($__require, exports, module) {
-  var global = this || self,
-      GLOBAL = global;
-  /* */
-  module.exports = { "default": $__require("4d"), __esModule: true };
-});
-(function() {
-var define = $__System.amdDefine;
-(function webpackUniversalModuleDefinition(root, factory) {
-  if (typeof exports === 'object' && typeof module === 'object')
-    module.exports = factory();
-  else if (typeof define === 'function' && define.amd)
-    define("4e", [], factory);
-  else if (typeof exports === 'object')
-    exports["dat"] = factory();
-  else
-    root["dat"] = factory();
-})(this, function() {
-  return (function(modules) {
-    var installedModules = {};
-    function __webpack_require__(moduleId) {
-      if (installedModules[moduleId])
-        return installedModules[moduleId].exports;
-      var module = installedModules[moduleId] = {
-        exports: {},
-        id: moduleId,
-        loaded: false
-      };
-      modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
-      module.loaded = true;
-      return module.exports;
-    }
-    __webpack_require__.m = modules;
-    __webpack_require__.c = installedModules;
-    __webpack_require__.p = "";
-    return __webpack_require__(0);
-  })([function(module, exports, __webpack_require__) {
-    'use strict';
-    exports.__esModule = true;
-    var _index = __webpack_require__(1);
-    var _index2 = _interopRequireDefault(_index);
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : {default: obj};
-    }
-    exports.default = _index2.default;
-    module.exports = exports['default'];
-  }, function(module, exports, __webpack_require__) {
-    'use strict';
-    exports.__esModule = true;
-    var _Color = __webpack_require__(2);
-    var _Color2 = _interopRequireDefault(_Color);
-    var _math = __webpack_require__(6);
-    var _math2 = _interopRequireDefault(_math);
-    var _interpret = __webpack_require__(3);
-    var _interpret2 = _interopRequireDefault(_interpret);
-    var _Controller = __webpack_require__(7);
-    var _Controller2 = _interopRequireDefault(_Controller);
-    var _BooleanController = __webpack_require__(8);
-    var _BooleanController2 = _interopRequireDefault(_BooleanController);
-    var _OptionController = __webpack_require__(10);
-    var _OptionController2 = _interopRequireDefault(_OptionController);
-    var _StringController = __webpack_require__(11);
-    var _StringController2 = _interopRequireDefault(_StringController);
-    var _NumberController = __webpack_require__(12);
-    var _NumberController2 = _interopRequireDefault(_NumberController);
-    var _NumberControllerBox = __webpack_require__(13);
-    var _NumberControllerBox2 = _interopRequireDefault(_NumberControllerBox);
-    var _NumberControllerSlider = __webpack_require__(14);
-    var _NumberControllerSlider2 = _interopRequireDefault(_NumberControllerSlider);
-    var _FunctionController = __webpack_require__(15);
-    var _FunctionController2 = _interopRequireDefault(_FunctionController);
-    var _ColorController = __webpack_require__(16);
-    var _ColorController2 = _interopRequireDefault(_ColorController);
-    var _dom = __webpack_require__(9);
-    var _dom2 = _interopRequireDefault(_dom);
-    var _GUI = __webpack_require__(17);
-    var _GUI2 = _interopRequireDefault(_GUI);
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : {default: obj};
-    }
-    exports.default = {
-      color: {
-        Color: _Color2.default,
-        math: _math2.default,
-        interpret: _interpret2.default
-      },
-      controllers: {
-        Controller: _Controller2.default,
-        BooleanController: _BooleanController2.default,
-        OptionController: _OptionController2.default,
-        StringController: _StringController2.default,
-        NumberController: _NumberController2.default,
-        NumberControllerBox: _NumberControllerBox2.default,
-        NumberControllerSlider: _NumberControllerSlider2.default,
-        FunctionController: _FunctionController2.default,
-        ColorController: _ColorController2.default
-      },
-      dom: {dom: _dom2.default},
-      gui: {GUI: _GUI2.default},
-      GUI: _GUI2.default
-    };
-    module.exports = exports['default'];
-  }, function(module, exports, __webpack_require__) {
-    'use strict';
-    exports.__esModule = true;
-    var _interpret = __webpack_require__(3);
-    var _interpret2 = _interopRequireDefault(_interpret);
-    var _math = __webpack_require__(6);
-    var _math2 = _interopRequireDefault(_math);
-    var _toString = __webpack_require__(4);
-    var _toString2 = _interopRequireDefault(_toString);
-    var _common = __webpack_require__(5);
-    var _common2 = _interopRequireDefault(_common);
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : {default: obj};
-    }
-    function _classCallCheck(instance, Constructor) {
-      if (!(instance instanceof Constructor)) {
-        throw new TypeError("Cannot call a class as a function");
-      }
-    }
-    var Color = function() {
-      function Color() {
-        _classCallCheck(this, Color);
-        this.__state = _interpret2.default.apply(this, arguments);
-        if (this.__state === false) {
-          throw new Error('Failed to interpret color arguments');
-        }
-        this.__state.a = this.__state.a || 1;
-      }
-      Color.prototype.toString = function toString() {
-        return (0, _toString2.default)(this);
-      };
-      Color.prototype.toHexString = function toHexString() {
-        return (0, _toString2.default)(this, true);
-      };
-      Color.prototype.toOriginal = function toOriginal() {
-        return this.__state.conversion.write(this);
-      };
-      return Color;
-    }();
-    function defineRGBComponent(target, component, componentHexIndex) {
-      Object.defineProperty(target, component, {
-        get: function get() {
-          if (this.__state.space === 'RGB') {
-            return this.__state[component];
-          }
-          Color.recalculateRGB(this, component, componentHexIndex);
-          return this.__state[component];
-        },
-        set: function set(v) {
-          if (this.__state.space !== 'RGB') {
-            Color.recalculateRGB(this, component, componentHexIndex);
-            this.__state.space = 'RGB';
-          }
-          this.__state[component] = v;
-        }
-      });
-    }
-    function defineHSVComponent(target, component) {
-      Object.defineProperty(target, component, {
-        get: function get() {
-          if (this.__state.space === 'HSV') {
-            return this.__state[component];
-          }
-          Color.recalculateHSV(this);
-          return this.__state[component];
-        },
-        set: function set(v) {
-          if (this.__state.space !== 'HSV') {
-            Color.recalculateHSV(this);
-            this.__state.space = 'HSV';
-          }
-          this.__state[component] = v;
-        }
-      });
-    }
-    Color.recalculateRGB = function(color, component, componentHexIndex) {
-      if (color.__state.space === 'HEX') {
-        color.__state[component] = _math2.default.component_from_hex(color.__state.hex, componentHexIndex);
-      } else if (color.__state.space === 'HSV') {
-        _common2.default.extend(color.__state, _math2.default.hsv_to_rgb(color.__state.h, color.__state.s, color.__state.v));
-      } else {
-        throw new Error('Corrupted color state');
-      }
-    };
-    Color.recalculateHSV = function(color) {
-      var result = _math2.default.rgb_to_hsv(color.r, color.g, color.b);
-      _common2.default.extend(color.__state, {
-        s: result.s,
-        v: result.v
-      });
-      if (!_common2.default.isNaN(result.h)) {
-        color.__state.h = result.h;
-      } else if (_common2.default.isUndefined(color.__state.h)) {
-        color.__state.h = 0;
-      }
-    };
-    Color.COMPONENTS = ['r', 'g', 'b', 'h', 's', 'v', 'hex', 'a'];
-    defineRGBComponent(Color.prototype, 'r', 2);
-    defineRGBComponent(Color.prototype, 'g', 1);
-    defineRGBComponent(Color.prototype, 'b', 0);
-    defineHSVComponent(Color.prototype, 'h');
-    defineHSVComponent(Color.prototype, 's');
-    defineHSVComponent(Color.prototype, 'v');
-    Object.defineProperty(Color.prototype, 'a', {
-      get: function get() {
-        return this.__state.a;
-      },
-      set: function set(v) {
-        this.__state.a = v;
-      }
-    });
-    Object.defineProperty(Color.prototype, 'hex', {
-      get: function get() {
-        if (!this.__state.space !== 'HEX') {
-          this.__state.hex = _math2.default.rgb_to_hex(this.r, this.g, this.b);
-        }
-        return this.__state.hex;
-      },
-      set: function set(v) {
-        this.__state.space = 'HEX';
-        this.__state.hex = v;
-      }
-    });
-    exports.default = Color;
-    module.exports = exports['default'];
-  }, function(module, exports, __webpack_require__) {
-    'use strict';
-    exports.__esModule = true;
-    var _toString = __webpack_require__(4);
-    var _toString2 = _interopRequireDefault(_toString);
-    var _common = __webpack_require__(5);
-    var _common2 = _interopRequireDefault(_common);
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : {default: obj};
-    }
-    var INTERPRETATIONS = [{
-      litmus: _common2.default.isString,
-      conversions: {
-        THREE_CHAR_HEX: {
-          read: function read(original) {
-            var test = original.match(/^#([A-F0-9])([A-F0-9])([A-F0-9])$/i);
-            if (test === null) {
-              return false;
-            }
-            return {
-              space: 'HEX',
-              hex: parseInt('0x' + test[1].toString() + test[1].toString() + test[2].toString() + test[2].toString() + test[3].toString() + test[3].toString(), 0)
-            };
-          },
-          write: _toString2.default
-        },
-        SIX_CHAR_HEX: {
-          read: function read(original) {
-            var test = original.match(/^#([A-F0-9]{6})$/i);
-            if (test === null) {
-              return false;
-            }
-            return {
-              space: 'HEX',
-              hex: parseInt('0x' + test[1].toString(), 0)
-            };
-          },
-          write: _toString2.default
-        },
-        CSS_RGB: {
-          read: function read(original) {
-            var test = original.match(/^rgb\(\s*(.+)\s*,\s*(.+)\s*,\s*(.+)\s*\)/);
-            if (test === null) {
-              return false;
-            }
-            return {
-              space: 'RGB',
-              r: parseFloat(test[1]),
-              g: parseFloat(test[2]),
-              b: parseFloat(test[3])
-            };
-          },
-          write: _toString2.default
-        },
-        CSS_RGBA: {
-          read: function read(original) {
-            var test = original.match(/^rgba\(\s*(.+)\s*,\s*(.+)\s*,\s*(.+)\s*,\s*(.+)\s*\)/);
-            if (test === null) {
-              return false;
-            }
-            return {
-              space: 'RGB',
-              r: parseFloat(test[1]),
-              g: parseFloat(test[2]),
-              b: parseFloat(test[3]),
-              a: parseFloat(test[4])
-            };
-          },
-          write: _toString2.default
-        }
-      }
-    }, {
-      litmus: _common2.default.isNumber,
-      conversions: {HEX: {
-          read: function read(original) {
-            return {
-              space: 'HEX',
-              hex: original,
-              conversionName: 'HEX'
-            };
-          },
-          write: function write(color) {
-            return color.hex;
-          }
-        }}
-    }, {
-      litmus: _common2.default.isArray,
-      conversions: {
-        RGB_ARRAY: {
-          read: function read(original) {
-            if (original.length !== 3) {
-              return false;
-            }
-            return {
-              space: 'RGB',
-              r: original[0],
-              g: original[1],
-              b: original[2]
-            };
-          },
-          write: function write(color) {
-            return [color.r, color.g, color.b];
-          }
-        },
-        RGBA_ARRAY: {
-          read: function read(original) {
-            if (original.length !== 4)
-              return false;
-            return {
-              space: 'RGB',
-              r: original[0],
-              g: original[1],
-              b: original[2],
-              a: original[3]
-            };
-          },
-          write: function write(color) {
-            return [color.r, color.g, color.b, color.a];
-          }
-        }
-      }
-    }, {
-      litmus: _common2.default.isObject,
-      conversions: {
-        RGBA_OBJ: {
-          read: function read(original) {
-            if (_common2.default.isNumber(original.r) && _common2.default.isNumber(original.g) && _common2.default.isNumber(original.b) && _common2.default.isNumber(original.a)) {
-              return {
-                space: 'RGB',
-                r: original.r,
-                g: original.g,
-                b: original.b,
-                a: original.a
-              };
-            }
-            return false;
-          },
-          write: function write(color) {
-            return {
-              r: color.r,
-              g: color.g,
-              b: color.b,
-              a: color.a
-            };
-          }
-        },
-        RGB_OBJ: {
-          read: function read(original) {
-            if (_common2.default.isNumber(original.r) && _common2.default.isNumber(original.g) && _common2.default.isNumber(original.b)) {
-              return {
-                space: 'RGB',
-                r: original.r,
-                g: original.g,
-                b: original.b
-              };
-            }
-            return false;
-          },
-          write: function write(color) {
-            return {
-              r: color.r,
-              g: color.g,
-              b: color.b
-            };
-          }
-        },
-        HSVA_OBJ: {
-          read: function read(original) {
-            if (_common2.default.isNumber(original.h) && _common2.default.isNumber(original.s) && _common2.default.isNumber(original.v) && _common2.default.isNumber(original.a)) {
-              return {
-                space: 'HSV',
-                h: original.h,
-                s: original.s,
-                v: original.v,
-                a: original.a
-              };
-            }
-            return false;
-          },
-          write: function write(color) {
-            return {
-              h: color.h,
-              s: color.s,
-              v: color.v,
-              a: color.a
-            };
-          }
-        },
-        HSV_OBJ: {
-          read: function read(original) {
-            if (_common2.default.isNumber(original.h) && _common2.default.isNumber(original.s) && _common2.default.isNumber(original.v)) {
-              return {
-                space: 'HSV',
-                h: original.h,
-                s: original.s,
-                v: original.v
-              };
-            }
-            return false;
-          },
-          write: function write(color) {
-            return {
-              h: color.h,
-              s: color.s,
-              v: color.v
-            };
-          }
-        }
-      }
-    }];
-    var result = void 0;
-    var toReturn = void 0;
-    var interpret = function interpret() {
-      toReturn = false;
-      var original = arguments.length > 1 ? _common2.default.toArray(arguments) : arguments[0];
-      _common2.default.each(INTERPRETATIONS, function(family) {
-        if (family.litmus(original)) {
-          _common2.default.each(family.conversions, function(conversion, conversionName) {
-            result = conversion.read(original);
-            if (toReturn === false && result !== false) {
-              toReturn = result;
-              result.conversionName = conversionName;
-              result.conversion = conversion;
-              return _common2.default.BREAK;
-            }
-          });
-          return _common2.default.BREAK;
-        }
-      });
-      return toReturn;
-    };
-    exports.default = interpret;
-    module.exports = exports['default'];
-  }, function(module, exports) {
-    'use strict';
-    exports.__esModule = true;
-    exports.default = function(color, forceCSSHex) {
-      var colorFormat = color.__state.conversionName.toString();
-      var r = Math.round(color.r);
-      var g = Math.round(color.g);
-      var b = Math.round(color.b);
-      var a = color.a;
-      var h = Math.round(color.h);
-      var s = color.s.toFixed(1);
-      var v = color.v.toFixed(1);
-      if (forceCSSHex || colorFormat === 'THREE_CHAR_HEX' || colorFormat === 'SIX_CHAR_HEX') {
-        var str = color.hex.toString(16);
-        while (str.length < 6) {
-          str = '0' + str;
-        }
-        return '#' + str;
-      } else if (colorFormat === 'CSS_RGB') {
-        return 'rgb(' + r + ',' + g + ',' + b + ')';
-      } else if (colorFormat === 'CSS_RGBA') {
-        return 'rgba(' + r + ',' + g + ',' + b + ',' + a + ')';
-      } else if (colorFormat === 'HEX') {
-        return '0x' + color.hex.toString(16);
-      } else if (colorFormat === 'RGB_ARRAY') {
-        return '[' + r + ',' + g + ',' + b + ']';
-      } else if (colorFormat === 'RGBA_ARRAY') {
-        return '[' + r + ',' + g + ',' + b + ',' + a + ']';
-      } else if (colorFormat === 'RGB_OBJ') {
-        return '{r:' + r + ',g:' + g + ',b:' + b + '}';
-      } else if (colorFormat === 'RGBA_OBJ') {
-        return '{r:' + r + ',g:' + g + ',b:' + b + ',a:' + a + '}';
-      } else if (colorFormat === 'HSV_OBJ') {
-        return '{h:' + h + ',s:' + s + ',v:' + v + '}';
-      } else if (colorFormat === 'HSVA_OBJ') {
-        return '{h:' + h + ',s:' + s + ',v:' + v + ',a:' + a + '}';
-      }
-      return 'unknown format';
-    };
-    module.exports = exports['default'];
-  }, function(module, exports) {
-    'use strict';
-    exports.__esModule = true;
-    var ARR_EACH = Array.prototype.forEach;
-    var ARR_SLICE = Array.prototype.slice;
-    var Common = {
-      BREAK: {},
-      extend: function extend(target) {
-        this.each(ARR_SLICE.call(arguments, 1), function(obj) {
-          var keys = this.isObject(obj) ? Object.keys(obj) : [];
-          keys.forEach(function(key) {
-            if (!this.isUndefined(obj[key])) {
-              target[key] = obj[key];
-            }
-          }.bind(this));
-        }, this);
-        return target;
-      },
-      defaults: function defaults(target) {
-        this.each(ARR_SLICE.call(arguments, 1), function(obj) {
-          var keys = this.isObject(obj) ? Object.keys(obj) : [];
-          keys.forEach(function(key) {
-            if (this.isUndefined(target[key])) {
-              target[key] = obj[key];
-            }
-          }.bind(this));
-        }, this);
-        return target;
-      },
-      compose: function compose() {
-        var toCall = ARR_SLICE.call(arguments);
-        return function() {
-          var args = ARR_SLICE.call(arguments);
-          for (var i = toCall.length - 1; i >= 0; i--) {
-            args = [toCall[i].apply(this, args)];
-          }
-          return args[0];
-        };
-      },
-      each: function each(obj, itr, scope) {
-        if (!obj) {
-          return;
-        }
-        if (ARR_EACH && obj.forEach && obj.forEach === ARR_EACH) {
-          obj.forEach(itr, scope);
-        } else if (obj.length === obj.length + 0) {
-          var key = void 0;
-          var l = void 0;
-          for (key = 0, l = obj.length; key < l; key++) {
-            if (key in obj && itr.call(scope, obj[key], key) === this.BREAK) {
-              return;
-            }
-          }
-        } else {
-          for (var _key in obj) {
-            if (itr.call(scope, obj[_key], _key) === this.BREAK) {
-              return;
-            }
-          }
-        }
-      },
-      defer: function defer(fnc) {
-        setTimeout(fnc, 0);
-      },
-      debounce: function debounce(func, threshold, callImmediately) {
-        var timeout = void 0;
-        return function() {
-          var obj = this;
-          var args = arguments;
-          function delayed() {
-            timeout = null;
-            if (!callImmediately)
-              func.apply(obj, args);
-          }
-          var callNow = callImmediately || !timeout;
-          clearTimeout(timeout);
-          timeout = setTimeout(delayed, threshold);
-          if (callNow) {
-            func.apply(obj, args);
-          }
-        };
-      },
-      toArray: function toArray(obj) {
-        if (obj.toArray)
-          return obj.toArray();
-        return ARR_SLICE.call(obj);
-      },
-      isUndefined: function isUndefined(obj) {
-        return obj === undefined;
-      },
-      isNull: function isNull(obj) {
-        return obj === null;
-      },
-      isNaN: function(_isNaN) {
-        function isNaN(_x) {
-          return _isNaN.apply(this, arguments);
-        }
-        isNaN.toString = function() {
-          return _isNaN.toString();
-        };
-        return isNaN;
-      }(function(obj) {
-        return isNaN(obj);
-      }),
-      isArray: Array.isArray || function(obj) {
-        return obj.constructor === Array;
-      },
-      isObject: function isObject(obj) {
-        return obj === Object(obj);
-      },
-      isNumber: function isNumber(obj) {
-        return obj === obj + 0;
-      },
-      isString: function isString(obj) {
-        return obj === obj + '';
-      },
-      isBoolean: function isBoolean(obj) {
-        return obj === false || obj === true;
-      },
-      isFunction: function isFunction(obj) {
-        return Object.prototype.toString.call(obj) === '[object Function]';
-      }
-    };
-    exports.default = Common;
-    module.exports = exports['default'];
-  }, function(module, exports) {
-    "use strict";
-    exports.__esModule = true;
-    var tmpComponent = void 0;
-    var ColorMath = {
-      hsv_to_rgb: function hsv_to_rgb(h, s, v) {
-        var hi = Math.floor(h / 60) % 6;
-        var f = h / 60 - Math.floor(h / 60);
-        var p = v * (1.0 - s);
-        var q = v * (1.0 - f * s);
-        var t = v * (1.0 - (1.0 - f) * s);
-        var c = [[v, t, p], [q, v, p], [p, v, t], [p, q, v], [t, p, v], [v, p, q]][hi];
-        return {
-          r: c[0] * 255,
-          g: c[1] * 255,
-          b: c[2] * 255
-        };
-      },
-      rgb_to_hsv: function rgb_to_hsv(r, g, b) {
-        var min = Math.min(r, g, b);
-        var max = Math.max(r, g, b);
-        var delta = max - min;
-        var h = void 0;
-        var s = void 0;
-        if (max !== 0) {
-          s = delta / max;
-        } else {
-          return {
-            h: NaN,
-            s: 0,
-            v: 0
-          };
-        }
-        if (r === max) {
-          h = (g - b) / delta;
-        } else if (g === max) {
-          h = 2 + (b - r) / delta;
-        } else {
-          h = 4 + (r - g) / delta;
-        }
-        h /= 6;
-        if (h < 0) {
-          h += 1;
-        }
-        return {
-          h: h * 360,
-          s: s,
-          v: max / 255
-        };
-      },
-      rgb_to_hex: function rgb_to_hex(r, g, b) {
-        var hex = this.hex_with_component(0, 2, r);
-        hex = this.hex_with_component(hex, 1, g);
-        hex = this.hex_with_component(hex, 0, b);
-        return hex;
-      },
-      component_from_hex: function component_from_hex(hex, componentIndex) {
-        return hex >> componentIndex * 8 & 0xFF;
-      },
-      hex_with_component: function hex_with_component(hex, componentIndex, value) {
-        return value << (tmpComponent = componentIndex * 8) | hex & ~(0xFF << tmpComponent);
-      }
-    };
-    exports.default = ColorMath;
-    module.exports = exports["default"];
-  }, function(module, exports) {
-    'use strict';
-    exports.__esModule = true;
-    function _classCallCheck(instance, Constructor) {
-      if (!(instance instanceof Constructor)) {
-        throw new TypeError("Cannot call a class as a function");
-      }
-    }
-    var Controller = function() {
-      function Controller(object, property) {
-        _classCallCheck(this, Controller);
-        this.initialValue = object[property];
-        this.domElement = document.createElement('div');
-        this.object = object;
-        this.property = property;
-        this.__onChange = undefined;
-        this.__onFinishChange = undefined;
-      }
-      Controller.prototype.onChange = function onChange(fnc) {
-        this.__onChange = fnc;
-        return this;
-      };
-      Controller.prototype.onFinishChange = function onFinishChange(fnc) {
-        this.__onFinishChange = fnc;
-        return this;
-      };
-      Controller.prototype.setValue = function setValue(newValue) {
-        this.object[this.property] = newValue;
-        if (this.__onChange) {
-          this.__onChange.call(this, newValue);
-        }
-        this.updateDisplay();
-        return this;
-      };
-      Controller.prototype.getValue = function getValue() {
-        return this.object[this.property];
-      };
-      Controller.prototype.updateDisplay = function updateDisplay() {
-        return this;
-      };
-      Controller.prototype.isModified = function isModified() {
-        return this.initialValue !== this.getValue();
-      };
-      return Controller;
-    }();
-    exports.default = Controller;
-    module.exports = exports['default'];
-  }, function(module, exports, __webpack_require__) {
-    'use strict';
-    exports.__esModule = true;
-    var _Controller2 = __webpack_require__(7);
-    var _Controller3 = _interopRequireDefault(_Controller2);
-    var _dom = __webpack_require__(9);
-    var _dom2 = _interopRequireDefault(_dom);
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : {default: obj};
-    }
-    function _classCallCheck(instance, Constructor) {
-      if (!(instance instanceof Constructor)) {
-        throw new TypeError("Cannot call a class as a function");
-      }
-    }
-    function _possibleConstructorReturn(self, call) {
-      if (!self) {
-        throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
-      }
-      return call && (typeof call === "object" || typeof call === "function") ? call : self;
-    }
-    function _inherits(subClass, superClass) {
-      if (typeof superClass !== "function" && superClass !== null) {
-        throw new TypeError("Super expression must either be null or a function, not " + typeof superClass);
-      }
-      subClass.prototype = Object.create(superClass && superClass.prototype, {constructor: {
-          value: subClass,
-          enumerable: false,
-          writable: true,
-          configurable: true
-        }});
-      if (superClass)
-        Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
-    }
-    var BooleanController = function(_Controller) {
-      _inherits(BooleanController, _Controller);
-      function BooleanController(object, property) {
-        _classCallCheck(this, BooleanController);
-        var _this2 = _possibleConstructorReturn(this, _Controller.call(this, object, property));
-        var _this = _this2;
-        _this2.__prev = _this2.getValue();
-        _this2.__checkbox = document.createElement('input');
-        _this2.__checkbox.setAttribute('type', 'checkbox');
-        function onChange() {
-          _this.setValue(!_this.__prev);
-        }
-        _dom2.default.bind(_this2.__checkbox, 'change', onChange, false);
-        _this2.domElement.appendChild(_this2.__checkbox);
-        _this2.updateDisplay();
-        return _this2;
-      }
-      BooleanController.prototype.setValue = function setValue(v) {
-        var toReturn = _Controller.prototype.setValue.call(this, v);
-        if (this.__onFinishChange) {
-          this.__onFinishChange.call(this, this.getValue());
-        }
-        this.__prev = this.getValue();
-        return toReturn;
-      };
-      BooleanController.prototype.updateDisplay = function updateDisplay() {
-        if (this.getValue() === true) {
-          this.__checkbox.setAttribute('checked', 'checked');
-          this.__checkbox.checked = true;
-          this.__prev = true;
-        } else {
-          this.__checkbox.checked = false;
-          this.__prev = false;
-        }
-        return _Controller.prototype.updateDisplay.call(this);
-      };
-      return BooleanController;
-    }(_Controller3.default);
-    exports.default = BooleanController;
-    module.exports = exports['default'];
-  }, function(module, exports, __webpack_require__) {
-    'use strict';
-    exports.__esModule = true;
-    var _common = __webpack_require__(5);
-    var _common2 = _interopRequireDefault(_common);
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : {default: obj};
-    }
-    var EVENT_MAP = {
-      HTMLEvents: ['change'],
-      MouseEvents: ['click', 'mousemove', 'mousedown', 'mouseup', 'mouseover'],
-      KeyboardEvents: ['keydown']
-    };
-    var EVENT_MAP_INV = {};
-    _common2.default.each(EVENT_MAP, function(v, k) {
-      _common2.default.each(v, function(e) {
-        EVENT_MAP_INV[e] = k;
-      });
-    });
-    var CSS_VALUE_PIXELS = /(\d+(\.\d+)?)px/;
-    function cssValueToPixels(val) {
-      if (val === '0' || _common2.default.isUndefined(val)) {
-        return 0;
-      }
-      var match = val.match(CSS_VALUE_PIXELS);
-      if (!_common2.default.isNull(match)) {
-        return parseFloat(match[1]);
-      }
-      return 0;
-    }
-    var dom = {
-      makeSelectable: function makeSelectable(elem, selectable) {
-        if (elem === undefined || elem.style === undefined)
-          return;
-        elem.onselectstart = selectable ? function() {
-          return false;
-        } : function() {};
-        elem.style.MozUserSelect = selectable ? 'auto' : 'none';
-        elem.style.KhtmlUserSelect = selectable ? 'auto' : 'none';
-        elem.unselectable = selectable ? 'on' : 'off';
-      },
-      makeFullscreen: function makeFullscreen(elem, hor, vert) {
-        var vertical = vert;
-        var horizontal = hor;
-        if (_common2.default.isUndefined(horizontal)) {
-          horizontal = true;
-        }
-        if (_common2.default.isUndefined(vertical)) {
-          vertical = true;
-        }
-        elem.style.position = 'absolute';
-        if (horizontal) {
-          elem.style.left = 0;
-          elem.style.right = 0;
-        }
-        if (vertical) {
-          elem.style.top = 0;
-          elem.style.bottom = 0;
-        }
-      },
-      fakeEvent: function fakeEvent(elem, eventType, pars, aux) {
-        var params = pars || {};
-        var className = EVENT_MAP_INV[eventType];
-        if (!className) {
-          throw new Error('Event type ' + eventType + ' not supported.');
-        }
-        var evt = document.createEvent(className);
-        switch (className) {
-          case 'MouseEvents':
-            {
-              var clientX = params.x || params.clientX || 0;
-              var clientY = params.y || params.clientY || 0;
-              evt.initMouseEvent(eventType, params.bubbles || false, params.cancelable || true, window, params.clickCount || 1, 0, 0, clientX, clientY, false, false, false, false, 0, null);
-              break;
-            }
-          case 'KeyboardEvents':
-            {
-              var init = evt.initKeyboardEvent || evt.initKeyEvent;
-              _common2.default.defaults(params, {
-                cancelable: true,
-                ctrlKey: false,
-                altKey: false,
-                shiftKey: false,
-                metaKey: false,
-                keyCode: undefined,
-                charCode: undefined
-              });
-              init(eventType, params.bubbles || false, params.cancelable, window, params.ctrlKey, params.altKey, params.shiftKey, params.metaKey, params.keyCode, params.charCode);
-              break;
-            }
-          default:
-            {
-              evt.initEvent(eventType, params.bubbles || false, params.cancelable || true);
-              break;
-            }
-        }
-        _common2.default.defaults(evt, aux);
-        elem.dispatchEvent(evt);
-      },
-      bind: function bind(elem, event, func, newBool) {
-        var bool = newBool || false;
-        if (elem.addEventListener) {
-          elem.addEventListener(event, func, bool);
-        } else if (elem.attachEvent) {
-          elem.attachEvent('on' + event, func);
-        }
-        return dom;
-      },
-      unbind: function unbind(elem, event, func, newBool) {
-        var bool = newBool || false;
-        if (elem.removeEventListener) {
-          elem.removeEventListener(event, func, bool);
-        } else if (elem.detachEvent) {
-          elem.detachEvent('on' + event, func);
-        }
-        return dom;
-      },
-      addClass: function addClass(elem, className) {
-        if (elem.className === undefined) {
-          elem.className = className;
-        } else if (elem.className !== className) {
-          var classes = elem.className.split(/ +/);
-          if (classes.indexOf(className) === -1) {
-            classes.push(className);
-            elem.className = classes.join(' ').replace(/^\s+/, '').replace(/\s+$/, '');
-          }
-        }
-        return dom;
-      },
-      removeClass: function removeClass(elem, className) {
-        if (className) {
-          if (elem.className === className) {
-            elem.removeAttribute('class');
-          } else {
-            var classes = elem.className.split(/ +/);
-            var index = classes.indexOf(className);
-            if (index !== -1) {
-              classes.splice(index, 1);
-              elem.className = classes.join(' ');
-            }
-          }
-        } else {
-          elem.className = undefined;
-        }
-        return dom;
-      },
-      hasClass: function hasClass(elem, className) {
-        return new RegExp('(?:^|\\s+)' + className + '(?:\\s+|$)').test(elem.className) || false;
-      },
-      getWidth: function getWidth(elem) {
-        var style = getComputedStyle(elem);
-        return cssValueToPixels(style['border-left-width']) + cssValueToPixels(style['border-right-width']) + cssValueToPixels(style['padding-left']) + cssValueToPixels(style['padding-right']) + cssValueToPixels(style.width);
-      },
-      getHeight: function getHeight(elem) {
-        var style = getComputedStyle(elem);
-        return cssValueToPixels(style['border-top-width']) + cssValueToPixels(style['border-bottom-width']) + cssValueToPixels(style['padding-top']) + cssValueToPixels(style['padding-bottom']) + cssValueToPixels(style.height);
-      },
-      getOffset: function getOffset(el) {
-        var elem = el;
-        var offset = {
-          left: 0,
-          top: 0
-        };
-        if (elem.offsetParent) {
-          do {
-            offset.left += elem.offsetLeft;
-            offset.top += elem.offsetTop;
-            elem = elem.offsetParent;
-          } while (elem);
-        }
-        return offset;
-      },
-      isActive: function isActive(elem) {
-        return elem === document.activeElement && (elem.type || elem.href);
-      }
-    };
-    exports.default = dom;
-    module.exports = exports['default'];
-  }, function(module, exports, __webpack_require__) {
-    'use strict';
-    exports.__esModule = true;
-    var _Controller2 = __webpack_require__(7);
-    var _Controller3 = _interopRequireDefault(_Controller2);
-    var _dom = __webpack_require__(9);
-    var _dom2 = _interopRequireDefault(_dom);
-    var _common = __webpack_require__(5);
-    var _common2 = _interopRequireDefault(_common);
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : {default: obj};
-    }
-    function _classCallCheck(instance, Constructor) {
-      if (!(instance instanceof Constructor)) {
-        throw new TypeError("Cannot call a class as a function");
-      }
-    }
-    function _possibleConstructorReturn(self, call) {
-      if (!self) {
-        throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
-      }
-      return call && (typeof call === "object" || typeof call === "function") ? call : self;
-    }
-    function _inherits(subClass, superClass) {
-      if (typeof superClass !== "function" && superClass !== null) {
-        throw new TypeError("Super expression must either be null or a function, not " + typeof superClass);
-      }
-      subClass.prototype = Object.create(superClass && superClass.prototype, {constructor: {
-          value: subClass,
-          enumerable: false,
-          writable: true,
-          configurable: true
-        }});
-      if (superClass)
-        Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
-    }
-    var OptionController = function(_Controller) {
-      _inherits(OptionController, _Controller);
-      function OptionController(object, property, opts) {
-        _classCallCheck(this, OptionController);
-        var _this2 = _possibleConstructorReturn(this, _Controller.call(this, object, property));
-        var options = opts;
-        var _this = _this2;
-        _this2.__select = document.createElement('select');
-        if (_common2.default.isArray(options)) {
-          var map = {};
-          _common2.default.each(options, function(element) {
-            map[element] = element;
-          });
-          options = map;
-        }
-        _common2.default.each(options, function(value, key) {
-          var opt = document.createElement('option');
-          opt.innerHTML = key;
-          opt.setAttribute('value', value);
-          _this.__select.appendChild(opt);
-        });
-        _this2.updateDisplay();
-        _dom2.default.bind(_this2.__select, 'change', function() {
-          var desiredValue = this.options[this.selectedIndex].value;
-          _this.setValue(desiredValue);
-        });
-        _this2.domElement.appendChild(_this2.__select);
-        return _this2;
-      }
-      OptionController.prototype.setValue = function setValue(v) {
-        var toReturn = _Controller.prototype.setValue.call(this, v);
-        if (this.__onFinishChange) {
-          this.__onFinishChange.call(this, this.getValue());
-        }
-        return toReturn;
-      };
-      OptionController.prototype.updateDisplay = function updateDisplay() {
-        if (_dom2.default.isActive(this.__select))
-          return this;
-        this.__select.value = this.getValue();
-        return _Controller.prototype.updateDisplay.call(this);
-      };
-      return OptionController;
-    }(_Controller3.default);
-    exports.default = OptionController;
-    module.exports = exports['default'];
-  }, function(module, exports, __webpack_require__) {
-    'use strict';
-    exports.__esModule = true;
-    var _Controller2 = __webpack_require__(7);
-    var _Controller3 = _interopRequireDefault(_Controller2);
-    var _dom = __webpack_require__(9);
-    var _dom2 = _interopRequireDefault(_dom);
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : {default: obj};
-    }
-    function _classCallCheck(instance, Constructor) {
-      if (!(instance instanceof Constructor)) {
-        throw new TypeError("Cannot call a class as a function");
-      }
-    }
-    function _possibleConstructorReturn(self, call) {
-      if (!self) {
-        throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
-      }
-      return call && (typeof call === "object" || typeof call === "function") ? call : self;
-    }
-    function _inherits(subClass, superClass) {
-      if (typeof superClass !== "function" && superClass !== null) {
-        throw new TypeError("Super expression must either be null or a function, not " + typeof superClass);
-      }
-      subClass.prototype = Object.create(superClass && superClass.prototype, {constructor: {
-          value: subClass,
-          enumerable: false,
-          writable: true,
-          configurable: true
-        }});
-      if (superClass)
-        Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
-    }
-    var StringController = function(_Controller) {
-      _inherits(StringController, _Controller);
-      function StringController(object, property) {
-        _classCallCheck(this, StringController);
-        var _this2 = _possibleConstructorReturn(this, _Controller.call(this, object, property));
-        var _this = _this2;
-        function onChange() {
-          _this.setValue(_this.__input.value);
-        }
-        function onBlur() {
-          if (_this.__onFinishChange) {
-            _this.__onFinishChange.call(_this, _this.getValue());
-          }
-        }
-        _this2.__input = document.createElement('input');
-        _this2.__input.setAttribute('type', 'text');
-        _dom2.default.bind(_this2.__input, 'keyup', onChange);
-        _dom2.default.bind(_this2.__input, 'change', onChange);
-        _dom2.default.bind(_this2.__input, 'blur', onBlur);
-        _dom2.default.bind(_this2.__input, 'keydown', function(e) {
-          if (e.keyCode === 13) {
-            this.blur();
-          }
-        });
-        _this2.updateDisplay();
-        _this2.domElement.appendChild(_this2.__input);
-        return _this2;
-      }
-      StringController.prototype.updateDisplay = function updateDisplay() {
-        if (!_dom2.default.isActive(this.__input)) {
-          this.__input.value = this.getValue();
-        }
-        return _Controller.prototype.updateDisplay.call(this);
-      };
-      return StringController;
-    }(_Controller3.default);
-    exports.default = StringController;
-    module.exports = exports['default'];
-  }, function(module, exports, __webpack_require__) {
-    'use strict';
-    exports.__esModule = true;
-    var _Controller2 = __webpack_require__(7);
-    var _Controller3 = _interopRequireDefault(_Controller2);
-    var _common = __webpack_require__(5);
-    var _common2 = _interopRequireDefault(_common);
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : {default: obj};
-    }
-    function _classCallCheck(instance, Constructor) {
-      if (!(instance instanceof Constructor)) {
-        throw new TypeError("Cannot call a class as a function");
-      }
-    }
-    function _possibleConstructorReturn(self, call) {
-      if (!self) {
-        throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
-      }
-      return call && (typeof call === "object" || typeof call === "function") ? call : self;
-    }
-    function _inherits(subClass, superClass) {
-      if (typeof superClass !== "function" && superClass !== null) {
-        throw new TypeError("Super expression must either be null or a function, not " + typeof superClass);
-      }
-      subClass.prototype = Object.create(superClass && superClass.prototype, {constructor: {
-          value: subClass,
-          enumerable: false,
-          writable: true,
-          configurable: true
-        }});
-      if (superClass)
-        Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
-    }
-    function numDecimals(x) {
-      var _x = x.toString();
-      if (_x.indexOf('.') > -1) {
-        return _x.length - _x.indexOf('.') - 1;
-      }
-      return 0;
-    }
-    var NumberController = function(_Controller) {
-      _inherits(NumberController, _Controller);
-      function NumberController(object, property, params) {
-        _classCallCheck(this, NumberController);
-        var _this = _possibleConstructorReturn(this, _Controller.call(this, object, property));
-        var _params = params || {};
-        _this.__min = _params.min;
-        _this.__max = _params.max;
-        _this.__step = _params.step;
-        if (_common2.default.isUndefined(_this.__step)) {
-          if (_this.initialValue === 0) {
-            _this.__impliedStep = 1;
-          } else {
-            _this.__impliedStep = Math.pow(10, Math.floor(Math.log(Math.abs(_this.initialValue)) / Math.LN10)) / 10;
-          }
-        } else {
-          _this.__impliedStep = _this.__step;
-        }
-        _this.__precision = numDecimals(_this.__impliedStep);
-        return _this;
-      }
-      NumberController.prototype.setValue = function setValue(v) {
-        var _v = v;
-        if (this.__min !== undefined && _v < this.__min) {
-          _v = this.__min;
-        } else if (this.__max !== undefined && _v > this.__max) {
-          _v = this.__max;
-        }
-        if (this.__step !== undefined && _v % this.__step !== 0) {
-          _v = Math.round(_v / this.__step) * this.__step;
-        }
-        return _Controller.prototype.setValue.call(this, _v);
-      };
-      NumberController.prototype.min = function min(v) {
-        this.__min = v;
-        return this;
-      };
-      NumberController.prototype.max = function max(v) {
-        this.__max = v;
-        return this;
-      };
-      NumberController.prototype.step = function step(v) {
-        this.__step = v;
-        this.__impliedStep = v;
-        this.__precision = numDecimals(v);
-        return this;
-      };
-      return NumberController;
-    }(_Controller3.default);
-    exports.default = NumberController;
-    module.exports = exports['default'];
-  }, function(module, exports, __webpack_require__) {
-    'use strict';
-    exports.__esModule = true;
-    var _NumberController2 = __webpack_require__(12);
-    var _NumberController3 = _interopRequireDefault(_NumberController2);
-    var _dom = __webpack_require__(9);
-    var _dom2 = _interopRequireDefault(_dom);
-    var _common = __webpack_require__(5);
-    var _common2 = _interopRequireDefault(_common);
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : {default: obj};
-    }
-    function _classCallCheck(instance, Constructor) {
-      if (!(instance instanceof Constructor)) {
-        throw new TypeError("Cannot call a class as a function");
-      }
-    }
-    function _possibleConstructorReturn(self, call) {
-      if (!self) {
-        throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
-      }
-      return call && (typeof call === "object" || typeof call === "function") ? call : self;
-    }
-    function _inherits(subClass, superClass) {
-      if (typeof superClass !== "function" && superClass !== null) {
-        throw new TypeError("Super expression must either be null or a function, not " + typeof superClass);
-      }
-      subClass.prototype = Object.create(superClass && superClass.prototype, {constructor: {
-          value: subClass,
-          enumerable: false,
-          writable: true,
-          configurable: true
-        }});
-      if (superClass)
-        Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
-    }
-    function roundToDecimal(value, decimals) {
-      var tenTo = Math.pow(10, decimals);
-      return Math.round(value * tenTo) / tenTo;
-    }
-    var NumberControllerBox = function(_NumberController) {
-      _inherits(NumberControllerBox, _NumberController);
-      function NumberControllerBox(object, property, params) {
-        _classCallCheck(this, NumberControllerBox);
-        var _this2 = _possibleConstructorReturn(this, _NumberController.call(this, object, property, params));
-        _this2.__truncationSuspended = false;
-        var _this = _this2;
-        var prevY = void 0;
-        function onChange() {
-          var attempted = parseFloat(_this.__input.value);
-          if (!_common2.default.isNaN(attempted)) {
-            _this.setValue(attempted);
-          }
-        }
-        function onFinish() {
-          if (_this.__onFinishChange) {
-            _this.__onFinishChange.call(_this, _this.getValue());
-          }
-        }
-        function onBlur() {
-          onFinish();
-        }
-        function onMouseDrag(e) {
-          var diff = prevY - e.clientY;
-          _this.setValue(_this.getValue() + diff * _this.__impliedStep);
-          prevY = e.clientY;
-        }
-        function onMouseUp() {
-          _dom2.default.unbind(window, 'mousemove', onMouseDrag);
-          _dom2.default.unbind(window, 'mouseup', onMouseUp);
-          onFinish();
-        }
-        function onMouseDown(e) {
-          _dom2.default.bind(window, 'mousemove', onMouseDrag);
-          _dom2.default.bind(window, 'mouseup', onMouseUp);
-          prevY = e.clientY;
-        }
-        _this2.__input = document.createElement('input');
-        _this2.__input.setAttribute('type', 'text');
-        _dom2.default.bind(_this2.__input, 'change', onChange);
-        _dom2.default.bind(_this2.__input, 'blur', onBlur);
-        _dom2.default.bind(_this2.__input, 'mousedown', onMouseDown);
-        _dom2.default.bind(_this2.__input, 'keydown', function(e) {
-          if (e.keyCode === 13) {
-            _this.__truncationSuspended = true;
-            this.blur();
-            _this.__truncationSuspended = false;
-            onFinish();
-          }
-        });
-        _this2.updateDisplay();
-        _this2.domElement.appendChild(_this2.__input);
-        return _this2;
-      }
-      NumberControllerBox.prototype.updateDisplay = function updateDisplay() {
-        this.__input.value = this.__truncationSuspended ? this.getValue() : roundToDecimal(this.getValue(), this.__precision);
-        return _NumberController.prototype.updateDisplay.call(this);
-      };
-      return NumberControllerBox;
-    }(_NumberController3.default);
-    exports.default = NumberControllerBox;
-    module.exports = exports['default'];
-  }, function(module, exports, __webpack_require__) {
-    'use strict';
-    exports.__esModule = true;
-    var _NumberController2 = __webpack_require__(12);
-    var _NumberController3 = _interopRequireDefault(_NumberController2);
-    var _dom = __webpack_require__(9);
-    var _dom2 = _interopRequireDefault(_dom);
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : {default: obj};
-    }
-    function _classCallCheck(instance, Constructor) {
-      if (!(instance instanceof Constructor)) {
-        throw new TypeError("Cannot call a class as a function");
-      }
-    }
-    function _possibleConstructorReturn(self, call) {
-      if (!self) {
-        throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
-      }
-      return call && (typeof call === "object" || typeof call === "function") ? call : self;
-    }
-    function _inherits(subClass, superClass) {
-      if (typeof superClass !== "function" && superClass !== null) {
-        throw new TypeError("Super expression must either be null or a function, not " + typeof superClass);
-      }
-      subClass.prototype = Object.create(superClass && superClass.prototype, {constructor: {
-          value: subClass,
-          enumerable: false,
-          writable: true,
-          configurable: true
-        }});
-      if (superClass)
-        Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
-    }
-    function map(v, i1, i2, o1, o2) {
-      return o1 + (o2 - o1) * ((v - i1) / (i2 - i1));
-    }
-    var NumberControllerSlider = function(_NumberController) {
-      _inherits(NumberControllerSlider, _NumberController);
-      function NumberControllerSlider(object, property, min, max, step) {
-        _classCallCheck(this, NumberControllerSlider);
-        var _this2 = _possibleConstructorReturn(this, _NumberController.call(this, object, property, {
-          min: min,
-          max: max,
-          step: step
-        }));
-        var _this = _this2;
-        _this2.__background = document.createElement('div');
-        _this2.__foreground = document.createElement('div');
-        _dom2.default.bind(_this2.__background, 'mousedown', onMouseDown);
-        _dom2.default.addClass(_this2.__background, 'slider');
-        _dom2.default.addClass(_this2.__foreground, 'slider-fg');
-        function onMouseDown(e) {
-          document.activeElement.blur();
-          _dom2.default.bind(window, 'mousemove', onMouseDrag);
-          _dom2.default.bind(window, 'mouseup', onMouseUp);
-          onMouseDrag(e);
-        }
-        function onMouseDrag(e) {
-          e.preventDefault();
-          var bgRect = _this.__background.getBoundingClientRect();
-          _this.setValue(map(e.clientX, bgRect.left, bgRect.right, _this.__min, _this.__max));
-          return false;
-        }
-        function onMouseUp() {
-          _dom2.default.unbind(window, 'mousemove', onMouseDrag);
-          _dom2.default.unbind(window, 'mouseup', onMouseUp);
-          if (_this.__onFinishChange) {
-            _this.__onFinishChange.call(_this, _this.getValue());
-          }
-        }
-        _this2.updateDisplay();
-        _this2.__background.appendChild(_this2.__foreground);
-        _this2.domElement.appendChild(_this2.__background);
-        return _this2;
-      }
-      NumberControllerSlider.prototype.updateDisplay = function updateDisplay() {
-        var pct = (this.getValue() - this.__min) / (this.__max - this.__min);
-        this.__foreground.style.width = pct * 100 + '%';
-        return _NumberController.prototype.updateDisplay.call(this);
-      };
-      return NumberControllerSlider;
-    }(_NumberController3.default);
-    exports.default = NumberControllerSlider;
-    module.exports = exports['default'];
-  }, function(module, exports, __webpack_require__) {
-    'use strict';
-    exports.__esModule = true;
-    var _Controller2 = __webpack_require__(7);
-    var _Controller3 = _interopRequireDefault(_Controller2);
-    var _dom = __webpack_require__(9);
-    var _dom2 = _interopRequireDefault(_dom);
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : {default: obj};
-    }
-    function _classCallCheck(instance, Constructor) {
-      if (!(instance instanceof Constructor)) {
-        throw new TypeError("Cannot call a class as a function");
-      }
-    }
-    function _possibleConstructorReturn(self, call) {
-      if (!self) {
-        throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
-      }
-      return call && (typeof call === "object" || typeof call === "function") ? call : self;
-    }
-    function _inherits(subClass, superClass) {
-      if (typeof superClass !== "function" && superClass !== null) {
-        throw new TypeError("Super expression must either be null or a function, not " + typeof superClass);
-      }
-      subClass.prototype = Object.create(superClass && superClass.prototype, {constructor: {
-          value: subClass,
-          enumerable: false,
-          writable: true,
-          configurable: true
-        }});
-      if (superClass)
-        Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
-    }
-    var FunctionController = function(_Controller) {
-      _inherits(FunctionController, _Controller);
-      function FunctionController(object, property, text) {
-        _classCallCheck(this, FunctionController);
-        var _this2 = _possibleConstructorReturn(this, _Controller.call(this, object, property));
-        var _this = _this2;
-        _this2.__button = document.createElement('div');
-        _this2.__button.innerHTML = text === undefined ? 'Fire' : text;
-        _dom2.default.bind(_this2.__button, 'click', function(e) {
-          e.preventDefault();
-          _this.fire();
-          return false;
-        });
-        _dom2.default.addClass(_this2.__button, 'button');
-        _this2.domElement.appendChild(_this2.__button);
-        return _this2;
-      }
-      FunctionController.prototype.fire = function fire() {
-        if (this.__onChange) {
-          this.__onChange.call(this);
-        }
-        this.getValue().call(this.object);
-        if (this.__onFinishChange) {
-          this.__onFinishChange.call(this, this.getValue());
-        }
-      };
-      return FunctionController;
-    }(_Controller3.default);
-    exports.default = FunctionController;
-    module.exports = exports['default'];
-  }, function(module, exports, __webpack_require__) {
-    'use strict';
-    exports.__esModule = true;
-    var _Controller2 = __webpack_require__(7);
-    var _Controller3 = _interopRequireDefault(_Controller2);
-    var _dom = __webpack_require__(9);
-    var _dom2 = _interopRequireDefault(_dom);
-    var _Color = __webpack_require__(2);
-    var _Color2 = _interopRequireDefault(_Color);
-    var _interpret = __webpack_require__(3);
-    var _interpret2 = _interopRequireDefault(_interpret);
-    var _common = __webpack_require__(5);
-    var _common2 = _interopRequireDefault(_common);
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : {default: obj};
-    }
-    function _classCallCheck(instance, Constructor) {
-      if (!(instance instanceof Constructor)) {
-        throw new TypeError("Cannot call a class as a function");
-      }
-    }
-    function _possibleConstructorReturn(self, call) {
-      if (!self) {
-        throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
-      }
-      return call && (typeof call === "object" || typeof call === "function") ? call : self;
-    }
-    function _inherits(subClass, superClass) {
-      if (typeof superClass !== "function" && superClass !== null) {
-        throw new TypeError("Super expression must either be null or a function, not " + typeof superClass);
-      }
-      subClass.prototype = Object.create(superClass && superClass.prototype, {constructor: {
-          value: subClass,
-          enumerable: false,
-          writable: true,
-          configurable: true
-        }});
-      if (superClass)
-        Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
-    }
-    var ColorController = function(_Controller) {
-      _inherits(ColorController, _Controller);
-      function ColorController(object, property) {
-        _classCallCheck(this, ColorController);
-        var _this2 = _possibleConstructorReturn(this, _Controller.call(this, object, property));
-        _this2.__color = new _Color2.default(_this2.getValue());
-        _this2.__temp = new _Color2.default(0);
-        var _this = _this2;
-        _this2.domElement = document.createElement('div');
-        _dom2.default.makeSelectable(_this2.domElement, false);
-        _this2.__selector = document.createElement('div');
-        _this2.__selector.className = 'selector';
-        _this2.__saturation_field = document.createElement('div');
-        _this2.__saturation_field.className = 'saturation-field';
-        _this2.__field_knob = document.createElement('div');
-        _this2.__field_knob.className = 'field-knob';
-        _this2.__field_knob_border = '2px solid ';
-        _this2.__hue_knob = document.createElement('div');
-        _this2.__hue_knob.className = 'hue-knob';
-        _this2.__hue_field = document.createElement('div');
-        _this2.__hue_field.className = 'hue-field';
-        _this2.__input = document.createElement('input');
-        _this2.__input.type = 'text';
-        _this2.__input_textShadow = '0 1px 1px ';
-        _dom2.default.bind(_this2.__input, 'keydown', function(e) {
-          if (e.keyCode === 13) {
-            onBlur.call(this);
-          }
-        });
-        _dom2.default.bind(_this2.__input, 'blur', onBlur);
-        _dom2.default.bind(_this2.__selector, 'mousedown', function() {
-          _dom2.default.addClass(this, 'drag').bind(window, 'mouseup', function() {
-            _dom2.default.removeClass(_this.__selector, 'drag');
-          });
-        });
-        var valueField = document.createElement('div');
-        _common2.default.extend(_this2.__selector.style, {
-          width: '122px',
-          height: '102px',
-          padding: '3px',
-          backgroundColor: '#222',
-          boxShadow: '0px 1px 3px rgba(0,0,0,0.3)'
-        });
-        _common2.default.extend(_this2.__field_knob.style, {
-          position: 'absolute',
-          width: '12px',
-          height: '12px',
-          border: _this2.__field_knob_border + (_this2.__color.v < 0.5 ? '#fff' : '#000'),
-          boxShadow: '0px 1px 3px rgba(0,0,0,0.5)',
-          borderRadius: '12px',
-          zIndex: 1
-        });
-        _common2.default.extend(_this2.__hue_knob.style, {
-          position: 'absolute',
-          width: '15px',
-          height: '2px',
-          borderRight: '4px solid #fff',
-          zIndex: 1
-        });
-        _common2.default.extend(_this2.__saturation_field.style, {
-          width: '100px',
-          height: '100px',
-          border: '1px solid #555',
-          marginRight: '3px',
-          display: 'inline-block',
-          cursor: 'pointer'
-        });
-        _common2.default.extend(valueField.style, {
-          width: '100%',
-          height: '100%',
-          background: 'none'
-        });
-        linearGradient(valueField, 'top', 'rgba(0,0,0,0)', '#000');
-        _common2.default.extend(_this2.__hue_field.style, {
-          width: '15px',
-          height: '100px',
-          border: '1px solid #555',
-          cursor: 'ns-resize',
-          position: 'absolute',
-          top: '3px',
-          right: '3px'
-        });
-        hueGradient(_this2.__hue_field);
-        _common2.default.extend(_this2.__input.style, {
-          outline: 'none',
-          textAlign: 'center',
-          color: '#fff',
-          border: 0,
-          fontWeight: 'bold',
-          textShadow: _this2.__input_textShadow + 'rgba(0,0,0,0.7)'
-        });
-        _dom2.default.bind(_this2.__saturation_field, 'mousedown', fieldDown);
-        _dom2.default.bind(_this2.__field_knob, 'mousedown', fieldDown);
-        _dom2.default.bind(_this2.__hue_field, 'mousedown', function(e) {
-          setH(e);
-          _dom2.default.bind(window, 'mousemove', setH);
-          _dom2.default.bind(window, 'mouseup', fieldUpH);
-        });
-        function fieldDown(e) {
-          setSV(e);
-          _dom2.default.bind(window, 'mousemove', setSV);
-          _dom2.default.bind(window, 'mouseup', fieldUpSV);
-        }
-        function fieldUpSV() {
-          _dom2.default.unbind(window, 'mousemove', setSV);
-          _dom2.default.unbind(window, 'mouseup', fieldUpSV);
-          onFinish();
-        }
-        function onBlur() {
-          var i = (0, _interpret2.default)(this.value);
-          if (i !== false) {
-            _this.__color.__state = i;
-            _this.setValue(_this.__color.toOriginal());
-          } else {
-            this.value = _this.__color.toString();
-          }
-        }
-        function fieldUpH() {
-          _dom2.default.unbind(window, 'mousemove', setH);
-          _dom2.default.unbind(window, 'mouseup', fieldUpH);
-          onFinish();
-        }
-        function onFinish() {
-          if (_this.__onFinishChange) {
-            _this.__onFinishChange.call(_this, _this.__color.toOriginal());
-          }
-        }
-        _this2.__saturation_field.appendChild(valueField);
-        _this2.__selector.appendChild(_this2.__field_knob);
-        _this2.__selector.appendChild(_this2.__saturation_field);
-        _this2.__selector.appendChild(_this2.__hue_field);
-        _this2.__hue_field.appendChild(_this2.__hue_knob);
-        _this2.domElement.appendChild(_this2.__input);
-        _this2.domElement.appendChild(_this2.__selector);
-        _this2.updateDisplay();
-        function setSV(e) {
-          e.preventDefault();
-          var fieldRect = _this.__saturation_field.getBoundingClientRect();
-          var s = (e.clientX - fieldRect.left) / (fieldRect.right - fieldRect.left);
-          var v = 1 - (e.clientY - fieldRect.top) / (fieldRect.bottom - fieldRect.top);
-          if (v > 1) {
-            v = 1;
-          } else if (v < 0) {
-            v = 0;
-          }
-          if (s > 1) {
-            s = 1;
-          } else if (s < 0) {
-            s = 0;
-          }
-          _this.__color.v = v;
-          _this.__color.s = s;
-          _this.setValue(_this.__color.toOriginal());
-          return false;
-        }
-        function setH(e) {
-          e.preventDefault();
-          var fieldRect = _this.__hue_field.getBoundingClientRect();
-          var h = 1 - (e.clientY - fieldRect.top) / (fieldRect.bottom - fieldRect.top);
-          if (h > 1) {
-            h = 1;
-          } else if (h < 0) {
-            h = 0;
-          }
-          _this.__color.h = h * 360;
-          _this.setValue(_this.__color.toOriginal());
-          return false;
-        }
-        return _this2;
-      }
-      ColorController.prototype.updateDisplay = function updateDisplay() {
-        var i = (0, _interpret2.default)(this.getValue());
-        if (i !== false) {
-          var mismatch = false;
-          _common2.default.each(_Color2.default.COMPONENTS, function(component) {
-            if (!_common2.default.isUndefined(i[component]) && !_common2.default.isUndefined(this.__color.__state[component]) && i[component] !== this.__color.__state[component]) {
-              mismatch = true;
-              return {};
-            }
-          }, this);
-          if (mismatch) {
-            _common2.default.extend(this.__color.__state, i);
-          }
-        }
-        _common2.default.extend(this.__temp.__state, this.__color.__state);
-        this.__temp.a = 1;
-        var flip = this.__color.v < 0.5 || this.__color.s > 0.5 ? 255 : 0;
-        var _flip = 255 - flip;
-        _common2.default.extend(this.__field_knob.style, {
-          marginLeft: 100 * this.__color.s - 7 + 'px',
-          marginTop: 100 * (1 - this.__color.v) - 7 + 'px',
-          backgroundColor: this.__temp.toHexString(),
-          border: this.__field_knob_border + 'rgb(' + flip + ',' + flip + ',' + flip + ')'
-        });
-        this.__hue_knob.style.marginTop = (1 - this.__color.h / 360) * 100 + 'px';
-        this.__temp.s = 1;
-        this.__temp.v = 1;
-        linearGradient(this.__saturation_field, 'left', '#fff', this.__temp.toHexString());
-        this.__input.value = this.__color.toString();
-        _common2.default.extend(this.__input.style, {
-          backgroundColor: this.__color.toHexString(),
-          color: 'rgb(' + flip + ',' + flip + ',' + flip + ')',
-          textShadow: this.__input_textShadow + 'rgba(' + _flip + ',' + _flip + ',' + _flip + ',.7)'
-        });
-      };
-      return ColorController;
-    }(_Controller3.default);
-    var vendors = ['-moz-', '-o-', '-webkit-', '-ms-', ''];
-    function linearGradient(elem, x, a, b) {
-      elem.style.background = '';
-      _common2.default.each(vendors, function(vendor) {
-        elem.style.cssText += 'background: ' + vendor + 'linear-gradient(' + x + ', ' + a + ' 0%, ' + b + ' 100%); ';
-      });
-    }
-    function hueGradient(elem) {
-      elem.style.background = '';
-      elem.style.cssText += 'background: -moz-linear-gradient(top,  #ff0000 0%, #ff00ff 17%, #0000ff 34%, #00ffff 50%, #00ff00 67%, #ffff00 84%, #ff0000 100%);';
-      elem.style.cssText += 'background: -webkit-linear-gradient(top,  #ff0000 0%,#ff00ff 17%,#0000ff 34%,#00ffff 50%,#00ff00 67%,#ffff00 84%,#ff0000 100%);';
-      elem.style.cssText += 'background: -o-linear-gradient(top,  #ff0000 0%,#ff00ff 17%,#0000ff 34%,#00ffff 50%,#00ff00 67%,#ffff00 84%,#ff0000 100%);';
-      elem.style.cssText += 'background: -ms-linear-gradient(top,  #ff0000 0%,#ff00ff 17%,#0000ff 34%,#00ffff 50%,#00ff00 67%,#ffff00 84%,#ff0000 100%);';
-      elem.style.cssText += 'background: linear-gradient(top,  #ff0000 0%,#ff00ff 17%,#0000ff 34%,#00ffff 50%,#00ff00 67%,#ffff00 84%,#ff0000 100%);';
-    }
-    exports.default = ColorController;
-    module.exports = exports['default'];
-  }, function(module, exports, __webpack_require__) {
-    'use strict';
-    exports.__esModule = true;
-    var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function(obj) {
-      return typeof obj;
-    } : function(obj) {
-      return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
-    };
-    var _css = __webpack_require__(18);
-    var _css2 = _interopRequireDefault(_css);
-    var _saveDialogue = __webpack_require__(19);
-    var _saveDialogue2 = _interopRequireDefault(_saveDialogue);
-    var _ControllerFactory = __webpack_require__(20);
-    var _ControllerFactory2 = _interopRequireDefault(_ControllerFactory);
-    var _Controller = __webpack_require__(7);
-    var _Controller2 = _interopRequireDefault(_Controller);
-    var _BooleanController = __webpack_require__(8);
-    var _BooleanController2 = _interopRequireDefault(_BooleanController);
-    var _FunctionController = __webpack_require__(15);
-    var _FunctionController2 = _interopRequireDefault(_FunctionController);
-    var _NumberControllerBox = __webpack_require__(13);
-    var _NumberControllerBox2 = _interopRequireDefault(_NumberControllerBox);
-    var _NumberControllerSlider = __webpack_require__(14);
-    var _NumberControllerSlider2 = _interopRequireDefault(_NumberControllerSlider);
-    var _ColorController = __webpack_require__(16);
-    var _ColorController2 = _interopRequireDefault(_ColorController);
-    var _requestAnimationFrame = __webpack_require__(21);
-    var _requestAnimationFrame2 = _interopRequireDefault(_requestAnimationFrame);
-    var _CenteredDiv = __webpack_require__(22);
-    var _CenteredDiv2 = _interopRequireDefault(_CenteredDiv);
-    var _dom = __webpack_require__(9);
-    var _dom2 = _interopRequireDefault(_dom);
-    var _common = __webpack_require__(5);
-    var _common2 = _interopRequireDefault(_common);
-    var _style = __webpack_require__(23);
-    var _style2 = _interopRequireDefault(_style);
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : {default: obj};
-    }
-    _css2.default.inject(_style2.default);
-    var CSS_NAMESPACE = 'dg';
-    var HIDE_KEY_CODE = 72;
-    var CLOSE_BUTTON_HEIGHT = 20;
-    var DEFAULT_DEFAULT_PRESET_NAME = 'Default';
-    var SUPPORTS_LOCAL_STORAGE = function() {
-      try {
-        return 'localStorage' in window && window.localStorage !== null;
-      } catch (e) {
-        return false;
-      }
-    }();
-    var SAVE_DIALOGUE = void 0;
-    var autoPlaceVirgin = true;
-    var autoPlaceContainer = void 0;
-    var hide = false;
-    var hideableGuis = [];
-    var GUI = function GUI(pars) {
-      var _this = this;
-      var params = pars || {};
-      this.domElement = document.createElement('div');
-      this.__ul = document.createElement('ul');
-      this.domElement.appendChild(this.__ul);
-      _dom2.default.addClass(this.domElement, CSS_NAMESPACE);
-      this.__folders = {};
-      this.__controllers = [];
-      this.__rememberedObjects = [];
-      this.__rememberedObjectIndecesToControllers = [];
-      this.__listening = [];
-      params = _common2.default.defaults(params, {
-        closeOnTop: false,
-        autoPlace: true,
-        width: GUI.DEFAULT_WIDTH
-      });
-      params = _common2.default.defaults(params, {
-        resizable: params.autoPlace,
-        hideable: params.autoPlace
-      });
-      if (!_common2.default.isUndefined(params.load)) {
-        if (params.preset) {
-          params.load.preset = params.preset;
-        }
-      } else {
-        params.load = {preset: DEFAULT_DEFAULT_PRESET_NAME};
-      }
-      if (_common2.default.isUndefined(params.parent) && params.hideable) {
-        hideableGuis.push(this);
-      }
-      params.resizable = _common2.default.isUndefined(params.parent) && params.resizable;
-      if (params.autoPlace && _common2.default.isUndefined(params.scrollable)) {
-        params.scrollable = true;
-      }
-      var useLocalStorage = SUPPORTS_LOCAL_STORAGE && localStorage.getItem(getLocalStorageHash(this, 'isLocal')) === 'true';
-      var saveToLocalStorage = void 0;
-      Object.defineProperties(this, {
-        parent: {get: function get() {
-            return params.parent;
-          }},
-        scrollable: {get: function get() {
-            return params.scrollable;
-          }},
-        autoPlace: {get: function get() {
-            return params.autoPlace;
-          }},
-        closeOnTop: {get: function get() {
-            return params.closeOnTop;
-          }},
-        preset: {
-          get: function get() {
-            if (_this.parent) {
-              return _this.getRoot().preset;
-            }
-            return params.load.preset;
-          },
-          set: function set(v) {
-            if (_this.parent) {
-              _this.getRoot().preset = v;
-            } else {
-              params.load.preset = v;
-            }
-            setPresetSelectIndex(this);
-            _this.revert();
-          }
-        },
-        width: {
-          get: function get() {
-            return params.width;
-          },
-          set: function set(v) {
-            params.width = v;
-            setWidth(_this, v);
-          }
-        },
-        name: {
-          get: function get() {
-            return params.name;
-          },
-          set: function set(v) {
-            params.name = v;
-            if (titleRowName) {
-              titleRowName.innerHTML = params.name;
-            }
-          }
-        },
-        closed: {
-          get: function get() {
-            return params.closed;
-          },
-          set: function set(v) {
-            params.closed = v;
-            if (params.closed) {
-              _dom2.default.addClass(_this.__ul, GUI.CLASS_CLOSED);
-            } else {
-              _dom2.default.removeClass(_this.__ul, GUI.CLASS_CLOSED);
-            }
-            this.onResize();
-            if (_this.__closeButton) {
-              _this.__closeButton.innerHTML = v ? GUI.TEXT_OPEN : GUI.TEXT_CLOSED;
-            }
-          }
-        },
-        load: {get: function get() {
-            return params.load;
-          }},
-        useLocalStorage: {
-          get: function get() {
-            return useLocalStorage;
-          },
-          set: function set(bool) {
-            if (SUPPORTS_LOCAL_STORAGE) {
-              useLocalStorage = bool;
-              if (bool) {
-                _dom2.default.bind(window, 'unload', saveToLocalStorage);
-              } else {
-                _dom2.default.unbind(window, 'unload', saveToLocalStorage);
-              }
-              localStorage.setItem(getLocalStorageHash(_this, 'isLocal'), bool);
-            }
-          }
-        }
-      });
-      if (_common2.default.isUndefined(params.parent)) {
-        params.closed = false;
-        _dom2.default.addClass(this.domElement, GUI.CLASS_MAIN);
-        _dom2.default.makeSelectable(this.domElement, false);
-        if (SUPPORTS_LOCAL_STORAGE) {
-          if (useLocalStorage) {
-            _this.useLocalStorage = true;
-            var savedGui = localStorage.getItem(getLocalStorageHash(this, 'gui'));
-            if (savedGui) {
-              params.load = JSON.parse(savedGui);
-            }
-          }
-        }
-        this.__closeButton = document.createElement('div');
-        this.__closeButton.innerHTML = GUI.TEXT_CLOSED;
-        _dom2.default.addClass(this.__closeButton, GUI.CLASS_CLOSE_BUTTON);
-        if (params.closeOnTop) {
-          _dom2.default.addClass(this.__closeButton, GUI.CLASS_CLOSE_TOP);
-          this.domElement.insertBefore(this.__closeButton, this.domElement.childNodes[0]);
-        } else {
-          _dom2.default.addClass(this.__closeButton, GUI.CLASS_CLOSE_BOTTOM);
-          this.domElement.appendChild(this.__closeButton);
-        }
-        _dom2.default.bind(this.__closeButton, 'click', function() {
-          _this.closed = !_this.closed;
-        });
-      } else {
-        if (params.closed === undefined) {
-          params.closed = true;
-        }
-        var _titleRowName = document.createTextNode(params.name);
-        _dom2.default.addClass(_titleRowName, 'controller-name');
-        var titleRow = addRow(_this, _titleRowName);
-        var onClickTitle = function onClickTitle(e) {
-          e.preventDefault();
-          _this.closed = !_this.closed;
-          return false;
-        };
-        _dom2.default.addClass(this.__ul, GUI.CLASS_CLOSED);
-        _dom2.default.addClass(titleRow, 'title');
-        _dom2.default.bind(titleRow, 'click', onClickTitle);
-        if (!params.closed) {
-          this.closed = false;
-        }
-      }
-      if (params.autoPlace) {
-        if (_common2.default.isUndefined(params.parent)) {
-          if (autoPlaceVirgin) {
-            autoPlaceContainer = document.createElement('div');
-            _dom2.default.addClass(autoPlaceContainer, CSS_NAMESPACE);
-            _dom2.default.addClass(autoPlaceContainer, GUI.CLASS_AUTO_PLACE_CONTAINER);
-            document.body.appendChild(autoPlaceContainer);
-            autoPlaceVirgin = false;
-          }
-          autoPlaceContainer.appendChild(this.domElement);
-          _dom2.default.addClass(this.domElement, GUI.CLASS_AUTO_PLACE);
-        }
-        if (!this.parent) {
-          setWidth(_this, params.width);
-        }
-      }
-      this.__resizeHandler = function() {
-        _this.onResizeDebounced();
-      };
-      _dom2.default.bind(window, 'resize', this.__resizeHandler);
-      _dom2.default.bind(this.__ul, 'webkitTransitionEnd', this.__resizeHandler);
-      _dom2.default.bind(this.__ul, 'transitionend', this.__resizeHandler);
-      _dom2.default.bind(this.__ul, 'oTransitionEnd', this.__resizeHandler);
-      this.onResize();
-      if (params.resizable) {
-        addResizeHandle(this);
-      }
-      saveToLocalStorage = function saveToLocalStorage() {
-        if (SUPPORTS_LOCAL_STORAGE && localStorage.getItem(getLocalStorageHash(_this, 'isLocal')) === 'true') {
-          localStorage.setItem(getLocalStorageHash(_this, 'gui'), JSON.stringify(_this.getSaveObject()));
-        }
-      };
-      this.saveToLocalStorageIfPossible = saveToLocalStorage;
-      function resetWidth() {
-        var root = _this.getRoot();
-        root.width += 1;
-        _common2.default.defer(function() {
-          root.width -= 1;
-        });
-      }
-      if (!params.parent) {
-        resetWidth();
-      }
-    };
-    GUI.toggleHide = function() {
-      hide = !hide;
-      _common2.default.each(hideableGuis, function(gui) {
-        gui.domElement.style.display = hide ? 'none' : '';
-      });
-    };
-    GUI.CLASS_AUTO_PLACE = 'a';
-    GUI.CLASS_AUTO_PLACE_CONTAINER = 'ac';
-    GUI.CLASS_MAIN = 'main';
-    GUI.CLASS_CONTROLLER_ROW = 'cr';
-    GUI.CLASS_TOO_TALL = 'taller-than-window';
-    GUI.CLASS_CLOSED = 'closed';
-    GUI.CLASS_CLOSE_BUTTON = 'close-button';
-    GUI.CLASS_CLOSE_TOP = 'close-top';
-    GUI.CLASS_CLOSE_BOTTOM = 'close-bottom';
-    GUI.CLASS_DRAG = 'drag';
-    GUI.DEFAULT_WIDTH = 245;
-    GUI.TEXT_CLOSED = 'Close Controls';
-    GUI.TEXT_OPEN = 'Open Controls';
-    GUI._keydownHandler = function(e) {
-      if (document.activeElement.type !== 'text' && (e.which === HIDE_KEY_CODE || e.keyCode === HIDE_KEY_CODE)) {
-        GUI.toggleHide();
-      }
-    };
-    _dom2.default.bind(window, 'keydown', GUI._keydownHandler, false);
-    _common2.default.extend(GUI.prototype, {
-      add: function add(object, property) {
-        return _add(this, object, property, {factoryArgs: Array.prototype.slice.call(arguments, 2)});
-      },
-      addColor: function addColor(object, property) {
-        return _add(this, object, property, {color: true});
-      },
-      remove: function remove(controller) {
-        this.__ul.removeChild(controller.__li);
-        this.__controllers.splice(this.__controllers.indexOf(controller), 1);
-        var _this = this;
-        _common2.default.defer(function() {
-          _this.onResize();
-        });
-      },
-      destroy: function destroy() {
-        if (this.autoPlace) {
-          autoPlaceContainer.removeChild(this.domElement);
-        }
-        _dom2.default.unbind(window, 'keydown', GUI._keydownHandler, false);
-        _dom2.default.unbind(window, 'resize', this.__resizeHandler);
-        if (this.saveToLocalStorageIfPossible) {
-          _dom2.default.unbind(window, 'unload', this.saveToLocalStorageIfPossible);
-        }
-      },
-      addFolder: function addFolder(name) {
-        if (this.__folders[name] !== undefined) {
-          throw new Error('You already have a folder in this GUI by the' + ' name "' + name + '"');
-        }
-        var newGuiParams = {
-          name: name,
-          parent: this
-        };
-        newGuiParams.autoPlace = this.autoPlace;
-        if (this.load && this.load.folders && this.load.folders[name]) {
-          newGuiParams.closed = this.load.folders[name].closed;
-          newGuiParams.load = this.load.folders[name];
-        }
-        var gui = new GUI(newGuiParams);
-        this.__folders[name] = gui;
-        var li = addRow(this, gui.domElement);
-        _dom2.default.addClass(li, 'folder');
-        return gui;
-      },
-      open: function open() {
-        this.closed = false;
-      },
-      close: function close() {
-        this.closed = true;
-      },
-      onResize: function onResize() {
-        var root = this.getRoot();
-        if (root.scrollable) {
-          var top = _dom2.default.getOffset(root.__ul).top;
-          var h = 0;
-          _common2.default.each(root.__ul.childNodes, function(node) {
-            if (!(root.autoPlace && node === root.__save_row)) {
-              h += _dom2.default.getHeight(node);
-            }
-          });
-          if (window.innerHeight - top - CLOSE_BUTTON_HEIGHT < h) {
-            _dom2.default.addClass(root.domElement, GUI.CLASS_TOO_TALL);
-            root.__ul.style.height = window.innerHeight - top - CLOSE_BUTTON_HEIGHT + 'px';
-          } else {
-            _dom2.default.removeClass(root.domElement, GUI.CLASS_TOO_TALL);
-            root.__ul.style.height = 'auto';
-          }
-        }
-        if (root.__resize_handle) {
-          _common2.default.defer(function() {
-            root.__resize_handle.style.height = root.__ul.offsetHeight + 'px';
-          });
-        }
-        if (root.__closeButton) {
-          root.__closeButton.style.width = root.width + 'px';
-        }
-      },
-      onResizeDebounced: _common2.default.debounce(function() {
-        this.onResize();
-      }, 50),
-      remember: function remember() {
-        if (_common2.default.isUndefined(SAVE_DIALOGUE)) {
-          SAVE_DIALOGUE = new _CenteredDiv2.default();
-          SAVE_DIALOGUE.domElement.innerHTML = _saveDialogue2.default;
-        }
-        if (this.parent) {
-          throw new Error('You can only call remember on a top level GUI.');
-        }
-        var _this = this;
-        _common2.default.each(Array.prototype.slice.call(arguments), function(object) {
-          if (_this.__rememberedObjects.length === 0) {
-            addSaveMenu(_this);
-          }
-          if (_this.__rememberedObjects.indexOf(object) === -1) {
-            _this.__rememberedObjects.push(object);
-          }
-        });
-        if (this.autoPlace) {
-          setWidth(this, this.width);
-        }
-      },
-      getRoot: function getRoot() {
-        var gui = this;
-        while (gui.parent) {
-          gui = gui.parent;
-        }
-        return gui;
-      },
-      getSaveObject: function getSaveObject() {
-        var toReturn = this.load;
-        toReturn.closed = this.closed;
-        if (this.__rememberedObjects.length > 0) {
-          toReturn.preset = this.preset;
-          if (!toReturn.remembered) {
-            toReturn.remembered = {};
-          }
-          toReturn.remembered[this.preset] = getCurrentPreset(this);
-        }
-        toReturn.folders = {};
-        _common2.default.each(this.__folders, function(element, key) {
-          toReturn.folders[key] = element.getSaveObject();
-        });
-        return toReturn;
-      },
-      save: function save() {
-        if (!this.load.remembered) {
-          this.load.remembered = {};
-        }
-        this.load.remembered[this.preset] = getCurrentPreset(this);
-        markPresetModified(this, false);
-        this.saveToLocalStorageIfPossible();
-      },
-      saveAs: function saveAs(presetName) {
-        if (!this.load.remembered) {
-          this.load.remembered = {};
-          this.load.remembered[DEFAULT_DEFAULT_PRESET_NAME] = getCurrentPreset(this, true);
-        }
-        this.load.remembered[presetName] = getCurrentPreset(this);
-        this.preset = presetName;
-        addPresetOption(this, presetName, true);
-        this.saveToLocalStorageIfPossible();
-      },
-      revert: function revert(gui) {
-        _common2.default.each(this.__controllers, function(controller) {
-          if (!this.getRoot().load.remembered) {
-            controller.setValue(controller.initialValue);
-          } else {
-            recallSavedValue(gui || this.getRoot(), controller);
-          }
-          if (controller.__onFinishChange) {
-            controller.__onFinishChange.call(controller, controller.getValue());
-          }
-        }, this);
-        _common2.default.each(this.__folders, function(folder) {
-          folder.revert(folder);
-        });
-        if (!gui) {
-          markPresetModified(this.getRoot(), false);
-        }
-      },
-      listen: function listen(controller) {
-        var init = this.__listening.length === 0;
-        this.__listening.push(controller);
-        if (init) {
-          updateDisplays(this.__listening);
-        }
-      },
-      updateDisplay: function updateDisplay() {
-        _common2.default.each(this.__controllers, function(controller) {
-          controller.updateDisplay();
-        });
-        _common2.default.each(this.__folders, function(folder) {
-          folder.updateDisplay();
-        });
-      }
-    });
-    function addRow(gui, newDom, liBefore) {
-      var li = document.createElement('li');
-      if (newDom) {
-        li.appendChild(newDom);
-      }
-      if (liBefore) {
-        gui.__ul.insertBefore(li, liBefore);
-      } else {
-        gui.__ul.appendChild(li);
-      }
-      gui.onResize();
-      return li;
-    }
-    function markPresetModified(gui, modified) {
-      var opt = gui.__preset_select[gui.__preset_select.selectedIndex];
-      if (modified) {
-        opt.innerHTML = opt.value + '*';
-      } else {
-        opt.innerHTML = opt.value;
-      }
-    }
-    function augmentController(gui, li, controller) {
-      controller.__li = li;
-      controller.__gui = gui;
-      _common2.default.extend(controller, {
-        options: function options(_options) {
-          if (arguments.length > 1) {
-            var nextSibling = controller.__li.nextElementSibling;
-            controller.remove();
-            return _add(gui, controller.object, controller.property, {
-              before: nextSibling,
-              factoryArgs: [_common2.default.toArray(arguments)]
-            });
-          }
-          if (_common2.default.isArray(_options) || _common2.default.isObject(_options)) {
-            var _nextSibling = controller.__li.nextElementSibling;
-            controller.remove();
-            return _add(gui, controller.object, controller.property, {
-              before: _nextSibling,
-              factoryArgs: [_options]
-            });
-          }
-        },
-        name: function name(v) {
-          controller.__li.firstElementChild.firstElementChild.innerHTML = v;
-          return controller;
-        },
-        listen: function listen() {
-          controller.__gui.listen(controller);
-          return controller;
-        },
-        remove: function remove() {
-          controller.__gui.remove(controller);
-          return controller;
-        }
-      });
-      if (controller instanceof _NumberControllerSlider2.default) {
-        var box = new _NumberControllerBox2.default(controller.object, controller.property, {
-          min: controller.__min,
-          max: controller.__max,
-          step: controller.__step
-        });
-        _common2.default.each(['updateDisplay', 'onChange', 'onFinishChange', 'step'], function(method) {
-          var pc = controller[method];
-          var pb = box[method];
-          controller[method] = box[method] = function() {
-            var args = Array.prototype.slice.call(arguments);
-            pb.apply(box, args);
-            return pc.apply(controller, args);
-          };
-        });
-        _dom2.default.addClass(li, 'has-slider');
-        controller.domElement.insertBefore(box.domElement, controller.domElement.firstElementChild);
-      } else if (controller instanceof _NumberControllerBox2.default) {
-        var r = function r(returned) {
-          if (_common2.default.isNumber(controller.__min) && _common2.default.isNumber(controller.__max)) {
-            var oldName = controller.__li.firstElementChild.firstElementChild.innerHTML;
-            var wasListening = controller.__gui.__listening.indexOf(controller) > -1;
-            controller.remove();
-            var newController = _add(gui, controller.object, controller.property, {
-              before: controller.__li.nextElementSibling,
-              factoryArgs: [controller.__min, controller.__max, controller.__step]
-            });
-            newController.name(oldName);
-            if (wasListening)
-              newController.listen();
-            return newController;
-          }
-          return returned;
-        };
-        controller.min = _common2.default.compose(r, controller.min);
-        controller.max = _common2.default.compose(r, controller.max);
-      } else if (controller instanceof _BooleanController2.default) {
-        _dom2.default.bind(li, 'click', function() {
-          _dom2.default.fakeEvent(controller.__checkbox, 'click');
-        });
-        _dom2.default.bind(controller.__checkbox, 'click', function(e) {
-          e.stopPropagation();
-        });
-      } else if (controller instanceof _FunctionController2.default) {
-        _dom2.default.bind(li, 'click', function() {
-          _dom2.default.fakeEvent(controller.__button, 'click');
-        });
-        _dom2.default.bind(li, 'mouseover', function() {
-          _dom2.default.addClass(controller.__button, 'hover');
-        });
-        _dom2.default.bind(li, 'mouseout', function() {
-          _dom2.default.removeClass(controller.__button, 'hover');
-        });
-      } else if (controller instanceof _ColorController2.default) {
-        _dom2.default.addClass(li, 'color');
-        controller.updateDisplay = _common2.default.compose(function(val) {
-          li.style.borderLeftColor = controller.__color.toString();
-          return val;
-        }, controller.updateDisplay);
-        controller.updateDisplay();
-      }
-      controller.setValue = _common2.default.compose(function(val) {
-        if (gui.getRoot().__preset_select && controller.isModified()) {
-          markPresetModified(gui.getRoot(), true);
-        }
-        return val;
-      }, controller.setValue);
-    }
-    function recallSavedValue(gui, controller) {
-      var root = gui.getRoot();
-      var matchedIndex = root.__rememberedObjects.indexOf(controller.object);
-      if (matchedIndex !== -1) {
-        var controllerMap = root.__rememberedObjectIndecesToControllers[matchedIndex];
-        if (controllerMap === undefined) {
-          controllerMap = {};
-          root.__rememberedObjectIndecesToControllers[matchedIndex] = controllerMap;
-        }
-        controllerMap[controller.property] = controller;
-        if (root.load && root.load.remembered) {
-          var presetMap = root.load.remembered;
-          var preset = void 0;
-          if (presetMap[gui.preset]) {
-            preset = presetMap[gui.preset];
-          } else if (presetMap[DEFAULT_DEFAULT_PRESET_NAME]) {
-            preset = presetMap[DEFAULT_DEFAULT_PRESET_NAME];
-          } else {
-            return;
-          }
-          if (preset[matchedIndex] && preset[matchedIndex][controller.property] !== undefined) {
-            var value = preset[matchedIndex][controller.property];
-            controller.initialValue = value;
-            controller.setValue(value);
-          }
-        }
-      }
-    }
-    function _add(gui, object, property, params) {
-      if (object[property] === undefined) {
-        throw new Error('Object "' + object + '" has no property "' + property + '"');
-      }
-      var controller = void 0;
-      if (params.color) {
-        controller = new _ColorController2.default(object, property);
-      } else {
-        var factoryArgs = [object, property].concat(params.factoryArgs);
-        controller = _ControllerFactory2.default.apply(gui, factoryArgs);
-      }
-      if (params.before instanceof _Controller2.default) {
-        params.before = params.before.__li;
-      }
-      recallSavedValue(gui, controller);
-      _dom2.default.addClass(controller.domElement, 'c');
-      var name = document.createElement('span');
-      _dom2.default.addClass(name, 'property-name');
-      name.innerHTML = controller.property;
-      var container = document.createElement('div');
-      container.appendChild(name);
-      container.appendChild(controller.domElement);
-      var li = addRow(gui, container, params.before);
-      _dom2.default.addClass(li, GUI.CLASS_CONTROLLER_ROW);
-      if (controller instanceof _ColorController2.default) {
-        _dom2.default.addClass(li, 'color');
-      } else {
-        _dom2.default.addClass(li, _typeof(controller.getValue()));
-      }
-      augmentController(gui, li, controller);
-      gui.__controllers.push(controller);
-      return controller;
-    }
-    function getLocalStorageHash(gui, key) {
-      return document.location.href + '.' + key;
-    }
-    function addPresetOption(gui, name, setSelected) {
-      var opt = document.createElement('option');
-      opt.innerHTML = name;
-      opt.value = name;
-      gui.__preset_select.appendChild(opt);
-      if (setSelected) {
-        gui.__preset_select.selectedIndex = gui.__preset_select.length - 1;
-      }
-    }
-    function showHideExplain(gui, explain) {
-      explain.style.display = gui.useLocalStorage ? 'block' : 'none';
-    }
-    function addSaveMenu(gui) {
-      var div = gui.__save_row = document.createElement('li');
-      _dom2.default.addClass(gui.domElement, 'has-save');
-      gui.__ul.insertBefore(div, gui.__ul.firstChild);
-      _dom2.default.addClass(div, 'save-row');
-      var gears = document.createElement('span');
-      gears.innerHTML = '&nbsp;';
-      _dom2.default.addClass(gears, 'button gears');
-      var button = document.createElement('span');
-      button.innerHTML = 'Save';
-      _dom2.default.addClass(button, 'button');
-      _dom2.default.addClass(button, 'save');
-      var button2 = document.createElement('span');
-      button2.innerHTML = 'New';
-      _dom2.default.addClass(button2, 'button');
-      _dom2.default.addClass(button2, 'save-as');
-      var button3 = document.createElement('span');
-      button3.innerHTML = 'Revert';
-      _dom2.default.addClass(button3, 'button');
-      _dom2.default.addClass(button3, 'revert');
-      var select = gui.__preset_select = document.createElement('select');
-      if (gui.load && gui.load.remembered) {
-        _common2.default.each(gui.load.remembered, function(value, key) {
-          addPresetOption(gui, key, key === gui.preset);
-        });
-      } else {
-        addPresetOption(gui, DEFAULT_DEFAULT_PRESET_NAME, false);
-      }
-      _dom2.default.bind(select, 'change', function() {
-        for (var index = 0; index < gui.__preset_select.length; index++) {
-          gui.__preset_select[index].innerHTML = gui.__preset_select[index].value;
-        }
-        gui.preset = this.value;
-      });
-      div.appendChild(select);
-      div.appendChild(gears);
-      div.appendChild(button);
-      div.appendChild(button2);
-      div.appendChild(button3);
-      if (SUPPORTS_LOCAL_STORAGE) {
-        var explain = document.getElementById('dg-local-explain');
-        var localStorageCheckBox = document.getElementById('dg-local-storage');
-        var saveLocally = document.getElementById('dg-save-locally');
-        saveLocally.style.display = 'block';
-        if (localStorage.getItem(getLocalStorageHash(gui, 'isLocal')) === 'true') {
-          localStorageCheckBox.setAttribute('checked', 'checked');
-        }
-        showHideExplain(gui, explain);
-        _dom2.default.bind(localStorageCheckBox, 'change', function() {
-          gui.useLocalStorage = !gui.useLocalStorage;
-          showHideExplain(gui, explain);
-        });
-      }
-      var newConstructorTextArea = document.getElementById('dg-new-constructor');
-      _dom2.default.bind(newConstructorTextArea, 'keydown', function(e) {
-        if (e.metaKey && (e.which === 67 || e.keyCode === 67)) {
-          SAVE_DIALOGUE.hide();
-        }
-      });
-      _dom2.default.bind(gears, 'click', function() {
-        newConstructorTextArea.innerHTML = JSON.stringify(gui.getSaveObject(), undefined, 2);
-        SAVE_DIALOGUE.show();
-        newConstructorTextArea.focus();
-        newConstructorTextArea.select();
-      });
-      _dom2.default.bind(button, 'click', function() {
-        gui.save();
-      });
-      _dom2.default.bind(button2, 'click', function() {
-        var presetName = prompt('Enter a new preset name.');
-        if (presetName) {
-          gui.saveAs(presetName);
-        }
-      });
-      _dom2.default.bind(button3, 'click', function() {
-        gui.revert();
-      });
-    }
-    function addResizeHandle(gui) {
-      var pmouseX = void 0;
-      gui.__resize_handle = document.createElement('div');
-      _common2.default.extend(gui.__resize_handle.style, {
-        width: '6px',
-        marginLeft: '-3px',
-        height: '200px',
-        cursor: 'ew-resize',
-        position: 'absolute'
-      });
-      function drag(e) {
-        e.preventDefault();
-        gui.width += pmouseX - e.clientX;
-        gui.onResize();
-        pmouseX = e.clientX;
-        return false;
-      }
-      function dragStop() {
-        _dom2.default.removeClass(gui.__closeButton, GUI.CLASS_DRAG);
-        _dom2.default.unbind(window, 'mousemove', drag);
-        _dom2.default.unbind(window, 'mouseup', dragStop);
-      }
-      function dragStart(e) {
-        e.preventDefault();
-        pmouseX = e.clientX;
-        _dom2.default.addClass(gui.__closeButton, GUI.CLASS_DRAG);
-        _dom2.default.bind(window, 'mousemove', drag);
-        _dom2.default.bind(window, 'mouseup', dragStop);
-        return false;
-      }
-      _dom2.default.bind(gui.__resize_handle, 'mousedown', dragStart);
-      _dom2.default.bind(gui.__closeButton, 'mousedown', dragStart);
-      gui.domElement.insertBefore(gui.__resize_handle, gui.domElement.firstElementChild);
-    }
-    function setWidth(gui, w) {
-      gui.domElement.style.width = w + 'px';
-      if (gui.__save_row && gui.autoPlace) {
-        gui.__save_row.style.width = w + 'px';
-      }
-      if (gui.__closeButton) {
-        gui.__closeButton.style.width = w + 'px';
-      }
-    }
-    function getCurrentPreset(gui, useInitialValues) {
-      var toReturn = {};
-      _common2.default.each(gui.__rememberedObjects, function(val, index) {
-        var savedValues = {};
-        var controllerMap = gui.__rememberedObjectIndecesToControllers[index];
-        _common2.default.each(controllerMap, function(controller, property) {
-          savedValues[property] = useInitialValues ? controller.initialValue : controller.getValue();
-        });
-        toReturn[index] = savedValues;
-      });
-      return toReturn;
-    }
-    function setPresetSelectIndex(gui) {
-      for (var index = 0; index < gui.__preset_select.length; index++) {
-        if (gui.__preset_select[index].value === gui.preset) {
-          gui.__preset_select.selectedIndex = index;
-        }
-      }
-    }
-    function updateDisplays(controllerArray) {
-      if (controllerArray.length !== 0) {
-        _requestAnimationFrame2.default.call(window, function() {
-          updateDisplays(controllerArray);
-        });
-      }
-      _common2.default.each(controllerArray, function(c) {
-        c.updateDisplay();
-      });
-    }
-    exports.default = GUI;
-    module.exports = exports['default'];
-  }, function(module, exports) {
-    'use strict';
-    module.exports = {
-      load: function load(url, indoc) {
-        var doc = indoc || document;
-        var link = doc.createElement('link');
-        link.type = 'text/css';
-        link.rel = 'stylesheet';
-        link.href = url;
-        doc.getElementsByTagName('head')[0].appendChild(link);
-      },
-      inject: function inject(css, indoc) {
-        var doc = indoc || document;
-        var injected = document.createElement('style');
-        injected.type = 'text/css';
-        injected.innerHTML = css;
-        var head = doc.getElementsByTagName('head')[0];
-        try {
-          head.appendChild(injected);
-        } catch (e) {}
-      }
-    };
-  }, function(module, exports) {
-    module.exports = "<div id=\"dg-save\" class=\"dg dialogue\">\n\n  Here's the new load parameter for your <code>GUI</code>'s constructor:\n\n  <textarea id=\"dg-new-constructor\"></textarea>\n\n  <div id=\"dg-save-locally\">\n\n    <input id=\"dg-local-storage\" type=\"checkbox\"/> Automatically save\n    values to <code>localStorage</code> on exit.\n\n    <div id=\"dg-local-explain\">The values saved to <code>localStorage</code> will\n      override those passed to <code>dat.GUI</code>'s constructor. This makes it\n      easier to work incrementally, but <code>localStorage</code> is fragile,\n      and your friends may not see the same values you do.\n\n    </div>\n\n  </div>\n\n</div>";
-  }, function(module, exports, __webpack_require__) {
-    'use strict';
-    exports.__esModule = true;
-    var _OptionController = __webpack_require__(10);
-    var _OptionController2 = _interopRequireDefault(_OptionController);
-    var _NumberControllerBox = __webpack_require__(13);
-    var _NumberControllerBox2 = _interopRequireDefault(_NumberControllerBox);
-    var _NumberControllerSlider = __webpack_require__(14);
-    var _NumberControllerSlider2 = _interopRequireDefault(_NumberControllerSlider);
-    var _StringController = __webpack_require__(11);
-    var _StringController2 = _interopRequireDefault(_StringController);
-    var _FunctionController = __webpack_require__(15);
-    var _FunctionController2 = _interopRequireDefault(_FunctionController);
-    var _BooleanController = __webpack_require__(8);
-    var _BooleanController2 = _interopRequireDefault(_BooleanController);
-    var _common = __webpack_require__(5);
-    var _common2 = _interopRequireDefault(_common);
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : {default: obj};
-    }
-    var ControllerFactory = function ControllerFactory(object, property) {
-      var initialValue = object[property];
-      if (_common2.default.isArray(arguments[2]) || _common2.default.isObject(arguments[2])) {
-        return new _OptionController2.default(object, property, arguments[2]);
-      }
-      if (_common2.default.isNumber(initialValue)) {
-        if (_common2.default.isNumber(arguments[2]) && _common2.default.isNumber(arguments[3])) {
-          if (_common2.default.isNumber(arguments[4])) {
-            return new _NumberControllerSlider2.default(object, property, arguments[2], arguments[3], arguments[4]);
-          }
-          return new _NumberControllerSlider2.default(object, property, arguments[2], arguments[3]);
-        }
-        if (_common2.default.isNumber(arguments[4])) {
-          return new _NumberControllerBox2.default(object, property, {
-            min: arguments[2],
-            max: arguments[3],
-            step: arguments[4]
-          });
-        }
-        return new _NumberControllerBox2.default(object, property, {
-          min: arguments[2],
-          max: arguments[3]
-        });
-      }
-      if (_common2.default.isString(initialValue)) {
-        return new _StringController2.default(object, property);
-      }
-      if (_common2.default.isFunction(initialValue)) {
-        return new _FunctionController2.default(object, property, '');
-      }
-      if (_common2.default.isBoolean(initialValue)) {
-        return new _BooleanController2.default(object, property);
-      }
-      return null;
-    };
-    exports.default = ControllerFactory;
-    module.exports = exports['default'];
-  }, function(module, exports) {
-    "use strict";
-    exports.__esModule = true;
-    function requestAnimationFrame(callback) {
-      setTimeout(callback, 1000 / 60);
-    }
-    exports.default = window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame || requestAnimationFrame;
-    module.exports = exports["default"];
-  }, function(module, exports, __webpack_require__) {
-    'use strict';
-    exports.__esModule = true;
-    var _dom = __webpack_require__(9);
-    var _dom2 = _interopRequireDefault(_dom);
-    var _common = __webpack_require__(5);
-    var _common2 = _interopRequireDefault(_common);
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : {default: obj};
-    }
-    function _classCallCheck(instance, Constructor) {
-      if (!(instance instanceof Constructor)) {
-        throw new TypeError("Cannot call a class as a function");
-      }
-    }
-    var CenteredDiv = function() {
-      function CenteredDiv() {
-        _classCallCheck(this, CenteredDiv);
-        this.backgroundElement = document.createElement('div');
-        _common2.default.extend(this.backgroundElement.style, {
-          backgroundColor: 'rgba(0,0,0,0.8)',
-          top: 0,
-          left: 0,
-          display: 'none',
-          zIndex: '1000',
-          opacity: 0,
-          WebkitTransition: 'opacity 0.2s linear',
-          transition: 'opacity 0.2s linear'
-        });
-        _dom2.default.makeFullscreen(this.backgroundElement);
-        this.backgroundElement.style.position = 'fixed';
-        this.domElement = document.createElement('div');
-        _common2.default.extend(this.domElement.style, {
-          position: 'fixed',
-          display: 'none',
-          zIndex: '1001',
-          opacity: 0,
-          WebkitTransition: '-webkit-transform 0.2s ease-out, opacity 0.2s linear',
-          transition: 'transform 0.2s ease-out, opacity 0.2s linear'
-        });
-        document.body.appendChild(this.backgroundElement);
-        document.body.appendChild(this.domElement);
-        var _this = this;
-        _dom2.default.bind(this.backgroundElement, 'click', function() {
-          _this.hide();
-        });
-      }
-      CenteredDiv.prototype.show = function show() {
-        var _this = this;
-        this.backgroundElement.style.display = 'block';
-        this.domElement.style.display = 'block';
-        this.domElement.style.opacity = 0;
-        this.domElement.style.webkitTransform = 'scale(1.1)';
-        this.layout();
-        _common2.default.defer(function() {
-          _this.backgroundElement.style.opacity = 1;
-          _this.domElement.style.opacity = 1;
-          _this.domElement.style.webkitTransform = 'scale(1)';
-        });
-      };
-      CenteredDiv.prototype.hide = function hide() {
-        var _this = this;
-        var hide = function hide() {
-          _this.domElement.style.display = 'none';
-          _this.backgroundElement.style.display = 'none';
-          _dom2.default.unbind(_this.domElement, 'webkitTransitionEnd', hide);
-          _dom2.default.unbind(_this.domElement, 'transitionend', hide);
-          _dom2.default.unbind(_this.domElement, 'oTransitionEnd', hide);
-        };
-        _dom2.default.bind(this.domElement, 'webkitTransitionEnd', hide);
-        _dom2.default.bind(this.domElement, 'transitionend', hide);
-        _dom2.default.bind(this.domElement, 'oTransitionEnd', hide);
-        this.backgroundElement.style.opacity = 0;
-        this.domElement.style.opacity = 0;
-        this.domElement.style.webkitTransform = 'scale(1.1)';
-      };
-      CenteredDiv.prototype.layout = function layout() {
-        this.domElement.style.left = window.innerWidth / 2 - _dom2.default.getWidth(this.domElement) / 2 + 'px';
-        this.domElement.style.top = window.innerHeight / 2 - _dom2.default.getHeight(this.domElement) / 2 + 'px';
-      };
-      return CenteredDiv;
-    }();
-    exports.default = CenteredDiv;
-    module.exports = exports['default'];
-  }, function(module, exports, __webpack_require__) {
-    exports = module.exports = __webpack_require__(24)();
-    exports.push([module.id, ".dg {\n  /** Clear list styles */\n  /* Auto-place container */\n  /* Auto-placed GUI's */\n  /* Line items that don't contain folders. */\n  /** Folder names */\n  /** Hides closed items */\n  /** Controller row */\n  /** Name-half (left) */\n  /** Controller-half (right) */\n  /** Controller placement */\n  /** Shorter number boxes when slider is present. */\n  /** Ensure the entire boolean and function row shows a hand */\n  /** allow overflow for color selector */ }\n  .dg ul {\n    list-style: none;\n    margin: 0;\n    padding: 0;\n    width: 100%;\n    clear: both; }\n  .dg.ac {\n    position: fixed;\n    top: 0;\n    left: 0;\n    right: 0;\n    height: 0;\n    z-index: 0; }\n  .dg:not(.ac) .main {\n    /** Exclude mains in ac so that we don't hide close button */\n    overflow: hidden; }\n  .dg.main {\n    -webkit-transition: opacity 0.1s linear;\n    -o-transition: opacity 0.1s linear;\n    -moz-transition: opacity 0.1s linear;\n    transition: opacity 0.1s linear; }\n    .dg.main.taller-than-window {\n      overflow-y: auto; }\n      .dg.main.taller-than-window .close-button {\n        opacity: 1;\n        /* TODO, these are style notes */\n        margin-top: -1px;\n        border-top: 1px solid #2c2c2c; }\n    .dg.main ul.closed .close-button {\n      opacity: 1 !important; }\n    .dg.main:hover .close-button,\n    .dg.main .close-button.drag {\n      opacity: 1; }\n    .dg.main .close-button {\n      /*opacity: 0;*/\n      -webkit-transition: opacity 0.1s linear;\n      -o-transition: opacity 0.1s linear;\n      -moz-transition: opacity 0.1s linear;\n      transition: opacity 0.1s linear;\n      border: 0;\n      line-height: 19px;\n      height: 20px;\n      /* TODO, these are style notes */\n      cursor: pointer;\n      text-align: center;\n      background-color: #000; }\n      .dg.main .close-button.close-top {\n        position: relative; }\n      .dg.main .close-button.close-bottom {\n        position: absolute; }\n      .dg.main .close-button:hover {\n        background-color: #111; }\n  .dg.a {\n    float: right;\n    margin-right: 15px;\n    overflow-y: visible; }\n    .dg.a.has-save > ul.close-top {\n      margin-top: 0; }\n    .dg.a.has-save > ul.close-bottom {\n      margin-top: 27px; }\n    .dg.a.has-save > ul.closed {\n      margin-top: 0; }\n    .dg.a .save-row {\n      top: 0;\n      z-index: 1002; }\n      .dg.a .save-row.close-top {\n        position: relative; }\n      .dg.a .save-row.close-bottom {\n        position: fixed; }\n  .dg li {\n    -webkit-transition: height 0.1s ease-out;\n    -o-transition: height 0.1s ease-out;\n    -moz-transition: height 0.1s ease-out;\n    transition: height 0.1s ease-out;\n    -webkit-transition: overflow 0.1s linear;\n    -o-transition: overflow 0.1s linear;\n    -moz-transition: overflow 0.1s linear;\n    transition: overflow 0.1s linear; }\n  .dg li:not(.folder) {\n    cursor: auto;\n    height: 27px;\n    line-height: 27px;\n    padding: 0 4px 0 5px; }\n  .dg li.folder {\n    padding: 0;\n    border-left: 4px solid transparent; }\n  .dg li.title {\n    cursor: pointer;\n    margin-left: -4px; }\n  .dg .closed li:not(.title),\n  .dg .closed ul li,\n  .dg .closed ul li > * {\n    height: 0;\n    overflow: hidden;\n    border: 0; }\n  .dg .cr {\n    clear: both;\n    padding-left: 3px;\n    height: 27px;\n    overflow: hidden; }\n  .dg .property-name {\n    cursor: default;\n    float: left;\n    clear: left;\n    width: 40%;\n    overflow: hidden;\n    text-overflow: ellipsis; }\n  .dg .c {\n    float: left;\n    width: 60%;\n    position: relative; }\n  .dg .c input[type=text] {\n    border: 0;\n    margin-top: 4px;\n    padding: 3px;\n    width: 100%;\n    float: right; }\n  .dg .has-slider input[type=text] {\n    width: 30%;\n    /*display: none;*/\n    margin-left: 0; }\n  .dg .slider {\n    float: left;\n    width: 66%;\n    margin-left: -5px;\n    margin-right: 0;\n    height: 19px;\n    margin-top: 4px; }\n  .dg .slider-fg {\n    height: 100%; }\n  .dg .c input[type=checkbox] {\n    margin-top: 7px; }\n  .dg .c select {\n    margin-top: 5px; }\n  .dg .cr.function,\n  .dg .cr.function .property-name,\n  .dg .cr.function *,\n  .dg .cr.boolean,\n  .dg .cr.boolean * {\n    cursor: pointer; }\n  .dg .cr.color {\n    overflow: visible; }\n  .dg .selector {\n    display: none;\n    position: absolute;\n    margin-left: -9px;\n    margin-top: 23px;\n    z-index: 10; }\n  .dg .c:hover .selector,\n  .dg .selector.drag {\n    display: block; }\n  .dg li.save-row {\n    padding: 0; }\n    .dg li.save-row .button {\n      display: inline-block;\n      padding: 0px 6px; }\n  .dg.dialogue {\n    background-color: #222;\n    width: 460px;\n    padding: 15px;\n    font-size: 13px;\n    line-height: 15px; }\n\n/* TODO Separate style and structure */\n#dg-new-constructor {\n  padding: 10px;\n  color: #222;\n  font-family: Monaco, monospace;\n  font-size: 10px;\n  border: 0;\n  resize: none;\n  box-shadow: inset 1px 1px 1px #888;\n  word-wrap: break-word;\n  margin: 12px 0;\n  display: block;\n  width: 440px;\n  overflow-y: scroll;\n  height: 100px;\n  position: relative; }\n\n#dg-local-explain {\n  display: none;\n  font-size: 11px;\n  line-height: 17px;\n  border-radius: 3px;\n  background-color: #333;\n  padding: 8px;\n  margin-top: 10px; }\n  #dg-local-explain code {\n    font-size: 10px; }\n\n#dat-gui-save-locally {\n  display: none; }\n\n/** Main type */\n.dg {\n  color: #eee;\n  font: 11px 'Lucida Grande', sans-serif;\n  text-shadow: 0 -1px 0 #111;\n  /** Auto place */\n  /* Controller row, <li> */\n  /** Controllers */ }\n  .dg.main {\n    /** Scrollbar */ }\n    .dg.main::-webkit-scrollbar {\n      width: 5px;\n      background: #1a1a1a; }\n    .dg.main::-webkit-scrollbar-corner {\n      height: 0;\n      display: none; }\n    .dg.main::-webkit-scrollbar-thumb {\n      border-radius: 5px;\n      background: #676767; }\n  .dg li:not(.folder) {\n    background: #1a1a1a;\n    border-bottom: 1px solid #2c2c2c; }\n  .dg li.save-row {\n    line-height: 25px;\n    background: #dad5cb;\n    border: 0; }\n    .dg li.save-row select {\n      margin-left: 5px;\n      width: 108px; }\n    .dg li.save-row .button {\n      margin-left: 5px;\n      margin-top: 1px;\n      border-radius: 2px;\n      font-size: 9px;\n      line-height: 7px;\n      padding: 4px 4px 5px 4px;\n      background: #c5bdad;\n      color: #fff;\n      text-shadow: 0 1px 0 #b0a58f;\n      box-shadow: 0 -1px 0 #b0a58f;\n      cursor: pointer; }\n      .dg li.save-row .button.gears {\n        background: #c5bdad url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAsAAAANCAYAAAB/9ZQ7AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAQJJREFUeNpiYKAU/P//PwGIC/ApCABiBSAW+I8AClAcgKxQ4T9hoMAEUrxx2QSGN6+egDX+/vWT4e7N82AMYoPAx/evwWoYoSYbACX2s7KxCxzcsezDh3evFoDEBYTEEqycggWAzA9AuUSQQgeYPa9fPv6/YWm/Acx5IPb7ty/fw+QZblw67vDs8R0YHyQhgObx+yAJkBqmG5dPPDh1aPOGR/eugW0G4vlIoTIfyFcA+QekhhHJhPdQxbiAIguMBTQZrPD7108M6roWYDFQiIAAv6Aow/1bFwXgis+f2LUAynwoIaNcz8XNx3Dl7MEJUDGQpx9gtQ8YCueB+D26OECAAQDadt7e46D42QAAAABJRU5ErkJggg==) 2px 1px no-repeat;\n        height: 7px;\n        width: 8px; }\n      .dg li.save-row .button:hover {\n        background-color: #bab19e;\n        box-shadow: 0 -1px 0 #b0a58f; }\n  .dg li.folder {\n    border-bottom: 0; }\n  .dg li.title {\n    padding-left: 16px;\n    background: #000 url(data:image/gif;base64,R0lGODlhBQAFAJEAAP////Pz8////////yH5BAEAAAIALAAAAAAFAAUAAAIIlI+hKgFxoCgAOw==) 6px 10px no-repeat;\n    cursor: pointer;\n    border-bottom: 1px solid rgba(255, 255, 255, 0.2); }\n  .dg .closed li.title {\n    background-image: url(data:image/gif;base64,R0lGODlhBQAFAJEAAP////Pz8////////yH5BAEAAAIALAAAAAAFAAUAAAIIlGIWqMCbWAEAOw==); }\n  .dg .cr.boolean {\n    border-left: 3px solid #806787; }\n  .dg .cr.color {\n    border-left: 3px solid; }\n  .dg .cr.function {\n    border-left: 3px solid #e61d5f; }\n  .dg .cr.number {\n    border-left: 3px solid #2FA1D6; }\n    .dg .cr.number input[type=text] {\n      color: #2FA1D6; }\n  .dg .cr.string {\n    border-left: 3px solid #1ed36f; }\n    .dg .cr.string input[type=text] {\n      color: #1ed36f; }\n  .dg .cr.function:hover, .dg .cr.boolean:hover {\n    background: #111; }\n  .dg .c input[type=text] {\n    background: #303030;\n    outline: none; }\n    .dg .c input[type=text]:hover {\n      background: #3c3c3c; }\n    .dg .c input[type=text]:focus {\n      background: #494949;\n      color: #fff; }\n  .dg .c .slider {\n    background: #303030;\n    cursor: ew-resize; }\n  .dg .c .slider-fg {\n    background: #2FA1D6;\n    max-width: 100%; }\n  .dg .c .slider:hover {\n    background: #3c3c3c; }\n    .dg .c .slider:hover .slider-fg {\n      background: #44abda; }\n", ""]);
-  }, function(module, exports) {
-    module.exports = function() {
-      var list = [];
-      list.toString = function toString() {
-        var result = [];
-        for (var i = 0; i < this.length; i++) {
-          var item = this[i];
-          if (item[2]) {
-            result.push("@media " + item[2] + "{" + item[1] + "}");
-          } else {
-            result.push(item[1]);
-          }
-        }
-        return result.join("");
-      };
-      list.i = function(modules, mediaQuery) {
-        if (typeof modules === "string")
-          modules = [[null, modules, ""]];
-        var alreadyImportedModules = {};
-        for (var i = 0; i < this.length; i++) {
-          var id = this[i][0];
-          if (typeof id === "number")
-            alreadyImportedModules[id] = true;
-        }
-        for (i = 0; i < modules.length; i++) {
-          var item = modules[i];
-          if (typeof item[0] !== "number" || !alreadyImportedModules[item[0]]) {
-            if (mediaQuery && !item[2]) {
-              item[2] = mediaQuery;
-            } else if (mediaQuery) {
-              item[2] = "(" + item[2] + ") and (" + mediaQuery + ")";
-            }
-            list.push(item);
-          }
-        }
-      };
-      return list;
-    };
-  }]);
-});
-;
+										uniforms.time.value = elapsed / 1000;
+										uniforms.mouse.value[0] = -1. + 2. * mouse.x / window.innerWidth;
+										uniforms.mouse.value[1] = -1. + 2. * mouse.y / window.innerHeight;
 
-})();
-$__System.register("b", [], function (_export) {
-	"use strict";
+										camera.position.x = lerp(camera.position.x, -uniforms.mouse.value[0] * .5, .1);
+										camera.position.y = lerp(camera.position.y, uniforms.mouse.value[1] * .5, .1);
+										camera.lookAt(camera.targetLookAt);
+										camera.updateMatrix();
 
-	return {
-		setters: [],
-		execute: function () {
-			_export("default", {
-				debug: {
-					count: 12.,
-					range: .8,
-					radius: .4,
-					height: .001,
-					thin: .27,
-					blend: .1,
-					rotation1: 0,
-					rotation2: 0,
-					rotation3: 0,
-					rotation4: 0,
-					rotation5: 0,
-					rotation6: 0,
-					kaleidoX: true,
-					kaleidoY: true,
-					kaleidoZ: true
-				}
-			});
-		}
-	};
-});
+										renderer.render(scene, camera);
+								}
 
-$__System.register('46', ['a', '4e', 'b'], function (_export) {
-	var _Object$keys, dat, parameters, gui;
-
-	return {
-		setters: [function (_a) {
-			_Object$keys = _a['default'];
-		}, function (_e) {
-			dat = _e;
-		}, function (_b) {
-			parameters = _b['default'];
-		}],
-		execute: function () {
-			'use strict';
-
-			gui = {};
-
-			_export('gui', gui);
-
-			gui.gone = false;
-			gui.go = function () {
-				_export('gui', gui = new dat.gui.GUI());
-				gui.remember(parameters);
-				_Object$keys(parameters).forEach(function (keyRoot) {
-					var folder = gui.addFolder(keyRoot);
-					var keys = _Object$keys(parameters[keyRoot]);
-					if (keys.length > 0) {
-						keys.forEach(function (key) {
-							var param = parameters[keyRoot][key];
-							var item = folder.add(parameters[keyRoot], key);
-							var type = typeof param;
-							if (type == 'number') {
-								item.step(0.01);
-							}
+								function onWindowResize() {
+										var w = window.innerWidth / renderer.scale;
+										var h = window.innerHeight / renderer.scale;
+										renderer.setSize(window.innerWidth, window.innerHeight);
+										camera.aspect = w / h;
+										camera.updateProjectionMatrix();
+										uniforms.resolution.value[0] = w;
+										uniforms.resolution.value[1] = h;
+								}
 						});
-					} else {}
-					folder.open();
-				});
-				// gui.close();
-				gui.gone = true;
-			};
-		}
-	};
+				}
+		};
 });
 
-$__System.register('1', ['45', '46'], function (_export) {
+$__System.register('1', ['30'], function (_export) {
 	'use strict';
 
-	var demo, gui;
+	var demo;
 	return {
 		setters: [function (_) {
 			demo = _['default'];
-		}, function (_2) {
-			gui = _2.gui;
 		}],
 		execute: function () {
 

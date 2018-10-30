@@ -1,27 +1,25 @@
-doctype html
-html
-  head
-    meta(charset='utf-8')
-    title Cookie Demoparty 2018
-    link(rel='stylesheet', href='files/style.css')
+extend layout
 
-    meta(name='viewport', content='width=device-width, initial-scale=1')
-    meta(name='author', content='Cookie Demoparty')
-    meta(name='description', content='Demoparty on November 30 and December 1 in Paris, France.')
+block header
+  p 
+    img(src="images/cookie.png" width="100%")
 
-    meta(property='og:description', content='Demoparty on November 30 and December 1 in Paris, France.')
-    meta(property='og:image', content='/thumbnail.png')
-    meta(property='og:site_name', content='Cookie Demoparty')
-    meta(property='og:title', content='Cookie Demoparty')
-    meta(property='og:type', content='website')
-    meta(property='og:url', content='http://cookie.paris')
+block content
 
-    meta(name='twitter:card', content='summary')
-    meta(name='twitter:description', content='Demoparty on November 30 and December 1 in Paris, France.')
-    meta(name='twitter:image', content='/thumbnail.png')
-    meta(name='twitter:site', content='@CookieDemoparty')
-    meta(name='twitter:title', content='Cookie Demoparty')
 
-  body
-    .hide(style='font-family: bebasneue_bold') .
-    script(src='files/demo.js')
+  h2 Welcome!
+  p Cookie is a digital art festival known as <a href="https://en.wikipedia.org/wiki/Demoparty">demoparty</a>.
+  p This year, we welcome you on <a href="/timetable">November 30 and December 1</a> at <a href="/location">Folie Numérique in Paris, France</a>.
+  p Come over the weekend and watch stunning animations on modern or retro computers, attend to workshops and live performances, or simply meet passionate people around a beer.
+  p Don't be afraid if you are a newcomer, people will kindly help you, so come and enjoy the party!
+
+  h2 Pricing
+  p Pay what you want!
+  p This does not mean that the demoparty is free: we need your support to make the event possible. We simply acknowledge that different visitors have different financial resources, so contribute accordingly.
+
+  h2 What to do now?
+  p <a href="/visitors">Register</a> and see if your friends are coming too!
+  p Check out the <a href="/location">map</a>, <a href="/competitions">competitions</a>, and <a href="/timetable">timetable</a>.
+  p Prepare your entries!
+
+  script(src='files/demo.js')

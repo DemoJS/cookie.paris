@@ -36,7 +36,7 @@ app.post("/api/register", function(request, response)
     if (group)
         visitor += " / " + group;
 
-    redis.rpush("cookie2017:visitors", visitor, function(err)
+    redis.rpush("cookie2018:visitors", visitor, function(err)
     {
         if (err) return response.sendStatus(500)
 
@@ -50,7 +50,7 @@ app.get("/competitions", function(request, response) { response.render("competit
 app.get("/timetable", function(request, response) { response.render("timetable") })
 app.get("/visitors", function(request, response)
 {
-    return redis.lrange("cookie2017:visitors", 0, -1, function(err, visitors)
+    return redis.lrange("cookie2018:visitors", 0, -1, function(err, visitors)
     {
         if (err) return response.sendStatus(500)
 
