@@ -47,13 +47,6 @@ img.wide {
     margin-bottom: 15vh;
 }
 
-@media all and (orientation:landscape) {
-    .header img {
-        margin-top: 0;
-        margin-bottom: 0;
-    }
-}
-
 .logo {
     display: inline-block;
     height: 100px;
