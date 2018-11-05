@@ -1,32 +1,40 @@
 extend layout
 
-block header
-  .titleCompetitions
-
 block content
   .links
-    a.sublink(href="#4k-intro") 4k&nbsp;intro
-    a.sublink(href="#pc-demo") PC&nbsp;demo
+    span Competitions at a glance:
+    br
+    a.sublink(href="#pc-4k-intro") PC 4k&nbsp;intro
+    a.sublink(href="#pc-64k-intro") PC 64k&nbsp;intro
+    a.sublink(href="#newskool-demo") Newskool&nbsp;demo
     a.sublink(href="#oldskool-demo") Oldskool&nbsp;demo
     a.sublink(href="#music") Music
     a.sublink(href="#graphics") Graphics
-    a.sublink(href="#wild") Wild
-    br
     a.sublink(href="#food") Food
     a.sublink(href="#laser") Laser
-    a.sublink(href="#shader-showdown") Shader&nbsp;showdown
+    a.sublink(href="#wild") Wild
+    a.sublink(href="#shader-showdown") Shader&nbsp;Showdown&nbsp;(event)
+
   h2 General rules
   ul
     li The production must not have been released previously.
     li Remote entries are allowed! Send your entry and info at <a href="mailto:contact@cookie.paris">contact@cookie.paris</a>.
     li You should only submit your own work. In particular, copyrighted material is strictly forbidden.
     li You CAN start working on your production NOW. The production does NOT need to be made 100% at the party place.
-    li Deadline is saturday 2017-12-09 @6PM CEST
+    li Deadline is Saturday 2018-12-01 @ 6PM CEST.
     li Winners will be determined by voting from all visitors.
-    li Entries may be disqualified by the orga team if deemed innapropriate (pornography, illegal content...) or breaking the rules listed here.
+    li Entries may be disqualified by the orga team if deemed inapropriate (pornography, illegal content...) or breaking the rules listed here.
 
-  a.anchor(name="4k-intro")
-  h2 4k intro
+  h2 Compo machine
+  p The compo machine will be a PC with Windows, on which we can install software as needed (e.g DOSBox). For anything funkier than that, please bring your own hardware or get in touch with us so that we can prepare the appropriate environment for your production.
+  p Specs:
+  ul
+    li Xeon 6 cores HT
+    li 64GB RAM
+    li GTX 970
+
+  a.anchor(name="pc-4k-intro")
+  h2 PC 4k intro
   p Play with a few bytes!
   ul
     li Combined size of all files must fit within the allowed limit.
@@ -36,9 +44,20 @@ block content
     li You should not use any operating system provided media files such as the "Media" and "Music Samples" directory.
     li You can use built-in generic fonts such as serif, sans-serif.
 
-  a.anchor(name="pc-demo")
-  h2 PC demo
-  p No size limit, but it must be real-time!
+  a.anchor(name="pc-64k-intro")
+  h2 PC 64k intro
+  p Play with a few more bytes!
+  ul
+    li Combined size of all files must fit within the allowed limit.
+    li Note that 64k means 65536 bytes or less. Counting is done in bytes, *not* characters (beware of Unicode).
+    li The production has to work offline. (no HTTP server required, no internet connection).
+    li You are NOT allowed to retrieve content from the Internet.
+    li You should not use any operating system provided media files such as the "Media" and "Music Samples" directory.
+    li You can use built-in generic fonts such as serif, sans-serif.
+
+  a.anchor(name="newskool-demo")
+  h2 Newskool demo
+  p No size limit, on PC or any modern machine (PlayStation 4, Switch, ...), but it must be real-time!
   ul
     li No maximum filesize. However don't try to run a movie in an iframe.
     li Must be non-interactive.
@@ -46,7 +65,7 @@ block content
 
   a.anchor(name="oldskool-demo")
   h2 Oldskool demo
-  p No size limit, but it must be real-time!
+  p No size limit, on older machines (Atari, Amiga, Commodore 64, ...), but it must be real-time!
   ul
     li We have no materials: bring your own device, or submit with an emulator which supports the demo.
     li No maximum filesize. However don't try to run... a movie... in...?
@@ -68,50 +87,52 @@ block content
     li Any style is welcome, from pixel art to full-on 3D!
     li Please include a few work-in-progress images with your entry (from first draft to final composition, wireframes for 3D)
 
-  a.anchor(name="wild")
-  h2 Wild
-  p Anything else, get crazy!
-  ul
-    li From toasters to mechatronics, you can present anything fun!
-    li Please contact the organization team to plan ahead if you come with special hardware.
-    li You can also make a video of your thing if it's easier to explain or show what it is, but please also bring the original hardware if you can.
-
   a.anchor(name="food")
   h2 Food
   p Yes, actual food, like, from your kitchen!
   ul
     li All the dishes will lined up with a number (for voting), author(s), and weight.
     li Remember that ideally everyone at the party should get a bite to be able to vote eventually. Planning for a 1-2 person dish is probably not going to make you popular.
-    li Plates and cuttlery will be made available at the party place, you don't need to provide them.
-    li Dishes will be voted for exactly like other compos, cook for win!
+    li Plates and cuttlery will be made available at the party place, you don't need to provide them, unless very specific.
+    li Dishes will be voted for exactly like other compos, cook for win! It's recommended to take a picture of your dish and to set it as the entry's screenshot.
 
   a.anchor(name="laser")
   h2 Laser
-  p It's like on an oscilloscope, but bigger.
+  p It's like working on up to 4 oscilloscopes, but a lot bigger.
+  p We anticipate some really unseen and blasting uber visuals with the first ever multilasers compo.
+  p Lasers are definately not pixels, it's lines across point lists countinusly redrawn. It's damn simple and highly challenging to overcome/use strong hardware limitations : *welcome out of the box !!*
   ul
-    li This demo laser competition is about custom programs that delivers uber visuals, not lasershows produced with Q…ckshow or any other proprietary software.
-    li 4 ILDA lasers and their etherdreams controllers will be available on site. You may use one or more laser in your demo.
-    li There is no mandatory hardware: you can also bring and use your DIY system micro controller based. Remember for custom hardware, there is a « Wild » competition. Ask orga before bringing any extra laser system for safety check.
-    li One laser+etherdream will be available for test from now on* at the party place, every Wednesday during the Jack hackerspace open meeting. Remember that you can also use some of the code examples with built in simulator (see the bootstrap link below).
-    li For efficiency, no wifi access to the lasers LAN. Bring your RJ45 dongle if needed.
+    li There are 2x RGB phatty and 2x RGY sharp beams for everyone. You may use one or more lasers in your demo. There are some clever tricks to find like: using sharp beams for forefront and phatty beams for background ?
+    li All lasers are hooked to etherdream controllers. Etherdream libraries are available for major langs. Use the one you like.
+    li If you are a laser freak, you can also bring/show off/use your DIY system micro controller based. For custom hardware, check out the <a href="#wild">Wild competition</a>. Ask orga before bringing any extra laser system for safety check.
+    li Limited spare computers will be available. Ask the laser guys if you want to try something new and join this compo.
+    li For efficiency, *no wifi access* to the lasers LAN. You MUST bring your RJ45 USB dongle if needed.
+  p There will be a room dedicated to laser coding at the party. However, one laser+etherdream will be available for test from now on, every Wednesday during the Jack hackerspace open meeting, Metro Buzenval. Remember that there is some frameworks with simulators, see the bootstrap link below.
   p Useful links:
   ul
-    li: a(href="http://www.neurohack.cc/index.php?title=LaserBootstrap") How to / boostrap
-    li: a(href="https://github.com/tmpbci/Cookie-Paris-2017-Laser-competition-examples") Examples (GitHub repository)
+    li: a(href="http://www.neurohack.cc/index.php?title=LaserBootstrap") How to / boostrap in different lang.
+    li: a(href="https://github.com/tmplab/LJay") Multi lasers in python (GitHub repository).
+    li: a(href="https://github.com/tmpbci/demo_laser") Minimal one laser demo, from Cookie Demoparty 2017.
+
+  a.anchor(name="wild")
+  h2 Wild
+  p Anything that doesn't fit in the previous competitions. Get crazy!
+  ul
+    li From toasters to mechatronics, you can present anything fun!
+    li Please contact the organization team to plan ahead if you come with special hardware.
+    li You can also make a video of your thing if it's easier to explain or show what it is, but please also bring the original hardware if you can.
 
   a.anchor(name="shader-showdown")
-  h2 Shader showdown
-  p Live shader coding, happening on Friday night!
+  h2 Shader Showdown
+  p Tournament of live shader coding happening on Friday and Saturday nights.
+  p Eight participants will compete, 1 vs 1 for 25 minutes, to program the most amazing visual effects. The winner will be selected for the Shader Showdown's Season Finale at the next Revision demoparty!
+  p If you want to participate, tell us and you'll be on the list. First come first served! You'll have to be there both Friday and Saturday nights.
   ul
-    li The coding tool is <a href="https://github.com/Gargaj/Bonzomatic">Bonzomatic</a>.
-    li You're free to choose the shader language (HLSL DX9 & DX11, GLSL).
-    li You will be provided with a keyboard and mouse, you're free to bring your own devices.
-
-  h2 Compo machine
-  p The compo machine will be a PC with Windows, on which we can install software as needed (e.g DOSBox). For anything funkier than that, please bring your own hardware or get in touch with us so that we can prepare the appropriate environment for your production.
-
-  p Specs:
-  ul
-    li Xeon 6 cores HT
-    li 64GB RAM
-    li GTX 970
+    li Every battle lasts 25 minutes and you have to write all code from scratch.
+    li All code has to be written in (and only in) <a href="https://github.com/Gargaj/Bonzomatic">Bonzomatic</a> (<a href="http://www.pouet.net/topic.php?which=9881">discuss here</a>).
+    li A set of textures will be provided for each round.
+    li You can pick your weapon of choice: GLSL or HLSL (DX9 or DX11).
+    li The computers will default to FR-FR keymap - if you prefer a different layout, let us know beforehand.
+    li Competitors are welcome to bring their own keyboard (without memory function).
+    li No additional tools allowed (no paper, no memory sticks, no radio, no mobiles, tablets etc.), just you and the computer.
+  

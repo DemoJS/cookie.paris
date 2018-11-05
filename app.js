@@ -1,11 +1,12 @@
 var express = require("express")
 var app = express()
 var bodyParser = require('body-parser')
+var fs = require('fs')
 
-var redis = require("redis").createClient()
+var redis = require("redis").createClient(6379, "192.168.99.100")
 
 app.use(bodyParser.json())
-app.use(bodyParser.urlencoded({extended: false}))
+app.use(bodyParser.urlencoded({ extended: false }))
 
 app.set("view engine", "jade")
 app.set("views", __dirname + "/views")
@@ -20,8 +21,7 @@ app.set("views", __dirname + "/views")
     })
 })*/
 
-app.post("/api/register", function(request, response)
-{
+app.post("/api/register", function(request, response) {
     var handle = request.body.handle
     if ((typeof handle !== "string") || (handle.length === 0))
         return response.sendStatus(400)
@@ -36,8 +36,7 @@ app.post("/api/register", function(request, response)
     if (group)
         visitor += " / " + group;
 
-    redis.rpush("cookie2018:visitors", visitor, function(err)
-    {
+    redis.rpush("cookie2018:visitors", visitor, function(err) {
         if (err) return response.sendStatus(500)
 
         response.redirect("/visitors")
@@ -45,13 +44,8 @@ app.post("/api/register", function(request, response)
 })
 
 app.get("/", function(request, response) { response.render("index") })
-app.get("/location", function(request, response) { response.render("location") })
-app.get("/competitions", function(request, response) { response.render("competitions") })
-app.get("/timetable", function(request, response) { response.render("timetable") })
-app.get("/visitors", function(request, response)
-{
-    return redis.lrange("cookie2018:visitors", 0, -1, function(err, visitors)
-    {
+app.get("/visitors", function(request, response) {
+    return redis.lrange("cookie2018:visitors", 0, -1, function(err, visitors) {
         if (err) return response.sendStatus(500)
 
         response.render("visitors", {
@@ -60,10 +54,21 @@ app.get("/visitors", function(request, response)
     })
 })
 
+app.get("/:page", function(request, response, next) {
+    fs.access('views/' + request.params.page + '.jade', fs.constants.R_OK, (err) => {
+        if (err) return next()
+
+        response.render(request.params.page, function(err, html) {
+            if (err) return response.sendStatus(404)
+
+            response.send(html)
+        })
+    })
+})
+
 app.use(express.static(__dirname + "/public"))
 
-app.use(function(err, request, response, next)
-{
+app.use(function(err, request, response, next) {
     console.log(err)
     response.sendStatus(500)
 })

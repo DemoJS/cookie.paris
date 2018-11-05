@@ -1,170 +1,165 @@
 extend layout
 
-block header
-  .titleTimetable
-
 block content
-  p It is possible to sleep on site until Sunday 10th for the people coming from abroad.
-  p We may even organize a walking tour to visit some parts of Paris, if many people ask for it!
+  h2 During the whole festival
+  p On the first floor:
+  ul
+    li: a(href="/timetable-laser") Laser room: dedicated to laser coding;
+    li: a(href="/timetable-video-room") Video room: demoshows, documentaries, machinimas, and other videos;
+    li Video games and playful installations:
+      ul
+        li: a(href="/timetable-arcade-machine-tony") Custom Arcade Machine, by Tony Lallenec;
+        li: a(href="/timetable-arcade-machine-vincent") Custom Arcade Machine, by Vincent Malizia;
+        li: a(href="/timetable-game-jockey") Game Jockey, by Alineaire;
+        li: a(href="/timetable-gpu") Glitch Processing Unit, by MechBird (Tatiana Vilela and Leon Denise);
+        li: a(href="/timetable-pollen") Pollen, by Thomas Hooper;
+        li: a(href="/timetable-stereopolis") Stereopolis, by GLKT (Benjamin Vedrenne).
 
-  h2 Friday 8th
+  h2 Friday, November 30
   table.table.timetable
+    thead
+      tr
+        th Time
+        th Category
+        th Event
     tbody
       tr
         td 14:00
-        td(colspan="3") Gates open
-      tr
-        td 19:00
-        td Compo
-        td Shader Showdown
-        td Bar
-      tr
         td
-        td DJ set
-        td Caisse Obscure
-        td Bar
+        td Gates open
       tr
-        td 20:30
-        td Concert
-        td The Other Days
-        td Bar
+        td 19:45
+        td
+        td Opening ceremony
       tr
-        td 22:00
-        td DJ set
-        td Disconnect
-        td Bar
-
-  h2 Saturday 9th
-  p All day long: demoshows, documentaries, and other videos in the Auditorium.
-  table.table.timetable
-    tbody
-      tr.trFrame.trMoleman
-        td 10:00
-        td Documentary
-        td Demoscene: The Art of the Algorithms (Moleman 2)
-        td Auditorium
-      tr.noLine
-        td(colspan="4").trSpace
-      tr.trFrame.trPoke
-        td 10:00
-        td Workshop (2h)
-        td VCS (p0ke)
-        td Hackerspace
-      tr.noLine
-        td(colspan="4") Présentation rapide de l'atari VCS, et show de quelques demos incontournables sur le vrai hardware.
-      tr.noLine
-        td(colspan="3") Codeur amateur et Early lover des machines 8/16 bits, p0ke est spectateur de la demoscene depuis ses premiers jours et plus récemment (2012) acteur à part entière, dans le groupe flush.
-        td(colspan="1").tdPhoto.tdPoke
-      tr.noLine
-        td(colspan="4").trSpace
-      tr.trFrame.trSlayer
-        td 12:00
-        td Talk (2h)
-        td Histoire de la demoscene [FR] (Sgt Slayer)
-        td Bar
-      tr.noLine
-        td(colspan="4").trSpace
-      tr.trFrame.trCoyhot
-        td 14:00
-        td Talk (1h30)
-        td Eevee, Blender's real-time renderer (CoyHot)
-        td Bar
-      tr.noLine
-        td(colspan="4") Le futur Blender 2.8 sera pourvu d'énormes améliorations dans bien des domaines, mais l'un des plus marquants pour l'utilisateur final sera sans doute l'intégration d'un nouveau moteur de rendu dont le nom de code est pour l'instant "EEVEE". Visant à s'approcher des performances de moteurs graphiques tels que l'Unreal Engine ou encore Unity, EEVEE met avant tout l'accent sur le temps réel, ou du moins une capacité à présenter de manière extrêmement fidèle et rapide le rendu que pourra ensuite produire le moteur "Cycles", qui continue de s'améliorer sans cesse de son coté. EEVEE propose donc une nouvelle manière de voir le rendu, intégrant l'ajout de Light Probes, de réflexions et réfractions via l'utilisation de cubemap, de raytracing ou de SSR, ajoutant aussi le support du Motion Blur, du Depth of field ou encore des lumières volumétriques, le tout en temps réel directement dans la vue 3D de Blender. Au delà de considérer EEVEE comme un simple outil de prototypage pour Cycles, celui-ci peut rapidement s'imposer comme une arme incroyablement puissance pour les départements de lookdev, voir servir de moteur de rendu principal pour une série ou un film d'animation, réglant partiellement le problème des temps de rendu, parfois très lourds. Il a même été utilisé il y a quelques semaines pour les animations projetés sur la scène du groupe de rock français "Les Insus" (anciennement "Téléphone"), sur des écrans de 45 mètres de large, à une résolution approchant les 5K et une fréquence de 50 images/seconde ... une aventure pas toujours simple vu l'état de développement actuel du moteur (entaché pour l'instant de nombreux bugs), mais qui a permis de techniquement réaliser des prouesses en un temps record. Cette conférence sera l'occasion de découvrir les possibilités de EEVEE en analysant ce cas d'école et les raisons pour lesquelles nous avons opté pour un rendu OpenGL+EEVEE au sein de la société D/Labs, en charge de ce projet.
-      tr.noLine
-        td(colspan="3") Graphiste 2D/3D/VFX et développeur de logiciels graphiques depuis environ 20 ans. Toujours à la recherche d'équivalents libres afin d'avoir le luxe du choix en cas de dilemmes artistiques ou techniques. Mes intérêts se portent également sur le développement de moteurs hybrides 2D/3D temps réel.
-        td(colspan="1").tdPhoto.tdCoyhot
-      tr.noLine
-        td(colspan="4").trSpace
-      tr.trFrame.trFlopine
-        td 14:00
-        td Workshop (2h)
-        td Shader / Raymarching (Flopine)
-        td Hackerspace
-      tr.noLine
-        td(colspan="4") Je vous propose une initiation au shadercoding, tout en douceur !<br/>Dans une première partie je ferai un rappel de ce qu'est un shader, quels sont les différents types et à quoi servent-ils. J’enchaînerai ensuite avec un atelier pratique sous Shadertoy. Nous commencerons par de la manipulation d'images 2D, puis de la manipulation de l'espace en 2D pour finir sur de la création 3D avec le principe du Raymarching, aussi appelé le Sphere Tracing. Pour rappel, nous coderons en GLSL. (OpenGL Shader Langage)<br/>Venez nombreux et on fera de l'art avec des maths ! (ça fait des jolis trucs si si je vous jure)
-      tr.noLine
-        td(colspan="3") Doctorante en VR, Renderwoman dans une ferme de rendu et Demosceneuse, j'aime être touche à tout et étendre ma compréhension ainsi que ma pratique de l'art numérique. Ma passion aujourd'hui est de pouvoir lier la logique et les mathématiques à l'art par le biais du shadercoding, et plus généralement de l'art génératif.
-        td(colspan="1").tdPhoto.tdFlopine
-      tr.noLine
-        td(colspan="4").trSpace
-      tr.trFrame.trPlayShangai
-        td 14:00
-        td Documentary (30m)
-        td Play (In) Shanghai (Esteban Grine)
-        td Auditorium
-      tr.noLine
-        td(colspan="4").trSpace
-      tr.trFrame.trVideoGameMusic
-        td 14:30
-        td Documentary (30m)
-        td Video Game Music Adventures (Yacine Synapsas)
-        td Auditorium
-      tr.noLine
-        td(colspan="4").trSpace
-      tr.trFrame.trUgly
-        td 15:00
-        td Movie (1h)
-        td Ugly (Nikita Diakur)
-        td Auditorium
-      tr.noLine
-        td(colspan="4").trSpace
-      tr.trFrame.trHotel
-        td 16:00
-        td Movie (1h30)
-        td Hotel (Benjamin Nuel)
-        td Auditorium
-      tr.noLine
-        td(colspan="4").trSpace
-      tr.trFrame.trXtrium
-        td 16:00
-        td Workshop (2h)
-        td Tracker / Chiptune (Xtrium)
-        td Hackerspace
-      tr.noLine
-        td(colspan="4").trSpace
-      tr.trFrame.trHello
-        td 16:00
-        td Talk (1h)
-        td Les écrans animés dans les navigateurs (Hello)
-        td Bar
-      tr.noLine
-        td(colspan="4") Les WebExtensions ont révolutionné les navigateurs web en simplifiant le développement d'extension, comme  dans Firefox. Par exemple, vous pouvez utiliser une extension d’un autre navigateur (au hasard Chrome), l'améliorer et par la même occasion la rendre compatible sur les autres navigateurs basés sur Chromium comme Opera, mais aussi Edge, sans aucun changement (ou presque) ! Cette session montrera qu'il est possible de personnaliser son navigateur avec des animations à l'extrême, jusqu'à réaliser un fond d'écran animé (Screen saver).<br/>Cette session vous emmènera dans ce nouveau futur… qui est déjà disponible.
-      tr.noLine
-        td(colspan="3") Christophe Villeneuve est Consultant à Ausy. Il est impliqué dans de nombreuses technologies Open Source tels que PHP, Drupal, MariaDB, WebExtensions Firefox... et membre actif de DrupalFR, AFUP, LeMug, Mozilla... Il est aussi chroniqueur radio, auteur de Livres aux éditions ENI, Eyrolles, d’articles dans différents magazines et le PHPère des elePHPants.
-        td(colspan="1").tdPhoto.tdHello
-      tr.noLine
-        td(colspan="4").trSpace
+        td(rowspan=2) 20:00
+        td: .category.competition Competition
+        td: a(href="/timetable-shader-showdown") Shader Showdown
       tr
-        td 18:00
-        td Compo
-        td(colspan="2") Deadline
-      tr
-        td 19:00
-        td Compo
-        td Presentation
-        td Bar
-      tr.trFrame.trCouguarsOnABeach
-        td 20:00
-        td Concert
-        td Couguars On A Beach
-        td Bar
-      tr.noLine
-        td(colspan="4").trSpace
+        td: .category.performance Audio Performance
+        td To Be Anounced
       tr
         td 21:00
-        td Compo
-        td Prizegiving
-        td Bar
-      tr.trFrame.trCactusEtMammuth
-        td 22:00
-        td Concert
-        td Cactus & Mammuth
-        td Bar
+        td: .category.performance Audio-Visual Performance
+        td 
+          a(href="/timetable-machine-sauvage-meconium") Machine Sauvage - Méconium
+          br
+          a(href="/timetable-leon-denise") Léon Denise
+          br
+          em Presented by <a href="http://vision-r.org/">Vision'R</a>.
+      tr
+        td(rowspan=2) 22:00
+        td: .category.competition Competition
+        td: a(href="/timetable-shader-showdown") Shader Showdown
+      tr
+        td: .category.performance Audio Performance
+        td To Be Anounced
+      tr
+        td 23:00
+        td: .category.performance Audio-Visual Performance
+        td To Be Announced
+      tr
+        td 23:30
+        td: .category.performance Audio-Visual Performance
+        td To Be Announced
+      tr
+        td 1:00
+        td
+        td Gates close
 
-  h2 Sunday 10th
+  h2 Saturday, December 1
+  p Unless stated, all events happen on the ground level.
   table.table.timetable
+    thead
+      tr
+        th Time
+        th Category
+        th Event
     tbody
       tr
-        td 11:00
-        td Walking tour in Paris (Buttes aux cailles)
+        td 10:00
+        td
+        td Gates open
+      tr
+        td 12:30
+        td: .category.talk Talk
+        td
+         a(href="/timetable-animaux-jeux-video") Animaux et Jeux Vidéo, by Antoine Herren and Yacine Synapsas (French)
+      tr
+        td 14:00
+        td: .category.workshop Workshop
+        td Audio Live Coding
+      tr
+        td 16:00
+        td: .category.speedrun Speedrun
+        td To Be Announced
+          br
+          em In the Video room, on the first floor. 
+      tr
+        td 16:00
+        td: .category.workshop Workshop
+        td
+          a(href="/timetable-jpeg-crush") JPEG Crush, by Kaspar Ravel
+      tr
+        td(rowspan=2) 19:30
+        td: .category.competition Competition
+        td Music
+      tr
+        td: .category.performance Visual Performance
+        td To Be Anounced
+      tr
+        td(rowspan=2) 20:00
+        td: .category.competition Competition
+        td: a(href="/timetable-shader-showdown") Shader Showdown
+      tr
+        td: .category.performance Audio Performance
+        td: a(href="/timetable-super-toy-magic") Super Toy Magic
+      tr
+        td 21:00
+        td: .category.competition Competition
+        td Food
+          br
+          | Wild
+          br
+          | Graphics
+          br
+          | Oldskool demo
+          br
+          | PC 4k intro
+          br
+          | PC 64k intro
+          br
+          | Newskool demo
+      tr
+        td 22:00
+        td: .category.performance Audio-Visual Performance
+        td
+          a(href="/timetable-nao") NAO - Venomous Master
+          br
+          em Presented by <a href="http://vision-r.org/">Vision'R</a>.
+      tr
+        td(rowspan=2) 22:30
+        td: .category.competition Competition
+        td: a(href="/timetable-shader-showdown") Shader Showdown
+      tr
+        td: .category.performance Audio Performance
+        td To Be Anounced
+      tr
+        td 23:30
+        td 
+        td Prize giving ceremony
+      tr
+        td 00:00
+        td: .category.performance Audio-Visual Performance
+        td 
+          a(href="timetable-run-run-jump-punch") Run! Run! Jump! Punch!
+          br
+          | Flopine
+      tr
+        td 00:30
+        td: .category.performance Audio-Visual Performance
+        td Mangosh
+      tr
+        td 1:00
+        td
+        td Gates close
