@@ -1,0 +1,24 @@
+extend layout
+
+block content
+  h2 Shader Showdown
+  p Shader Showdown is a series of 1-on-1 coding battles at locations around Europe. Within a 25 minute time limit the coders try to create the most impressive graphical effect they possibly can. To ensure a fair contest, both coders are provided with identical pc's without internet connection, which are right in front of the live audience, so there is no way to cheat without being caught. The screens that both coders are working on will be relayed to a large format beamer display so the audience can follow their progress live while the battle is in progress. To support the coders, an algorave performer or a dj creates an audio signal live on the same stage, which is played through the venue's audio system, but also provided to the coders' workstations, so they can synchronize their graphical effects to the music.
+  p At the end of the battle, the effects made by both coders are shown for a final time, while the audience is invited to cheer for their favourite effect. If it is not possible to determine which effect gets the loudest cheers from the audience, audience members will be asked to stand on the side of the stage where the coder who should win in their opinion is seated. If there's an exactly equal number of people on both sides of the stage, the organisers will step down from the stage and make the final verdict by joining their favourite side.
+  p Does that all sound complex and confusing? TL;DR perhaps? No worries, a video registration of the final battle at a recent event is available via the link below. If that video's up your alley, you should definitely attend the Shader Showdown at Cookie Demoparty in La Villette, Paris on November 30th and December 1st- looking forward to seeing you there!
+  p: a(href="https://www.twitch.tv/videos/245026719?t=79m19s") https://www.twitch.tv/videos/245026719?t=79m19s
+  
+  #player
+  script(src="https://player.twitch.tv/js/embed/v1.js")
+  script.
+    var options = {
+      width: "100%",
+      height: "450px",
+      video: 245026719,
+    };
+    var player = new Twitch.Player("player", options);
+    var once = false;
+    player.addEventListener(Twitch.Player.PLAYING, function(event) {
+      if (once) return;
+      once = true;
+      player.seek(4759);
+    })

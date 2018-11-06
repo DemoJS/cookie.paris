@@ -2,18 +2,16 @@ extend layout
 
 block content
   h2 During the whole festival
-  p On the first floor:
+  p: a(href="/event-laser") Laser room dedicated to laser coding.
+  p: a(href="/event-video-room") Video room, showing demoshows, documentaries, machinimas, and other videos.
+  p Video games and playful installations:
   ul
-    li: a(href="/timetable-laser") Laser room: dedicated to laser coding;
-    li: a(href="/timetable-video-room") Video room: demoshows, documentaries, machinimas, and other videos;
-    li Video games and playful installations:
-      ul
-        li: a(href="/timetable-arcade-machine-tony") Custom Arcade Machine, by Tony Lallenec;
-        li: a(href="/timetable-arcade-machine-vincent") Custom Arcade Machine, by Vincent Malizia;
-        li: a(href="/timetable-game-jockey") Game Jockey, by Alineaire;
-        li: a(href="/timetable-gpu") Glitch Processing Unit, by MechBird (Tatiana Vilela and Leon Denise);
-        li: a(href="/timetable-pollen") Pollen, by Thomas Hooper;
-        li: a(href="/timetable-stereopolis") Stereopolis, by GLKT (Benjamin Vedrenne).
+    li: a(href="/event-arcade-machine-tony") Custom Arcade Machine, by Tony Lallenec;
+    li: a(href="/event-arcade-machine-vincent") Custom Arcade Machine, by Vincent Malizia;
+    li: a(href="/event-game-jockey") Game Jockey, by Alineaire;
+    li: a(href="/event-gpu") Glitch Processing Unit, by MechBird (Tatiana Vilela and Leon Denise);
+    li: a(href="/event-pollen") Pollen, by Thomas Hooper;
+    li: a(href="/event-stereopolis") Stereopolis, by GLKT (Benjamin Vedrenne).
 
   h2 Friday, November 30
   table.table.timetable
@@ -34,41 +32,44 @@ block content
       tr
         td(rowspan=2) 20:00
         td: .category.competition Competition
-        td: a(href="/timetable-shader-showdown") Shader Showdown
+        td: a(href="/event-shader-showdown") Shader Showdown
       tr
         td: .category.performance Audio Performance
-        td To Be Anounced
+        td: a(href="/event-audio-live-coding") Audio Live Coding Paris
       tr
         td 21:00
         td: .category.performance Audio-Visual Performance
         td 
-          a(href="/timetable-machine-sauvage-meconium") Machine Sauvage - Méconium
+          a(href="/event-machine-sauvage-meconium") Machine Sauvage - Méconium
           br
-          a(href="/timetable-leon-denise") Léon Denise
+          a(href="/event-leon-denise") Léon Denise
           br
           em Presented by <a href="http://vision-r.org/">Vision'R</a>.
       tr
         td(rowspan=2) 22:00
         td: .category.competition Competition
-        td: a(href="/timetable-shader-showdown") Shader Showdown
+        td: a(href="/event-shader-showdown") Shader Showdown
       tr
         td: .category.performance Audio Performance
-        td To Be Anounced
+        td: a(href="/event-audio-live-coding") Audio Live Coding Paris
       tr
         td 23:00
-        td: .category.performance Audio-Visual Performance
-        td To Be Announced
+        td: .category.performance Audio Performance
+        td Madcat
       tr
         td 23:30
         td: .category.performance Audio-Visual Performance
-        td To Be Announced
+        td: a(href="/event-50d-lsdlive") 50D &amp; Lsdlive
+      tr
+        td 0:00
+        td: .category.performance Audio Performance
+        td: a(href="/event-acoustic-devices") Acoustic Devices
       tr
         td 1:00
         td
         td Gates close
 
   h2 Saturday, December 1
-  p Unless stated, all events happen on the ground level.
   table.table.timetable
     thead
       tr
@@ -83,12 +84,11 @@ block content
       tr
         td 12:30
         td: .category.talk Talk
-        td
-         a(href="/timetable-animaux-jeux-video") Animaux et Jeux Vidéo, by Antoine Herren and Yacine Synapsas (French)
+        td: a(href="/event-animaux-jeux-video") Animaux et Jeux Vidéo, by Antoine Herren and Yacine Synapsas (French)
       tr
         td 14:00
         td: .category.workshop Workshop
-        td Audio Live Coding
+        td: a(href="/event-live-code-yourself") Live Code Yourself!, by Tom Desai
       tr
         td 16:00
         td: .category.speedrun Speedrun
@@ -98,26 +98,26 @@ block content
       tr
         td 16:00
         td: .category.workshop Workshop
-        td
-          a(href="/timetable-jpeg-crush") JPEG Crush, by Kaspar Ravel
+        td: a(href="/event-jpeg-crush") JPEG Crush, by Kaspar Ravel
+      tr
+        td(rowspan=2) 19:00
+        td: .category.competition Competition
+        td: a(href="/event-demoparty") Music
+      tr
+        td: .category.performance Visual Performance
+        td Visual Jam
       tr
         td(rowspan=2) 19:30
         td: .category.competition Competition
-        td Music
-      tr
-        td: .category.performance Visual Performance
-        td To Be Anounced
-      tr
-        td(rowspan=2) 20:00
-        td: .category.competition Competition
-        td: a(href="/timetable-shader-showdown") Shader Showdown
+        td: a(href="/event-shader-showdown") Shader Showdown
       tr
         td: .category.performance Audio Performance
-        td: a(href="/timetable-super-toy-magic") Super Toy Magic
+        td: a(href="/event-super-toy-magic") Super Toy Magic
       tr
-        td 21:00
+        td 20:30
         td: .category.competition Competition
-        td Food
+        td: a(href="/event-demoparty")
+          | Food
           br
           | Wild
           br
@@ -131,32 +131,32 @@ block content
           br
           | Newskool demo
       tr
-        td 22:00
+        td 21:30
         td: .category.performance Audio-Visual Performance
         td
-          a(href="/timetable-nao") NAO - Venomous Master
+          a(href="/event-nao") NAO - Venomous Master
           br
           em Presented by <a href="http://vision-r.org/">Vision'R</a>.
       tr
-        td(rowspan=2) 22:30
+        td(rowspan=2) 22:00
         td: .category.competition Competition
-        td: a(href="/timetable-shader-showdown") Shader Showdown
+        td: a(href="/event-shader-showdown") Shader Showdown
       tr
         td: .category.performance Audio Performance
-        td To Be Anounced
+        td Alkama
       tr
-        td 23:30
+        td 23:00
         td 
         td Prize giving ceremony
       tr
-        td 00:00
+        td 23:30
         td: .category.performance Audio-Visual Performance
         td 
-          a(href="timetable-run-run-jump-punch") Run! Run! Jump! Punch!
+          a(href="/event-run-run-jump-punch") Run! Run! Jump! Punch!
           br
           | Flopine
       tr
-        td 00:30
+        td 00:00
         td: .category.performance Audio-Visual Performance
         td Mangosh
       tr
