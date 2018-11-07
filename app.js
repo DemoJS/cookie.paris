@@ -62,11 +62,7 @@ app.get("/:page", function (request, response, next) {
     fs.exists('views/' + request.params.page + '.jade', function (exists) {
         if (!exists) return next()
 
-        response.render(request.params.page, function (err, html) {
-            if (err) return response.send(err);
-
-            response.send(html)
-        })
+        response.render(request.params.page)
     })
 })
 
