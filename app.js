@@ -59,8 +59,8 @@ app.get("/visitors", function (request, response) {
 })
 
 app.get("/:page", function (request, response, next) {
-    fs.access('views/' + request.params.page + '.jade', fs.constants.R_OK, function (err) {
-        if (err) return next()
+    fs.exists('views/' + request.params.page + '.jade', function (exists) {
+        if (!exists) return next()
 
         response.render(request.params.page, function (err, html) {
             if (err) return response.sendStatus(404)
