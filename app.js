@@ -63,7 +63,7 @@ app.get("/:page", function (request, response, next) {
         if (!exists) return next()
 
         response.render(request.params.page, function (err, html) {
-            if (err) return response.sendStatus(404)
+            if (err) return response.send(err);
 
             response.send(html)
         })
