@@ -59,7 +59,7 @@ app.get("/visitors", function (request, response) {
 })
 
 app.get("/:page", function (request, response, next) {
-    fs.exists('views/' + request.params.page + '.jade', function (exists) {
+    fs.exists(__dirname + '/views/' + request.params.page + '.jade', function (exists) {
         if (!exists) return next()
 
         response.render(request.params.page)
