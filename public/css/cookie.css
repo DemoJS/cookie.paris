@@ -42,6 +42,11 @@ img.wide {
     max-width: 760px;
 }
 
+.nav a {
+    padding-left: 10px !important;
+    padding-right: 10px !important;
+}
+
 .header img {
     margin-top: 25vh;
     margin-bottom: 15vh;
@@ -82,6 +87,10 @@ img.wide {
 .content h2.long {
     margin-bottom: 50px;
 }
+.content h3 {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
 
 .content .bio {
     border: 1px solid #444;
@@ -120,6 +129,13 @@ img.wide {
 
 .timetable .category.workshop {
     background-color: #723126;
+}
+
+.credit {
+    padding-bottom: 10px;
+    font-style: italic;
+    color: #cccccc;
+    text-align: right;
 }
 
 .footer {
