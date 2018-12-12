@@ -90,6 +90,7 @@ img.wide {
 .content h3 {
     margin-top: 20px;
     margin-bottom: 20px;
+    font-weight: normal;
 }
 
 .content .bio {
