@@ -3,8 +3,8 @@
   "version": "0.0.1-1",
   "author": "wsmind",
   "dependencies": {
-    "body-parser": "^1.13.3",
-    "express": "^4.13.2",
+    "body-parser": "^1.20.1",
+    "express": "^4.18.2",
     "jade": "^1.11.0",
     "redis": "^0.12.1"
   }
