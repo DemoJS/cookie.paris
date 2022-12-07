@@ -4,7 +4,7 @@
   "author": "wsmind",
   "dependencies": {
     "body-parser": "^1.13.3",
-    "express": "^4.13.2",
+    "express": "^4.17.3",
     "jade": "^1.11.0",
     "redis": "^0.12.1"
   }
